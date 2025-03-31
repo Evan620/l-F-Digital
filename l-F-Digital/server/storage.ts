@@ -318,6 +318,65 @@ export class MemStorage implements IStorage {
           "annualSavings": "$1.2M",
           "implementationTime": "6 mo"
         },
+        primaryServiceCategory: "AI & Machine Learning",
+        secondaryServiceCategories: ["Digital Experience & Customer Journey", "Data Analytics & Business Intelligence"],
+        timeline: "6 months",
+        teamSize: "4 specialists",
+        technologiesUsed: ["TensorFlow", "Python", "React", "AWS"],
+        isGenerated: false
+      },
+      {
+        title: "Healthcare Provider Achieves 64% Operational Efficiency with Process Automation",
+        industry: "Healthcare",
+        challenge: "A regional healthcare network struggled with manual, paper-based processes across 12 facilities, leading to administrative bottlenecks, delayed patient care, and high error rates in record management.",
+        solution: "We developed a comprehensive Intelligent Process Automation solution that digitized intake workflows, automated insurance verification, and created a centralized patient record system with secure cross-facility access. The solution included custom OCR for legacy document processing and real-time analytics dashboards.",
+        results: "Administrative processing time decreased by 64%, patient wait times reduced by 38%, and record errors fell by 87%. Staff reported 92% satisfaction with the new system after training.",
+        metrics: {
+          "efficiencyGain": "64%",
+          "errorReduction": "87%",
+          "ROI": "320%"
+        },
+        primaryServiceCategory: "Automation & Workflow Optimization",
+        secondaryServiceCategories: ["Custom Software Development", "Data Analytics & Business Intelligence"],
+        timeline: "9 months",
+        teamSize: "6 specialists",
+        technologiesUsed: ["UiPath", "Azure", "Power BI", "SQL Server"],
+        isGenerated: false
+      },
+      {
+        title: "Manufacturing Giant Saves $3.8M Annually with Cloud Transformation",
+        industry: "Manufacturing",
+        challenge: "A global manufacturer with operations in 8 countries was struggling with aging on-premises infrastructure, increasing IT maintenance costs, and inability to scale during peak production periods.",
+        solution: "We designed and executed a comprehensive cloud migration strategy that included containerizing legacy applications, implementing infrastructure as code for consistent deployments, and creating a global data mesh for real-time production analytics.",
+        results: "The company reduced IT infrastructure costs by 42%, achieved 99.99% system availability (up from 97%), and can now scale computing resources on-demand during peak seasons.",
+        metrics: {
+          "costReduction": "$3.8M annually",
+          "uptimeImprovement": "99.99%",
+          "deploymentSpeed": "85% faster"
+        },
+        primaryServiceCategory: "Cloud Solutions & Infrastructure",
+        secondaryServiceCategories: ["Enterprise Systems Integration", "Data Analytics & Business Intelligence"],
+        timeline: "12 months",
+        teamSize: "8 specialists",
+        technologiesUsed: ["AWS", "Kubernetes", "Terraform", "Docker", "Snowflake"],
+        isGenerated: false
+      },
+      {
+        title: "Financial Services Firm Prevents $4.5M in Fraud with AI",
+        industry: "Financial Services",
+        challenge: "A mid-sized financial services company was experiencing increasing fraud attempts, with traditional rule-based detection systems missing sophisticated attacks and generating too many false positives.",
+        solution: "We implemented an advanced AI-powered fraud detection system that uses machine learning to analyze transaction patterns in real-time. The system continuously learns from new data, adapting to emerging fraud techniques while reducing false positive alerts.",
+        results: "The new system prevented an estimated $4.5M in fraud in the first year, reduced false positive alerts by 76%, and improved analyst efficiency by 62% through better prioritization of high-risk cases.",
+        metrics: {
+          "fraudPrevention": "$4.5M",
+          "falsePositiveReduction": "76%",
+          "implementationTime": "5 months"
+        },
+        primaryServiceCategory: "AI & Machine Learning",
+        secondaryServiceCategories: ["Cybersecurity & Compliance", "Data Analytics & Business Intelligence"],
+        timeline: "5 months",
+        teamSize: "5 specialists",
+        technologiesUsed: ["Python", "TensorFlow", "Kafka", "Elasticsearch", "Neo4j"],
         isGenerated: false
       }
     ];

@@ -70,6 +70,11 @@ export const caseStudies = pgTable("case_studies", {
   solution: text("solution").notNull(),
   results: text("results").notNull(),
   metrics: json("metrics").$type<Record<string, string>>().notNull().default({}),
+  primaryServiceCategory: text("primary_service_category"),
+  secondaryServiceCategories: json("secondary_service_categories").$type<string[]>().default([]),
+  timeline: text("timeline"),
+  teamSize: text("team_size"),
+  technologiesUsed: json("technologies_used").$type<string[]>().default([]),
   isGenerated: boolean("is_generated").default(false),
 });
 

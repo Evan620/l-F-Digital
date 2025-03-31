@@ -56,15 +56,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const prompt = `
         As a senior digital transformation consultant for L&F Digital, analyze this business challenge: "${businessChallenge}"
         
-        L&F Digital offers a full spectrum of technology solutions including:
-        1. Custom Software Development - Building tailored applications, platforms, and digital products
-        2. AI & Machine Learning Solutions - Predictive models, NLP, computer vision, recommendation systems
-        3. Automation & Workflow Optimization - Process automation, workflow digitization, RPA
-        4. Cloud Solutions & Infrastructure - Cloud migration, serverless architecture, DevOps
-        5. Data Analytics & Business Intelligence - Data warehousing, dashboards, predictive analytics
-        6. Digital Experience & Customer Journey - UX/UI design, customer portals, engagement platforms
-        7. Enterprise Systems Integration - API development, system integration, middleware solutions
-        8. Cybersecurity & Compliance - Security audits, implementation, incident response strategies
+        L&F Digital offers a full spectrum of technology solutions across the following categories:
+        
+        - Automation & Workflow Optimization: Process automation, document digitization, RPA, workflow redesign, business process management
+        
+        - AI & Machine Learning: Predictive models, computer vision, NLP, conversational AI, recommendation systems, machine learning operations
+        
+        - Custom Software Development: Enterprise applications, mobile apps, web platforms, IoT solutions, microservices architecture 
+        
+        - Data Analytics & Business Intelligence: Data warehousing, interactive dashboards, predictive analytics, data visualization, data modeling
+        
+        - Cloud Solutions & Infrastructure: Cloud migration, serverless computing, containerization, infrastructure as code, DevOps implementation
+        
+        - Enterprise Systems Integration: API development, middleware solutions, systems consolidation, ETL pipelines, legacy system modernization
+        
+        - Cybersecurity & Compliance: Security assessments, compliance frameworks, attack surface reduction, incident response, security monitoring
+        
+        - Digital Experience & Customer Journey: UX/UI design, customer portals, engagement platforms, personalization engines, omnichannel solutions
         
         Here are our existing services:
         ${services.map(service => `
