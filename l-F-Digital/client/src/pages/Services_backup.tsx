@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { 
   Filter, CheckCircle2, ArrowDown, Database, Settings, ChevronRight, 
   Zap, PieChart, Users, Clock, TrendingUp, PlusCircle, MinusCircle,
-  BarChart, LineChart, Rocket, Check
+  BarChart, LineChart, Rocket
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import { Card, CardContent } from '@/components/ui/card';
@@ -624,7 +624,7 @@ export default function Services() {
               ))
             ) : filteredServices.length > 0 ? (
               filteredServices.map((service) => (
-                <SimpleServiceCard key={service.id} service={service} />
+                <ServiceCard key={service.id} service={service} />
               ))
             ) : (
               <div className="col-span-3 text-center py-16 bg-neutral-800/20 rounded-xl border border-neutral-700">
@@ -1620,7 +1620,7 @@ function QuizQuestion({
 }
 
 // Service Card Component - simpler version for Services page
-function SimpleServiceCard({ service }: { service: Service }) {
+function ServiceCard({ service }: { service: Service }) {
   // Get category color class - different style than Home page
   const getCategoryColorClass = (category: string) => {
     switch(category.toLowerCase()) {
