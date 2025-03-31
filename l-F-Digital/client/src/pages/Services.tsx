@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { 
   ArrowRight, ChevronDown, Download, Filter, CheckCircle2, ArrowDown, Database, 
   Settings, ChevronRight, Zap, PieChart, Users, Clock, TrendingUp, PlusCircle, 
-  MinusCircle, BarChart, LineChart, Rocket, Check, Sliders, 
-  Terminal, Star
+  MinusCircle, BarChart, BarChart3, LineChart, Rocket, Check, Sliders, 
+  Terminal, Star, Shield, Cloud, Layers
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import { Card, CardContent } from '@/components/ui/card';
@@ -44,7 +44,7 @@ export default function Services() {
   const [selectedAIPersona, setSelectedAIPersona] = useState('expert');
   const [timelineValue, setTimelineValue] = useState(6);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [swipeDirection, setSwipeDirection] = useState(null);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
   
   // AI recommendation states
   const [recommendedServices, setRecommendedServices] = useState<(Service & { explanation?: string })[]>([]);
@@ -112,7 +112,7 @@ export default function Services() {
   const dragControls = useRef(null);
   
   // Update the active case study index when swiped
-  const handleSwipe = (direction) => {
+  const handleSwipe = (direction: 'left' | 'right') => {
     setSwipeDirection(direction);
     setTimeout(() => {
       if (direction === 'right') {
@@ -126,7 +126,7 @@ export default function Services() {
   };
   
   // Handle AI persona selection
-  const handlePersonaSelect = (persona) => {
+  const handlePersonaSelect = (persona: string) => {
     setSelectedAIPersona(persona);
     toast({
       title: "AI Persona Selected",
@@ -135,7 +135,7 @@ export default function Services() {
   };
   
   // Calculate the ROI based on timeline
-  const calculateRoi = (months) => {
+  const calculateRoi = (months: number) => {
     // Simple calculation for demo
     const baseRoi = 120; // 120% ROI at 6 months
     const multiplier = months / 6;
@@ -143,7 +143,7 @@ export default function Services() {
   };
   
   // Handle quiz progress
-  const nextQuizStep = (answer) => {
+  const nextQuizStep = (answer: string) => {
     // Update the answer for the current step
     setQuizAnswers({...quizAnswers, [Object.keys(quizAnswers)[quizStep]]: answer});
     
@@ -201,7 +201,10 @@ export default function Services() {
       }
       
       // Scroll to recommendations
-      document.getElementById('recommendations').scrollIntoView({ behavior: 'smooth' });
+      const recommendationsElement = document.getElementById('recommendations');
+      if (recommendationsElement) {
+        recommendationsElement.scrollIntoView({ behavior: 'smooth' });
+      }
     } catch (error) {
       toast({
         title: "Recommendation failed",
@@ -211,6 +214,16 @@ export default function Services() {
     } finally {
       setLoading(false);
     }
+  };
+  
+  // State for service modal
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Open service detail modal
+  const openServiceModal = (service: Service) => {
+    setSelectedService(service);
+    setIsModalOpen(true);
   };
   
   // Get the appropriate service icon
@@ -229,6 +242,17 @@ export default function Services() {
   
   return (
     <div className="relative min-h-screen bg-neutral-900 text-neutral-100">
+      {/* Service Detail Modal */}
+      {selectedService && (
+        <ServiceDetailModal
+          service={selectedService}
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          additionalRecommendations={allServices.filter(s => 
+            s.category === selectedService.category && s.id !== selectedService.id
+          ).slice(0, 3)}
+        />
+      )}
       {/* Background elements with animated nodes */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-full">
@@ -391,105 +415,493 @@ export default function Services() {
             </p>
           </motion.div>
           
-          {/* Hexagon grid layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          {/* Expandable service categories */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            {/* Category 1: Automation & Workflow Optimization */}
             <motion.div
-              whileHover={{ y: -5, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.1 }}
-              className="relative bg-gradient-to-br from-blue-900/30 to-blue-700/10 rounded-xl border border-blue-500/20 p-6 group cursor-pointer overflow-hidden"
+              className="relative bg-gradient-to-br from-blue-900/30 to-blue-700/10 rounded-xl border border-blue-500/20 p-6 overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:blur-3xl group-hover:bg-blue-500/20 transition-all duration-700"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10"></div>
               
               <div className="relative z-10">
-                <div className="w-16 h-16 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4 group-hover:bg-blue-500/30 transition-colors duration-300">
-                  <Zap className="w-8 h-8 text-blue-400" />
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mr-4">
+                    <Zap className="w-6 h-6 text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Automation & Workflow Optimization</h3>
+                    <p className="text-neutral-300 text-sm">Streamlining processes to save time and reduce errors</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors duration-300">Automation Architects</h3>
-                <p className="text-neutral-300 mb-4">Building intelligent workflows that eliminate repetitive tasks</p>
                 
-                <div className="mt-2 pt-4 border-t border-blue-500/20 flex justify-between items-center">
-                  <span className="text-sm text-blue-400">3 services</span>
-                  <ChevronRight className="w-5 h-5 text-blue-400 group-hover:translate-x-1 transition-transform duration-300" />
-                </div>
+                {/* Accordion for services in this category */}
+                <Accordion type="single" collapsible className="w-full mt-2 border-t border-blue-500/20 pt-2">
+                  {allServices
+                    .filter(service => service.category === "Automation & Workflow Optimization")
+                    .map((service, i) => (
+                      <AccordionItem key={service.id} value={`automation-${service.id}`} className="border-b border-blue-500/10">
+                        <AccordionTrigger className="py-2 text-white hover:text-blue-400 text-left text-sm">
+                          {service.name}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-3">
+                          <div className="p-3 bg-blue-500/5 rounded-lg">
+                            <p className="text-sm text-neutral-300 mb-2">{service.description}</p>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {service.features.map((feature, idx) => (
+                                <span key={idx} className="text-xs px-2 py-1 bg-blue-500/10 text-blue-400 rounded-full">
+                                  {feature}
+                                </span>
+                              )).slice(0, 3)}
+                              {service.features.length > 3 && (
+                                <span className="text-xs px-2 py-1 bg-blue-500/10 text-blue-400 rounded-full">
+                                  +{service.features.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                            <Button 
+                              onClick={() => openServiceModal(service)}
+                              size="sm" 
+                              variant="outline"
+                              className="w-full mt-2 text-xs border-blue-500/20 text-blue-400 hover:bg-blue-500/10"
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                </Accordion>
               </div>
             </motion.div>
             
+            {/* Category 2: AI & Machine Learning */}
             <motion.div
-              whileHover={{ y: -5, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="relative bg-gradient-to-br from-purple-900/30 to-purple-700/10 rounded-xl border border-purple-500/20 p-6 group cursor-pointer overflow-hidden"
+              className="relative bg-gradient-to-br from-purple-900/30 to-purple-700/10 rounded-xl border border-purple-500/20 p-6 overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:blur-3xl group-hover:bg-purple-500/20 transition-all duration-700"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10"></div>
               
               <div className="relative z-10">
-                <div className="w-16 h-16 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4 group-hover:bg-purple-500/30 transition-colors duration-300">
-                  <PieChart className="w-8 h-8 text-purple-400" />
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mr-4">
+                    <PieChart className="w-6 h-6 text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">AI & Machine Learning</h3>
+                    <p className="text-neutral-300 text-sm">Intelligent solutions that learn and adapt to your business</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors duration-300">AI Alchemists</h3>
-                <p className="text-neutral-300 mb-4">Transforming raw data into golden business insights</p>
                 
-                <div className="mt-2 pt-4 border-t border-purple-500/20 flex justify-between items-center">
-                  <span className="text-sm text-purple-400">4 services</span>
-                  <ChevronRight className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform duration-300" />
-                </div>
+                {/* Accordion for services in this category */}
+                <Accordion type="single" collapsible className="w-full mt-2 border-t border-purple-500/20 pt-2">
+                  {allServices
+                    .filter(service => service.category === "AI & Machine Learning")
+                    .map((service, i) => (
+                      <AccordionItem key={service.id} value={`ai-${service.id}`} className="border-b border-purple-500/10">
+                        <AccordionTrigger className="py-2 text-white hover:text-purple-400 text-left text-sm">
+                          {service.name}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-3">
+                          <div className="p-3 bg-purple-500/5 rounded-lg">
+                            <p className="text-sm text-neutral-300 mb-2">{service.description}</p>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {service.features.map((feature, idx) => (
+                                <span key={idx} className="text-xs px-2 py-1 bg-purple-500/10 text-purple-400 rounded-full">
+                                  {feature}
+                                </span>
+                              )).slice(0, 3)}
+                              {service.features.length > 3 && (
+                                <span className="text-xs px-2 py-1 bg-purple-500/10 text-purple-400 rounded-full">
+                                  +{service.features.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                            <Button 
+                              onClick={() => openServiceModal(service)}
+                              size="sm" 
+                              variant="outline"
+                              className="w-full mt-2 text-xs border-purple-500/20 text-purple-400 hover:bg-purple-500/10"
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                </Accordion>
               </div>
             </motion.div>
             
+            {/* Category 3: Custom Software Development */}
             <motion.div
-              whileHover={{ y: -5, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.3 }}
-              className="relative bg-gradient-to-br from-secondary-900/30 to-secondary-700/10 rounded-xl border border-secondary-500/20 p-6 group cursor-pointer overflow-hidden"
+              className="relative bg-gradient-to-br from-orange-900/30 to-orange-700/10 rounded-xl border border-orange-500/20 p-6 overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-secondary-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:blur-3xl group-hover:bg-secondary-500/20 transition-all duration-700"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10"></div>
               
               <div className="relative z-10">
-                <div className="w-16 h-16 rounded-xl bg-secondary-500/20 flex items-center justify-center mb-4 group-hover:bg-secondary-500/30 transition-colors duration-300">
-                  <Rocket className="w-8 h-8 text-secondary-400" />
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center mr-4">
+                    <Rocket className="w-6 h-6 text-orange-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Custom Software Development</h3>
+                    <p className="text-neutral-300 text-sm">Tailor-made applications built for your specific needs</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-secondary-300 transition-colors duration-300">Revenue Rockets</h3>
-                <p className="text-neutral-300 mb-4">Accelerating growth with AI-optimized sales funnels</p>
                 
-                <div className="mt-2 pt-4 border-t border-secondary-500/20 flex justify-between items-center">
-                  <span className="text-sm text-secondary-400">3 services</span>
-                  <ChevronRight className="w-5 h-5 text-secondary-400 group-hover:translate-x-1 transition-transform duration-300" />
-                </div>
+                {/* Accordion for services in this category */}
+                <Accordion type="single" collapsible className="w-full mt-2 border-t border-orange-500/20 pt-2">
+                  {allServices
+                    .filter(service => service.category === "Custom Software Development")
+                    .map((service, i) => (
+                      <AccordionItem key={service.id} value={`software-${service.id}`} className="border-b border-orange-500/10">
+                        <AccordionTrigger className="py-2 text-white hover:text-orange-400 text-left text-sm">
+                          {service.name}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-3">
+                          <div className="p-3 bg-orange-500/5 rounded-lg">
+                            <p className="text-sm text-neutral-300 mb-2">{service.description}</p>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {service.features.map((feature, idx) => (
+                                <span key={idx} className="text-xs px-2 py-1 bg-orange-500/10 text-orange-400 rounded-full">
+                                  {feature}
+                                </span>
+                              )).slice(0, 3)}
+                              {service.features.length > 3 && (
+                                <span className="text-xs px-2 py-1 bg-orange-500/10 text-orange-400 rounded-full">
+                                  +{service.features.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                            <Button 
+                              onClick={() => openServiceModal(service)}
+                              size="sm" 
+                              variant="outline"
+                              className="w-full mt-2 text-xs border-orange-500/20 text-orange-400 hover:bg-orange-500/10"
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                </Accordion>
               </div>
             </motion.div>
             
+            {/* Category 4: Data Analytics & Business Intelligence */}
             <motion.div
-              whileHover={{ y: -5, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.4 }}
-              className="relative bg-gradient-to-br from-emerald-900/30 to-emerald-700/10 rounded-xl border border-emerald-500/20 p-6 group cursor-pointer overflow-hidden"
+              className="relative bg-gradient-to-br from-emerald-900/30 to-emerald-700/10 rounded-xl border border-emerald-500/20 p-6 overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:blur-3xl group-hover:bg-emerald-500/20 transition-all duration-700"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10"></div>
               
               <div className="relative z-10">
-                <div className="w-16 h-16 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-4 group-hover:bg-emerald-500/30 transition-colors duration-300">
-                  <Settings className="w-8 h-8 text-emerald-400" />
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mr-4">
+                    <BarChart3 className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Data Analytics & Business Intelligence</h3>
+                    <p className="text-neutral-300 text-sm">Turning your data into actionable insights</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors duration-300">Tech Surgeons</h3>
-                <p className="text-neutral-300 mb-4">Diagnosing and fixing digital inefficiencies with precision</p>
                 
-                <div className="mt-2 pt-4 border-t border-emerald-500/20 flex justify-between items-center">
-                  <span className="text-sm text-emerald-400">2 services</span>
-                  <ChevronRight className="w-5 h-5 text-emerald-400 group-hover:translate-x-1 transition-transform duration-300" />
+                {/* Accordion for services in this category */}
+                <Accordion type="single" collapsible className="w-full mt-2 border-t border-emerald-500/20 pt-2">
+                  {allServices
+                    .filter(service => service.category === "Data Analytics & Business Intelligence")
+                    .map((service, i) => (
+                      <AccordionItem key={service.id} value={`data-${service.id}`} className="border-b border-emerald-500/10">
+                        <AccordionTrigger className="py-2 text-white hover:text-emerald-400 text-left text-sm">
+                          {service.name}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-3">
+                          <div className="p-3 bg-emerald-500/5 rounded-lg">
+                            <p className="text-sm text-neutral-300 mb-2">{service.description}</p>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {service.features.map((feature, idx) => (
+                                <span key={idx} className="text-xs px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded-full">
+                                  {feature}
+                                </span>
+                              )).slice(0, 3)}
+                              {service.features.length > 3 && (
+                                <span className="text-xs px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded-full">
+                                  +{service.features.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                            <Button 
+                              onClick={() => openServiceModal(service)}
+                              size="sm" 
+                              variant="outline"
+                              className="w-full mt-2 text-xs border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                </Accordion>
+              </div>
+            </motion.div>
+            
+            {/* Category 5: Cloud Solutions & Infrastructure */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+              className="relative bg-gradient-to-br from-cyan-900/30 to-cyan-700/10 rounded-xl border border-cyan-500/20 p-6 overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center mr-4">
+                    <Cloud className="w-6 h-6 text-cyan-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Cloud Solutions & Infrastructure</h3>
+                    <p className="text-neutral-300 text-sm">Scalable cloud platforms for modern businesses</p>
+                  </div>
                 </div>
+                
+                {/* Accordion for services in this category */}
+                <Accordion type="single" collapsible className="w-full mt-2 border-t border-cyan-500/20 pt-2">
+                  {allServices
+                    .filter(service => service.category === "Cloud Solutions & Infrastructure")
+                    .map((service, i) => (
+                      <AccordionItem key={service.id} value={`cloud-${service.id}`} className="border-b border-cyan-500/10">
+                        <AccordionTrigger className="py-2 text-white hover:text-cyan-400 text-left text-sm">
+                          {service.name}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-3">
+                          <div className="p-3 bg-cyan-500/5 rounded-lg">
+                            <p className="text-sm text-neutral-300 mb-2">{service.description}</p>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {service.features.map((feature, idx) => (
+                                <span key={idx} className="text-xs px-2 py-1 bg-cyan-500/10 text-cyan-400 rounded-full">
+                                  {feature}
+                                </span>
+                              )).slice(0, 3)}
+                              {service.features.length > 3 && (
+                                <span className="text-xs px-2 py-1 bg-cyan-500/10 text-cyan-400 rounded-full">
+                                  +{service.features.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                            <Button 
+                              onClick={() => openServiceModal(service)}
+                              size="sm" 
+                              variant="outline"
+                              className="w-full mt-2 text-xs border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/10"
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                </Accordion>
+              </div>
+            </motion.div>
+            
+            {/* Category 6: Enterprise Systems Integration */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.6 }}
+              className="relative bg-gradient-to-br from-indigo-900/30 to-indigo-700/10 rounded-xl border border-indigo-500/20 p-6 overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center mr-4">
+                    <Layers className="w-6 h-6 text-indigo-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Enterprise Systems Integration</h3>
+                    <p className="text-neutral-300 text-sm">Connecting your systems for seamless operations</p>
+                  </div>
+                </div>
+                
+                {/* Accordion for services in this category */}
+                <Accordion type="single" collapsible className="w-full mt-2 border-t border-indigo-500/20 pt-2">
+                  {allServices
+                    .filter(service => service.category === "Enterprise Systems Integration")
+                    .map((service, i) => (
+                      <AccordionItem key={service.id} value={`integration-${service.id}`} className="border-b border-indigo-500/10">
+                        <AccordionTrigger className="py-2 text-white hover:text-indigo-400 text-left text-sm">
+                          {service.name}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-3">
+                          <div className="p-3 bg-indigo-500/5 rounded-lg">
+                            <p className="text-sm text-neutral-300 mb-2">{service.description}</p>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {service.features.map((feature, idx) => (
+                                <span key={idx} className="text-xs px-2 py-1 bg-indigo-500/10 text-indigo-400 rounded-full">
+                                  {feature}
+                                </span>
+                              )).slice(0, 3)}
+                              {service.features.length > 3 && (
+                                <span className="text-xs px-2 py-1 bg-indigo-500/10 text-indigo-400 rounded-full">
+                                  +{service.features.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                            <Button 
+                              onClick={() => openServiceModal(service)}
+                              size="sm" 
+                              variant="outline"
+                              className="w-full mt-2 text-xs border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10"
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                </Accordion>
+              </div>
+            </motion.div>
+            
+            {/* Category 7: Cybersecurity & Compliance */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.7 }}
+              className="relative bg-gradient-to-br from-red-900/30 to-red-700/10 rounded-xl border border-red-500/20 p-6 overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center mr-4">
+                    <Shield className="w-6 h-6 text-red-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Cybersecurity & Compliance</h3>
+                    <p className="text-neutral-300 text-sm">Protecting your business assets and ensuring regulatory compliance</p>
+                  </div>
+                </div>
+                
+                {/* Accordion for services in this category */}
+                <Accordion type="single" collapsible className="w-full mt-2 border-t border-red-500/20 pt-2">
+                  {allServices
+                    .filter(service => service.category === "Cybersecurity & Compliance")
+                    .map((service, i) => (
+                      <AccordionItem key={service.id} value={`security-${service.id}`} className="border-b border-red-500/10">
+                        <AccordionTrigger className="py-2 text-white hover:text-red-400 text-left text-sm">
+                          {service.name}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-3">
+                          <div className="p-3 bg-red-500/5 rounded-lg">
+                            <p className="text-sm text-neutral-300 mb-2">{service.description}</p>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {service.features.map((feature, idx) => (
+                                <span key={idx} className="text-xs px-2 py-1 bg-red-500/10 text-red-400 rounded-full">
+                                  {feature}
+                                </span>
+                              )).slice(0, 3)}
+                              {service.features.length > 3 && (
+                                <span className="text-xs px-2 py-1 bg-red-500/10 text-red-400 rounded-full">
+                                  +{service.features.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                            <Button 
+                              onClick={() => openServiceModal(service)}
+                              size="sm" 
+                              variant="outline"
+                              className="w-full mt-2 text-xs border-red-500/20 text-red-400 hover:bg-red-500/10"
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                </Accordion>
+              </div>
+            </motion.div>
+            
+            {/* Category 8: Digital Experience & Customer Journey */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.8 }}
+              className="relative bg-gradient-to-br from-pink-900/30 to-pink-700/10 rounded-xl border border-pink-500/20 p-6 overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center mr-4">
+                    <Users className="w-6 h-6 text-pink-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Digital Experience & Customer Journey</h3>
+                    <p className="text-neutral-300 text-sm">Creating outstanding digital experiences for your customers</p>
+                  </div>
+                </div>
+                
+                {/* Accordion for services in this category */}
+                <Accordion type="single" collapsible className="w-full mt-2 border-t border-pink-500/20 pt-2">
+                  {allServices
+                    .filter(service => service.category === "Digital Experience & Customer Journey")
+                    .map((service, i) => (
+                      <AccordionItem key={service.id} value={`experience-${service.id}`} className="border-b border-pink-500/10">
+                        <AccordionTrigger className="py-2 text-white hover:text-pink-400 text-left text-sm">
+                          {service.name}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-3">
+                          <div className="p-3 bg-pink-500/5 rounded-lg">
+                            <p className="text-sm text-neutral-300 mb-2">{service.description}</p>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {service.features.map((feature, idx) => (
+                                <span key={idx} className="text-xs px-2 py-1 bg-pink-500/10 text-pink-400 rounded-full">
+                                  {feature}
+                                </span>
+                              )).slice(0, 3)}
+                              {service.features.length > 3 && (
+                                <span className="text-xs px-2 py-1 bg-pink-500/10 text-pink-400 rounded-full">
+                                  +{service.features.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                            <Button 
+                              onClick={() => openServiceModal(service)}
+                              size="sm" 
+                              variant="outline"
+                              className="w-full mt-2 text-xs border-pink-500/20 text-pink-400 hover:bg-pink-500/10"
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                </Accordion>
               </div>
             </motion.div>
           </div>
