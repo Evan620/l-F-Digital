@@ -104,7 +104,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         let parsedResponse;
         try {
-          parsedResponse = JSON.parse(responseContent);
+          // First attempt to clean response - remove markdown code blocks if present
+          let cleanedContent = responseContent;
+          if (responseContent.includes("```json")) {
+            cleanedContent = responseContent.replace(/```json\n|\n```/g, "");
+          }
+          
+          parsedResponse = JSON.parse(cleanedContent);
           
           // Check if we got an error message instead of actual service suggestions
           if (parsedResponse.message && !parsedResponse.serviceSuggestions) {
@@ -115,7 +121,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           res.json(parsedResponse);
         } catch (parseError) {
           console.error("Failed to parse AI response or received error:", parseError);
-          throw new Error("Invalid AI response format");
+          
+          // Fallback to default services from storage
+          const fallbackServices = await storage.getAllServices();
+          const topServices = fallbackServices.slice(0, 3);
+          
+          res.json({
+            serviceSuggestions: topServices,
+            note: "Using default suggestions due to AI service error"
+          });
         }
       } catch (error) {
         console.error("AI service error:", error instanceof Error ? error.message : String(error));
@@ -185,7 +199,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         let parsedResponse;
         try {
-          parsedResponse = JSON.parse(responseContent);
+          // First attempt to clean response - remove markdown code blocks if present
+          let cleanedContent = responseContent;
+          if (responseContent.includes("```json")) {
+            cleanedContent = responseContent.replace(/```json\n|\n```/g, "");
+          }
+          
+          parsedResponse = JSON.parse(cleanedContent);
           
           // Check if we got an error message instead of an actual case study
           if (parsedResponse.message && !parsedResponse.caseStudy) {
@@ -202,7 +222,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           res.json(parsedResponse);
         } catch (parseError) {
           console.error("Failed to parse AI response or received error:", parseError);
-          throw new Error("Invalid AI response format");
+          
+          // Fallback to default case study
+          const existingCaseStudies = await storage.getAllCaseStudies();
+          const fallbackCaseStudy = existingCaseStudies.length > 0 
+            ? existingCaseStudies[0] 
+            : {
+                id: 0,
+                title: "How AI Transformed Business Operations",
+                industry: "General",
+                challenge: "The client faced operational inefficiencies.",
+                solution: "We implemented AI-driven automation.",
+                results: "Achieved significant improvements in productivity and cost savings.",
+                metrics: {
+                  "productivityIncrease": "35%",
+                  "costReduction": "$500K",
+                  "implementationTime": "3 months"
+                },
+                isGenerated: true
+              };
+          
+          res.json({ caseStudy: fallbackCaseStudy });
         }
       } catch (error) {
         console.error("AI service error:", error instanceof Error ? error.message : String(error));

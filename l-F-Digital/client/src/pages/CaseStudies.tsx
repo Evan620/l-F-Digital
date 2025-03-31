@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { 
   Filter, CheckCircle, ArrowDown, ChevronRight, 
   Zap, PieChart, Users, Clock, Rocket, BarChart3,
-  LineChart, Upload, Star, Play, Sparkles, Globe
+  LineChart, Upload, Star, Play, Sparkles, Globe, X
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
