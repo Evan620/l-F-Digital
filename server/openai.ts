@@ -24,19 +24,17 @@ export const openai = standardOpenAIAvailable || azureCredentialsAvailable ?
   new OpenAI({ 
     apiKey: standardOpenAIAvailable && !azureCredentialsAvailable 
       ? openAIApiKey  // Use standard OpenAI API key if Azure not available
-      : isModelInferenceEndpoint 
-        ? 'USING-DIRECT-AXIOS-FOR-AZURE-INFERENCE' 
-        : azureOpenAIApiKey,
+      : azureOpenAIApiKey,
         
-    baseURL: !isModelInferenceEndpoint && azureOpenAIEndpoint && azureCredentialsAvailable
+    baseURL: azureOpenAIEndpoint && azureCredentialsAvailable && !isModelInferenceEndpoint
       ? `${azureOpenAIEndpoint}/openai/deployments/${azureOpenAIDeploymentName}` 
       : undefined,
       
-    defaultQuery: !isModelInferenceEndpoint && azureOpenAIEndpoint && azureCredentialsAvailable
+    defaultQuery: azureOpenAIEndpoint && azureCredentialsAvailable && !isModelInferenceEndpoint
       ? { "api-version": "2023-12-01-preview" } 
       : undefined,
       
-    defaultHeaders: !isModelInferenceEndpoint && azureOpenAIEndpoint && azureCredentialsAvailable
+    defaultHeaders: azureOpenAIEndpoint && azureCredentialsAvailable && !isModelInferenceEndpoint
       ? { "api-key": azureOpenAIApiKey } 
       : undefined
   }) :
@@ -45,7 +43,7 @@ export const openai = standardOpenAIAvailable || azureCredentialsAvailable ?
     chat: {
       completions: {
         create: async () => ({
-          choices: [{ message: { content: JSON.stringify({ message: "OpenAI service is not configured. Using OpenRouter instead." }) } }]
+          choices: [{ message: { content: JSON.stringify({ message: "OpenAI service is not configured." }) } }]
         })
       }
     }
@@ -111,8 +109,8 @@ export async function createChatCompletion(messages: Array<{ role: string; conte
     if (isModelInferenceEndpoint) {
       console.log("Using models.inference.ai.azure.com endpoint with direct axios call");
       
+      // When using Azure OpenAI, we don't include the model in the request body
       const requestOptions = {
-        model: azureOpenAIDeploymentName,
         messages: messages,
         ...(options.response_format !== undefined ? { response_format: options.response_format } : { response_format: { type: "json_object" } }),
         ...options
@@ -129,12 +127,12 @@ export async function createChatCompletion(messages: Array<{ role: string; conte
       try {
         // Try direct axios call to the inference endpoint
         const response = await axios.post(
-          azureOpenAIEndpoint + '/v1/chat/completions', 
+          `${azureOpenAIEndpoint}/openai/deployments/${azureOpenAIDeploymentName}/chat/completions?api-version=2023-12-01-preview`, 
           requestOptions,
           {
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${azureOpenAIApiKey}`
+              'api-key': azureOpenAIApiKey
             }
           }
         );
