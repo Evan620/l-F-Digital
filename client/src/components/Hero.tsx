@@ -63,13 +63,54 @@ export default function Hero() {
             {/* Industry Recognition */}
             <div className="pt-8">
               <p className="text-sm text-neutral-400 mb-3">Trusted by industry leaders</p>
-              <div className="flex flex-wrap gap-6 items-center">
-                <div className="text-neutral-400 font-semibold text-sm">Safaricom</div>
-                <div className="text-neutral-400 font-semibold text-sm">KCB Tech</div>
-                <div className="text-neutral-400 font-semibold text-sm">Twiga Foods</div>
-                <div className="text-neutral-400 font-semibold text-sm">Sendy</div>
-                <div className="text-neutral-400 font-semibold text-sm">Jumia Kenya</div>
-                <div className="text-neutral-400 font-semibold text-sm">MPESA</div>
+              <div className="flex flex-wrap gap-8 items-center justify-center">
+                {/* Safaricom Logo */}
+                <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
+                  <svg viewBox="0 0 200 40" className="h-full w-auto">
+                    <path d="M40 20C40 31.0457 31.0457 40 20 40C8.9543 40 0 31.0457 0 20C0 8.9543 8.9543 0 20 0C31.0457 0 40 8.9543 40 20Z" fill="currentColor"/>
+                    <text x="50" y="25" className="text-xl font-bold" fill="currentColor">Safaricom</text>
+                  </svg>
+                </div>
+                
+                {/* KCB Tech Logo */}
+                <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
+                  <svg viewBox="0 0 120 40" className="h-full w-auto">
+                    <rect x="0" y="10" width="30" height="20" rx="2" fill="currentColor"/>
+                    <text x="35" y="25" className="text-xl font-bold" fill="currentColor">KCB Tech</text>
+                  </svg>
+                </div>
+                
+                {/* Twiga Foods Logo */}
+                <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
+                  <svg viewBox="0 0 150 40" className="h-full w-auto">
+                    <path d="M20 5L35 35L5 35L20 5Z" fill="currentColor"/>
+                    <text x="40" y="25" className="text-xl font-bold" fill="currentColor">Twiga Foods</text>
+                  </svg>
+                </div>
+                
+                {/* Sendy Logo */}
+                <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
+                  <svg viewBox="0 0 100 40" className="h-full w-auto">
+                    <circle cx="20" cy="20" r="15" fill="currentColor"/>
+                    <text x="40" y="25" className="text-xl font-bold" fill="currentColor">Sendy</text>
+                  </svg>
+                </div>
+                
+                {/* Jumia Kenya Logo */}
+                <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
+                  <svg viewBox="0 0 150 40" className="h-full w-auto">
+                    <path d="M10 30L25 10L40 30H10Z" fill="currentColor"/>
+                    <text x="45" y="25" className="text-xl font-bold" fill="currentColor">Jumia</text>
+                  </svg>
+                </div>
+                
+                {/* MPESA Logo */}
+                <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
+                  <svg viewBox="0 0 120 40" className="h-full w-auto">
+                    <rect x="5" y="10" width="30" height="20" rx="10" fill="currentColor"/>
+                    <text x="40" y="25" className="text-xl font-bold" fill="currentColor">MPESA</text>
+                  </svg>
+                </div>
               </div>
             </div>
           </motion.div>
