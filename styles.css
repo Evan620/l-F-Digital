@@ -1,0 +1,312 @@
+/* Base Styles */
+:root {
+    --primary-color: #0d6efd;
+    --primary-dark: #0b5ed7;
+    --secondary-color: #6c757d;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #0dcaf0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+    position: relative;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 100px 0;
+    margin-bottom: 30px;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--dark-color);
+}
+
+.hero-section p {
+    font-size: 1.25rem;
+    margin-bottom: 30px;
+    color: var(--secondary-color);
+}
+
+.analysis-graphic {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+}
+
+/* Feature Cards */
+.feature-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    height: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 70px;
+    background-color: rgba(13, 110, 253, 0.1);
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.feature-icon svg {
+    color: var(--primary-color);
+    width: 30px;
+    height: 30px;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--dark-color);
+}
+
+.feature-card p {
+    color: var(--secondary-color);
+}
+
+/* Progress Circular */
+.progress-circular {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(var(--primary-color) 0%, var(--light-color) 0%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.progress-circular::before {
+    content: '';
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background-color: white;
+}
+
+.score {
+    position: relative;
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+/* Analysis Results Styling */
+.severity-high {
+    color: var(--danger-color);
+}
+
+.severity-medium {
+    color: var(--warning-color);
+}
+
+.severity-low {
+    color: var(--info-color);
+}
+
+.issue-card {
+    border-left: 4px solid var(--secondary-color);
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.issue-card.high {
+    border-left-color: var(--danger-color);
+}
+
+.issue-card.medium {
+    border-left-color: var(--warning-color);
+}
+
+.issue-card.low {
+    border-left-color: var(--info-color);
+}
+
+.file-path {
+    font-family: monospace;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+.code-snippet {
+    font-family: monospace;
+    background-color: var(--light-color);
+    padding: 10px;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    font-size: 0.9rem;
+    overflow-x: auto;
+}
+
+/* Tabs Styling */
+.nav-tabs .nav-link {
+    color: var(--secondary-color);
+    padding: 10px 20px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color);
+    background-color: transparent;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 50px 0;
+    }
+    
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .analysis-graphic {
+        height: 200px;
+        margin-top: 30px;
+    }
+    
+    .progress-circular {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .progress-circular::before {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .score {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-section p {
+        font-size: 1.1rem;
+    }
+    
+    .feature-card {
+        padding: 20px;
+    }
+    
+    .tab-content {
+        padding: 15px !important;
+    }
+}
+
+/* Helper classes */
+.feather-small {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* Fix sections styling */
+.fix-item {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.fix-item .fix-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.fix-item h4 {
+    margin: 0;
+}
+
+.fix-item .fix-content {
+    margin-top: 15px;
+}
+
+.fix-item .before-after {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .fix-item .before-after {
+        grid-template-columns: 1fr;
+    }
+}
+
+.diff-display {
+    font-family: monospace;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    padding: 10px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    overflow-x: auto;
+    background-color: #f8f9fa;
+}
+
+.diff-display .addition {
+    background-color: #e6ffed;
+    color: #22863a;
+}
+
+.diff-display .deletion {
+    background-color: #ffeef0;
+    color: #cb2431;
+}
