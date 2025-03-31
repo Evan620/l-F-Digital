@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import ValueCalculator from '@/components/ValueCalculator';
-import ServicesExplorer from '@/components/ServicesExplorer';
+import ServicePreviewGrid from '@/components/ServicePreviewGrid';
 import CaseStudyGenerator from '@/components/CaseStudyGenerator';
 import AIChatInterface from '@/components/AIChatInterface';
 
@@ -44,7 +44,7 @@ export default function Home() {
       <main className="relative z-10">
         <Hero />
         <ValueCalculator />
-        <ServicesExplorer />
+        <ServicePreviewGrid />
         <CaseStudyGenerator />
       </main>
       
