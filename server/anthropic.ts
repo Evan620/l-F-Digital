@@ -2,10 +2,14 @@ import Anthropic from '@anthropic-ai/sdk';
 
 // Check if Anthropic API key is available
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const hasAnthropicCredentials = !!ANTHROPIC_API_KEY;
+
+// Export function to check if credentials are available
+export function hasAnthropicCredentials(): boolean {
+  return !!ANTHROPIC_API_KEY;
+}
 
 // Create the Anthropic client if API key is available
-export const anthropic = hasAnthropicCredentials 
+export const anthropic = !!ANTHROPIC_API_KEY 
   ? new Anthropic({
       apiKey: ANTHROPIC_API_KEY,
     })
@@ -40,7 +44,7 @@ export async function generateChatCompletion(
     options: JSON.stringify(options)
   });
 
-  if (!hasAnthropicCredentials) {
+  if (!hasAnthropicCredentials()) {
     console.log("Anthropic API key not available, returning mock response");
     return JSON.stringify({
       message: "Anthropic AI service is currently unavailable. Please check your API credentials."

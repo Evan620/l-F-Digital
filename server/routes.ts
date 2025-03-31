@@ -5,7 +5,7 @@ import { z } from "zod";
 import { insertBusinessInfoSchema, insertConversationSchema, type Message } from "@shared/schema";
 import { openai, createChatCompletion } from "./openai";
 import { generateChatCompletion as generateOpenRouterCompletion, hasOpenRouterCredentials } from "./openrouter";
-import { generateChatCompletion as generateAnthropicCompletion } from "./anthropic";
+import { generateChatCompletion as generateAnthropicCompletion, hasAnthropicCredentials } from "./anthropic";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // prefix all routes with /api
@@ -134,8 +134,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
         
-        // If OpenRouter failed or unavailable, try Anthropic
-        if (!responseContent) {
+        // If OpenRouter failed or unavailable, try Anthropic (if available)
+        if (!responseContent && hasAnthropicCredentials()) {
           try {
             console.log("Trying Anthropic for service recommendation");
             responseContent = await generateAnthropicCompletion([
@@ -287,8 +287,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
         
-        // If OpenRouter failed or unavailable, try Anthropic
-        if (!responseContent) {
+        // If OpenRouter failed or unavailable, try Anthropic (if available)
+        if (!responseContent && hasAnthropicCredentials()) {
           try {
             console.log("Trying Anthropic for case study generation");
             responseContent = await generateAnthropicCompletion([

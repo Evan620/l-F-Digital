@@ -1,0 +1,50 @@
+cess Automation","desc…
+Using OpenRouter with DeepSeek for case study generation
+OpenRouter chat completion request: {
+  messageCount: 1,
+  firstRole: 'user',
+  lastRole: 'user',
+  options: '{"model":"deepseek/deepseek-r1-zero:free","jsonMode":true}'
+}
+OpenRouter response received successfully
+OpenRouter response received successfully
+Trying Anthropic for case study generation
+Anthropic chat completion request: {
+  messageCount: 1,
+  firstRole: 'user',
+  lastRole: 'user',
+  options: '{"model":"claude-3-7-sonnet-20250219"}'
+}
+Anthropic API key not available, returning mock response
+Anthropic response received successfully
+Attempting to parse JSON: {"message":"Anthropic AI service is currently unavailable. Please check your API credentials."}...
+AI service unavailable, using fallback: Anthropic AI service is currently unavailable. Please check your API credentials.
+Failed to parse AI response or received error: Error: AI service unavailable
+    at <anonymous> (/home/runner/workspace/server/routes.ts:337:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+9:23:37 PM [express] POST /api/ai/generate-case-study 500 in 14821ms :: {"message":"AI service error…
+Using OpenRouter with DeepSeek for ROI calculation
+OpenRouter chat completion request: {
+  messageCount: 1,
+  firstRole: 'user',
+  lastRole: 'user',
+  options: '{"model":"deepseek/deepseek-r1-zero:free","jsonMode":true}'
+}
+OpenRouter response received successfully
+OpenRouter response received successfully
+Trying Anthropic for ROI calculation
+Anthropic chat completion request: {
+  messageCount: 1,
+  firstRole: 'user',
+  lastRole: 'user',
+  options: '{"model":"claude-3-7-sonnet-20250219"}'
+}
+Anthropic API key not available, returning mock response
+Anthropic response received successfully
+Attempting to parse ROI JSON: {"message":"Anthropic AI service is currently unavailable. Please check your API credentials."}...
+AI service unavailable, using fallback: Anthropic AI service is currently unavailable. Please check your API credentials.
+Failed to parse AI response or received error: Error: AI service unavailable
+    at <anonymous> (/home/runner/workspace/server/routes.ts:703:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+AI service error: Invalid AI response format
+9:24:57 PM [express] POST /api/ai/roi-calculator 500 in 16972ms :: {"message":"AI service unavailabl…
