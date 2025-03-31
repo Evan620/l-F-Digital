@@ -34,8 +34,8 @@ export async function generateChatCompletion(
   }
 
   try {
-    // Use the deepseek-r1-zero model per user requirements
-    const model = options.model || "deepseek/deepseek-r1-zero:free";
+    // Use the Mistral Small 3.1 model per user requirements
+    const model = options.model || "mistralai/mistral-small-3.1-24b-instruct:free";
     
     // Format response for JSON if needed
     const responseFormat = options.jsonMode 

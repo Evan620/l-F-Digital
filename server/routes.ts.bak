@@ -481,7 +481,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         let responseContent: string | null = null;
         
-        // Try Hugging Face first
         if (hasHuggingFaceCredentials()) {
           try {
             console.log("Using Hugging Face DeepSeek-R1 for chat response");
@@ -493,42 +492,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log("Successfully generated response with Hugging Face");
           } catch (huggingfaceError) {
             console.error("Hugging Face service failed:", huggingfaceError);
-            
-            // If Hugging Face fails, try OpenRouter
-            if (hasOpenRouterCredentials()) {
-              try {
-                console.log("Hugging Face failed. Trying OpenRouter with Mistral model for chat response");
-                responseContent = await openrouterGenerateChatCompletion(
-                  formattedMessages,
-                  { jsonMode: false, maxTokens: 800 }
-                );
-                console.log("Successfully generated chat response with OpenRouter");
-              } catch (openrouterError) {
-                console.error("OpenRouter service also failed:", openrouterError);
-                throw openrouterError;
-              }
-            } else {
-              console.log("No OpenRouter credentials available for fallback");
-              throw huggingfaceError;
-            }
-          }
-        } 
-        // If no Hugging Face credentials, try OpenRouter
-        else if (hasOpenRouterCredentials()) {
-          try {
-            console.log("Using OpenRouter with Mistral model for chat response");
-            responseContent = await openrouterGenerateChatCompletion(
-              formattedMessages,
-              { jsonMode: false, maxTokens: 800 }
-            );
-            console.log("Successfully generated chat response with OpenRouter");
-          } catch (openrouterError) {
-            console.error("OpenRouter service failed:", openrouterError);
-            throw openrouterError;
+            throw huggingfaceError;
           }
         } else {
-          console.log("No AI service credentials available");
-          throw new Error("No AI service credentials available (Hugging Face or OpenRouter)");
+          console.log("No Hugging Face credentials available");
+          throw new Error("Hugging Face API key is not available");
         }
         
         if (!responseContent) {
@@ -635,7 +603,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let responseContent: string | null = null;
       
       try {
-        // Try Hugging Face first
         if (hasHuggingFaceCredentials()) {
           try {
             console.log("Using Hugging Face DeepSeek-R1 for ROI calculation");
@@ -648,42 +615,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log("Successfully generated ROI with Hugging Face");
           } catch (huggingfaceError) {
             console.error("Hugging Face service failed:", huggingfaceError);
-            
-            // If Hugging Face fails, try OpenRouter
-            if (hasOpenRouterCredentials()) {
-              try {
-                console.log("Hugging Face failed. Trying OpenRouter with Mistral model for ROI calculation");
-                responseContent = await openrouterGenerateChatCompletion(
-                  [{ role: "user", content: prompt }],
-                  { jsonMode: true, maxTokens: 1500 }
-                );
-                console.log("Successfully generated ROI with OpenRouter");
-              } catch (openrouterError) {
-                console.error("OpenRouter service also failed:", openrouterError);
-                throw openrouterError;
-              }
-            } else {
-              console.log("No OpenRouter credentials available for fallback");
-              throw huggingfaceError;
-            }
-          }
-        } 
-        // If no Hugging Face credentials, try OpenRouter
-        else if (hasOpenRouterCredentials()) {
-          try {
-            console.log("Using OpenRouter with Mistral model for ROI calculation");
-            responseContent = await openrouterGenerateChatCompletion(
-              [{ role: "user", content: prompt }],
-              { jsonMode: true, maxTokens: 1500 }
-            );
-            console.log("Successfully generated ROI with OpenRouter");
-          } catch (openrouterError) {
-            console.error("OpenRouter service failed:", openrouterError);
-            throw openrouterError;
+            throw huggingfaceError;
           }
         } else {
-          console.log("No AI service credentials available");
-          throw new Error("No AI service credentials available (Hugging Face or OpenRouter)");
+          console.log("No Hugging Face credentials available");
+          throw new Error("Hugging Face API key is not available");
         }
         
         if (!responseContent) {
