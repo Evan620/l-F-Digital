@@ -63,22 +63,13 @@ export default function Hero() {
             {/* Industry Recognition */}
             <div className="pt-8">
               <p className="text-sm text-neutral-400 mb-3">Trusted by industry leaders</p>
-              <div className="flex flex-wrap gap-6 items-center opacity-70">
-                {/* Logo placeholders - using SVGs */}
-                <svg viewBox="0 0 100 30" className="h-6 w-auto text-neutral-500 fill-current">
-                  <rect x="10" y="10" width="80" height="10" rx="5" />
-                </svg>
-                <svg viewBox="0 0 100 30" className="h-6 w-auto text-neutral-500 fill-current">
-                  <circle cx="20" cy="15" r="10" />
-                  <rect x="35" y="5" width="55" height="20" rx="5" />
-                </svg>
-                <svg viewBox="0 0 100 30" className="h-6 w-auto text-neutral-500 fill-current">
-                  <polygon points="10,25 30,5 50,25 70,5 90,25" />
-                </svg>
-                <svg viewBox="0 0 100 30" className="h-6 w-auto text-neutral-500 fill-current">
-                  <rect x="10" y="5" width="30" height="20" rx="5" />
-                  <rect x="50" y="5" width="40" height="20" rx="5" />
-                </svg>
+              <div className="flex flex-wrap gap-6 items-center">
+                <div className="text-neutral-400 font-semibold text-sm">Safaricom</div>
+                <div className="text-neutral-400 font-semibold text-sm">KCB Tech</div>
+                <div className="text-neutral-400 font-semibold text-sm">Twiga Foods</div>
+                <div className="text-neutral-400 font-semibold text-sm">Sendy</div>
+                <div className="text-neutral-400 font-semibold text-sm">Jumia Kenya</div>
+                <div className="text-neutral-400 font-semibold text-sm">MPESA</div>
               </div>
             </div>
           </motion.div>
