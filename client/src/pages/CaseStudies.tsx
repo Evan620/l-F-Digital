@@ -22,7 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 // Import our new components
 import InteractiveCaseStudyCard from '@/components/InteractiveCaseStudyCard';
 import SocialProofGalaxy from '@/components/SocialProofGalaxy';
-import AISuccessLab from '@/components/AISuccessLab';
+import CaseStudyGenerator from '@/components/CaseStudyGenerator';
 import ROICalculator from '@/components/ROICalculator';
 
 export default function CaseStudies() {
@@ -404,7 +404,7 @@ export default function CaseStudies() {
             </p>
           </motion.div>
           
-          <AISuccessLab initialIndustry={userIndustry} />
+          <CaseStudyGenerator />
         </section>
         
         {/* ROI Calculator Section */}

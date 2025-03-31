@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
-import ValueCalculator from '@/components/ValueCalculator';
 import ServicesExplorer from '@/components/ServicesExplorer';
-import CaseStudyGenerator from '@/components/CaseStudyGenerator';
 import AIChatInterface from '@/components/AIChatInterface';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import { ArrowRight, FileText, Calculator } from 'lucide-react';
 
 export default function Home() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [_, setLocation] = useLocation();
 
   // Handle scroll events for animations
   useEffect(() => {
@@ -27,6 +30,14 @@ export default function Home() {
     setIsChatOpen(!isChatOpen);
   };
   
+  const navigateToCaseStudies = () => {
+    setLocation('/case-studies');
+  };
+  
+  const navigateToAITools = () => {
+    setLocation('/ai-tools');
+  };
+  
   return (
     <div className="relative min-h-screen bg-neutral-900 text-neutral-100">
       {/* Background elements */}
@@ -43,9 +54,82 @@ export default function Home() {
       
       <main className="relative z-10">
         <Hero />
-        <ValueCalculator />
         <ServicesExplorer fullView={false} />
-        <CaseStudyGenerator />
+        
+        {/* Interactive Tools Section (replacing individual tool components) */}
+        <section className="py-20 bg-neutral-950 relative">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div 
+              className="max-w-3xl mx-auto text-center mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="inline-block px-3 py-1 rounded-full bg-secondary-900/50 text-secondary-400 text-sm font-medium mb-4">
+                AI-Powered Tools
+              </span>
+              <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-white mb-4">
+                Interactive Business Solutions
+              </h2>
+              <p className="text-neutral-300 text-lg">
+                Experience our AI tools designed to help you visualize how our solutions can transform your business.
+              </p>
+            </motion.div>
+            
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Case Study Generator Card */}
+              <motion.div
+                className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <div className="p-6">
+                  <div className="w-12 h-12 rounded-lg bg-primary-900/50 flex items-center justify-center mb-4">
+                    <FileText className="h-6 w-6 text-primary-400" />
+                  </div>
+                  <h3 className="text-xl font-display font-bold text-white mb-2">Case Study Generator</h3>
+                  <p className="text-neutral-300 mb-6">
+                    Generate custom case studies based on your industry and challenges to see how our solutions have delivered results.
+                  </p>
+                  <Button 
+                    onClick={navigateToCaseStudies}
+                    className="w-full bg-primary-600 hover:bg-primary-500 text-white"
+                  >
+                    Generate Case Study <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </motion.div>
+              
+              {/* ROI Calculator Card */}
+              <motion.div
+                className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <div className="p-6">
+                  <div className="w-12 h-12 rounded-lg bg-secondary-900/50 flex items-center justify-center mb-4">
+                    <Calculator className="h-6 w-6 text-secondary-400" />
+                  </div>
+                  <h3 className="text-xl font-display font-bold text-white mb-2">ROI Calculator</h3>
+                  <p className="text-neutral-300 mb-6">
+                    Estimate your potential return on investment with our solutions based on your business parameters.
+                  </p>
+                  <Button 
+                    onClick={navigateToAITools}
+                    className="w-full bg-secondary-600 hover:bg-secondary-500 text-white"
+                  >
+                    Calculate Your ROI <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
       </main>
       
       {/* Chat interface */}
