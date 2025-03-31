@@ -150,48 +150,7 @@ export default function CaseStudies() {
           className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-neutral-900 via-secondary-900/30 to-neutral-900 mb-16 shadow-2xl"
         >
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute inset-0 bg-black/40 z-10"></div>
-            <motion.div 
-              className="absolute top-0 right-0 w-1/2 h-full"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            >
-              <div className="h-full w-full bg-gradient-to-br from-secondary-500/30 to-primary-500/30 backdrop-blur-lg">
-                <motion.div 
-                  className="absolute inset-0 flex items-center justify-center"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 1 }}
-                >
-                  <div className="text-center bg-black/40 px-6 py-3 rounded-lg shadow-xl backdrop-blur-md">
-                    <span className="block text-5xl font-bold text-secondary-300">300%</span>
-                    <span className="text-white text-xl font-medium">ROI</span>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              className="absolute top-0 left-0 w-1/2 h-full"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            >
-              <div className="h-full w-full bg-gradient-to-br from-neutral-800/70 to-neutral-900/70 backdrop-blur-lg">
-                <motion.div 
-                  className="absolute inset-0 flex items-center justify-center"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 1 }}
-                >
-                  <div className="text-center bg-black/40 px-6 py-3 rounded-lg shadow-xl backdrop-blur-md">
-                    <span className="block text-5xl font-bold text-white">0%</span>
-                    <span className="text-neutral-300 text-xl font-medium">Starting Point</span>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
+            <div className="absolute inset-0 bg-gradient-to-br from-neutral-900/90 via-secondary-900/30 to-neutral-900/90 z-10"></div>
           </div>
           
           <div className="relative z-20 px-6 py-16 sm:px-8 md:px-16 md:py-24">
