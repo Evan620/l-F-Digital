@@ -47,9 +47,9 @@ export default function Navbar() {
             <a href="#ai-tools" className="text-neutral-300 hover:text-white transition-colors duration-200">
               AI Tools
             </a>
-            <a href="#contact" className="text-neutral-300 hover:text-white transition-colors duration-200">
+            <Link href="/contact" className="text-neutral-300 hover:text-white transition-colors duration-200">
               Contact
-            </a>
+            </Link>
           </div>
           
           {/* AI Chat Button */}
@@ -89,9 +89,9 @@ export default function Navbar() {
             <a href="#ai-tools" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               AI Tools
             </a>
-            <a href="#contact" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
+            <Link href="/contact" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               Contact
-            </a>
+            </Link>
           </div>
         </div>
       )}
