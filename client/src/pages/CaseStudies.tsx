@@ -6,6 +6,7 @@ import {
   Zap, PieChart, Users, Clock, Rocket, BarChart3,
   LineChart, Upload, Star, Play, Sparkles, Globe, X
 } from 'lucide-react';
+import GoogleCalendarBooking from '@/components/GoogleCalendarBooking';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
