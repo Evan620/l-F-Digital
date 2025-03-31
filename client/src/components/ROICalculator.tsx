@@ -72,26 +72,27 @@ export default function ROICalculator({ caseStudy }: ROICalculatorProps) {
         implementationTimeline
       });
       
+      // Parse the response data
       const data = await response.json();
       
-      // Simulate API response for demonstration
-      if (!data.projection) {
-        // Generate a fallback projection if the API doesn't return one
-        const projection: ROIProjection = {
-          estimatedROI: `${180 + Math.floor(Math.random() * 120)}%`,
-          costReduction: `${15 + Math.floor(Math.random() * 30)}%`,
-          timelineMonths: parseInt(implementationTimeline.split('-')[0]) || 3,
-          potentialSavings: `$${(parseInt(annualRevenue) * 0.2).toLocaleString()}`
-        };
-        setRoiResults(projection);
-      } else {
-        setRoiResults(data.projection);
+      // First check if the response is an error
+      if (!response.ok) {
+        const errorMessage = data.message || "Failed to calculate ROI";
+        throw new Error(errorMessage);
       }
+      
+      // Check if we have valid projection data
+      if (!data.projection) {
+        throw new Error("Invalid ROI calculation response");
+      }
+      
+      // Set the ROI results from the AI service
+      setRoiResults(data.projection);
       
     } catch (error) {
       toast({
-        title: "Calculation failed",
-        description: "We couldn't calculate your ROI. Please try again.",
+        title: "AI Calculation Failed",
+        description: error instanceof Error ? error.message : "We couldn't calculate your ROI using AI. Please try again later or contact support if the issue persists.",
         variant: "destructive"
       });
     } finally {

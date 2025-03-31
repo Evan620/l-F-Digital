@@ -75,7 +75,7 @@ export async function createChatCompletion(messages: Array<{ role: string; conte
     console.log("Using standard OpenAI API with default model");
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo", // Use default model for standard OpenAI
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
         messages: messages,
         ...(options.response_format !== undefined ? { response_format: options.response_format } : {}),
         ...options

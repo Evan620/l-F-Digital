@@ -44,23 +44,25 @@ export default function ServicesExplorer({ fullView = true }: ServicesExplorerPr
         businessChallenge,
       });
       
+      // Check if the status is 500 or another error code
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Server error occurred");
+      }
+      
       const data = await response.json();
       
       if (data.serviceSuggestions && data.serviceSuggestions.length > 0) {
         setRecommendedServices(data.serviceSuggestions);
         setShowRecommendations(true);
       } else {
-        // Fallback to showing all services if AI recommendations fail
-        setRecommendedServices(allServices.slice(0, 3).map((service: Service) => ({
-          ...service,
-          explanation: "This service might help address your business challenge."
-        })));
-        setShowRecommendations(true);
+        // If AI failed, show error and don't show hardcoded recommendations
+        throw new Error("AI service didn't return any recommendations");
       }
     } catch (error) {
       toast({
-        title: "Recommendation failed",
-        description: "We couldn't generate service recommendations. Please try again.",
+        title: "AI Service Failed",
+        description: error instanceof Error ? error.message : "We couldn't generate service recommendations using AI. Please try again later or contact support if the issue persists.",
         variant: "destructive",
       });
     } finally {

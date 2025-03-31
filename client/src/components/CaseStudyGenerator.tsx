@@ -28,6 +28,13 @@ export default function CaseStudyGenerator() {
     
     try {
       const response = await apiRequest('POST', '/api/ai/generate-case-study', { query });
+      
+      // Check if the status is 500 or another error code
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Server error occurred");
+      }
+      
       const data = await response.json();
       
       if (data.caseStudy) {
@@ -37,8 +44,8 @@ export default function CaseStudyGenerator() {
       }
     } catch (error) {
       toast({
-        title: "Generation failed",
-        description: "We couldn't generate a case study based on your query. Please try again.",
+        title: "AI Generation Failed",
+        description: error instanceof Error ? error.message : "We couldn't generate a case study using AI. Please try again later or contact support if the issue persists.",
         variant: "destructive",
       });
     } finally {

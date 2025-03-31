@@ -4,7 +4,8 @@ import { storage } from "./storage";
 import { z } from "zod";
 import { insertBusinessInfoSchema, insertConversationSchema, type Message } from "@shared/schema";
 import { openai, createChatCompletion } from "./openai";
-import { generateChatCompletion, hasOpenRouterCredentials } from "./openrouter";
+import { generateChatCompletion as generateOpenRouterCompletion, hasOpenRouterCredentials } from "./openrouter";
+import { generateChatCompletion as generateAnthropicCompletion } from "./anthropic";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // prefix all routes with /api
@@ -113,17 +114,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       `;
       
       try {
-        // First try OpenRouter with DeepSeek if available
+        // Try each AI service in order: OpenRouter (DeepSeek), Anthropic, then OpenAI
         let responseContent;
-        // Always try to use OpenRouter first
+        
+        // First try OpenRouter with DeepSeek model
         if (hasOpenRouterCredentials()) {
           console.log("Using OpenRouter with DeepSeek for service recommendation");
-          responseContent = await generateChatCompletion([
-            { role: "user", content: prompt }
-          ], { jsonMode: true });
-        } else {
-          // Fall back to Azure OpenAI or standard OpenAI only if OpenRouter fails
-          console.log("OpenRouter unavailable, falling back to OpenAI for service recommendation");
+          try {
+            responseContent = await generateOpenRouterCompletion([
+              { role: "user", content: prompt }
+            ], { 
+              model: "deepseek/deepseek-r1-distill-qwen-32b:free",
+              jsonMode: true 
+            });
+            console.log("OpenRouter response received successfully");
+          } catch (orError) {
+            console.error("OpenRouter error:", orError);
+            // Continue to fallback options
+          }
+        }
+        
+        // If OpenRouter failed or unavailable, try Anthropic
+        if (!responseContent) {
+          try {
+            console.log("Trying Anthropic for service recommendation");
+            responseContent = await generateAnthropicCompletion([
+              { role: "user", content: prompt }
+            ], {
+              model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+            });
+            console.log("Anthropic response received successfully");
+          } catch (anthropicError) {
+            console.error("Anthropic error:", anthropicError);
+            // Continue to final fallback
+          }
+        }
+        
+        // Final fallback to OpenAI
+        if (!responseContent) {
+          console.log("Falling back to OpenAI (GPT-4o) for service recommendation");
           responseContent = await createChatCompletion([
             { role: "user", content: prompt }
           ]);
@@ -149,26 +178,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (parseError) {
           console.error("Failed to parse AI response or received error:", parseError);
           
-          // Fallback to default services from storage
-          const fallbackServices = await storage.getAllServices();
-          const topServices = fallbackServices.slice(0, 3);
-          
-          res.json({
-            serviceSuggestions: topServices,
-            note: "Using default suggestions due to AI service error"
+          // Return an error instead of hardcoded fallback
+          res.status(500).json({
+            message: "AI service error: Could not generate service recommendations",
+            error: parseError instanceof Error ? parseError.message : String(parseError)
           });
         }
       } catch (error) {
         console.error("AI service error:", error instanceof Error ? error.message : String(error));
-        // Fallback to return some default services
-        const defaultServices = await storage.getAllServices();
-        const fallbackResponse = {
-          serviceSuggestions: defaultServices.slice(0, 3).map(service => ({
-            ...service,
-            explanation: "This service might help address your business challenge."
-          })),
-        };
-        res.json(fallbackResponse);
+        // Return an error instead of hardcoded fallback
+        res.status(500).json({
+          message: "AI service error: Could not generate recommendations",
+          error: error instanceof Error ? error.message : String(error)
+        });
       }
     } catch (error) {
       res.status(400).json({ message: "Invalid request", error });
@@ -239,9 +261,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         let responseContent;
         if (hasOpenRouterCredentials()) {
           console.log("Using OpenRouter with DeepSeek for case study generation");
-          responseContent = await generateChatCompletion([
+          responseContent = await generateOpenRouterCompletion([
             { role: "user", content: prompt }
-          ], { jsonMode: true });
+          ], { 
+            model: "deepseek/deepseek-r1-distill-qwen-32b:free",
+            jsonMode: true 
+          });
         } else {
           // Fall back to Azure OpenAI or standard OpenAI only if OpenRouter fails
           console.log("OpenRouter unavailable, falling back to OpenAI for case study generation");
@@ -276,49 +301,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (parseError) {
           console.error("Failed to parse AI response or received error:", parseError);
           
-          // Fallback to default case study
-          const existingCaseStudies = await storage.getAllCaseStudies();
-          const fallbackCaseStudy = existingCaseStudies.length > 0 
-            ? existingCaseStudies[0] 
-            : {
-                id: 0,
-                title: "How AI Transformed Business Operations",
-                industry: "General",
-                challenge: "The client faced operational inefficiencies.",
-                solution: "We implemented AI-driven automation.",
-                results: "Achieved significant improvements in productivity and cost savings.",
-                metrics: {
-                  "productivityIncrease": "35%",
-                  "costReduction": "$500K",
-                  "implementationTime": "3 months"
-                },
-                isGenerated: true
-              };
-          
-          res.json({ caseStudy: fallbackCaseStudy });
+          // Return an error instead of hardcoded fallback
+          res.status(500).json({
+            message: "AI service error: Could not generate case study",
+            error: parseError instanceof Error ? parseError.message : String(parseError)
+          });
         }
       } catch (error) {
         console.error("AI service error:", error instanceof Error ? error.message : String(error));
-        // Return a fallback case study
-        const existingCaseStudies = await storage.getAllCaseStudies();
-        const fallbackCaseStudy = existingCaseStudies.length > 0 
-          ? existingCaseStudies[0] 
-          : {
-              id: 0,
-              title: "How AI Transformed Business Operations",
-              industry: "General",
-              challenge: "The client faced operational inefficiencies.",
-              solution: "We implemented AI-driven automation.",
-              results: "Achieved significant improvements in productivity and cost savings.",
-              metrics: {
-                "productivityIncrease": "35%",
-                "costReduction": "$500K",
-                "implementationTime": "3 months"
-              },
-              isGenerated: true
-            };
-        
-        res.json({ caseStudy: fallbackCaseStudy });
+        // Return an error instead of hardcoded fallback
+        res.status(500).json({
+          message: "AI service error: Could not generate case study",
+          error: error instanceof Error ? error.message : String(error)
+        });
       }
     } catch (error) {
       res.status(400).json({ message: "Invalid request", error });
@@ -438,14 +433,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ...messages.map(m => ({ role: m.role, content: m.content }))
         ];
         
-        // Always try to use OpenRouter first
+        // Try each AI service in order: OpenRouter (DeepSeek), Anthropic, then OpenAI
         let responseContent;
+        
+        // First try OpenRouter with DeepSeek model
         if (hasOpenRouterCredentials()) {
           console.log("Using OpenRouter with DeepSeek for chat response");
-          responseContent = await generateChatCompletion(openAIMessages);
-        } else {
-          // Fall back to Azure OpenAI or standard OpenAI only if OpenRouter fails
-          console.log("OpenRouter unavailable, falling back to OpenAI for chat response");
+          try {
+            responseContent = await generateOpenRouterCompletion(openAIMessages, { 
+              model: "deepseek/deepseek-r1-distill-qwen-32b:free"
+            });
+            console.log("OpenRouter response received successfully");
+          } catch (orError) {
+            console.error("OpenRouter error:", orError);
+            // Continue to fallback options
+          }
+        }
+        
+        // If OpenRouter failed or unavailable, try Anthropic
+        if (!responseContent) {
+          try {
+            console.log("Trying Anthropic for chat response");
+            responseContent = await generateAnthropicCompletion(openAIMessages, {
+              model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+            });
+            console.log("Anthropic response received successfully");
+          } catch (anthropicError) {
+            console.error("Anthropic error:", anthropicError);
+            // Continue to final fallback
+          }
+        }
+        
+        // Final fallback to OpenAI
+        if (!responseContent) {
+          console.log("Falling back to OpenAI (GPT-4o) for chat response");
           responseContent = await createChatCompletion(openAIMessages, {
             response_format: undefined  // Chat doesn't need JSON format
           });
@@ -600,111 +621,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } catch (error) {
         console.error("AI service error:", error instanceof Error ? error.message : String(error));
         
-        // Fallback ROI calculation if AI service fails
-        const baseROI = roiRequest.automationLevel === "Very Low" ? 300 : 
-                      roiRequest.automationLevel === "Low" ? 250 :
-                      roiRequest.automationLevel === "Medium" ? 200 :
-                      roiRequest.automationLevel === "High" ? 150 : 100;
-        
-        // Higher ROI for urgent timelines
-        const timelineMultiplier = roiRequest.implementationTimeline === "ASAP" ? 1.2 : 1;
-        
-        // Parse revenue range for estimation
-        let revenueEstimate = 1000000; // Default to $1M
-        if (roiRequest.annualRevenue.includes("1M-5M")) revenueEstimate = 3000000;
-        if (roiRequest.annualRevenue.includes("5M-20M")) revenueEstimate = 10000000;
-        if (roiRequest.annualRevenue.includes("20M-50M")) revenueEstimate = 35000000;
-        if (roiRequest.annualRevenue.includes("over50M")) revenueEstimate = 75000000;
-        
-        const finalROI = Math.round(baseROI * timelineMultiplier);
-        const costReduction = Math.round(revenueEstimate * finalROI / 100 * 0.05);
-        
-        // Enhanced fallback with more dynamic content based on the business goal
-        const goalLowerCase = roiRequest.businessGoal.toLowerCase();
-        
-        // Determine relevant service categories based on keywords in the goal
-        const recommendedCategories = [];
-        if (goalLowerCase.includes('automat') || goalLowerCase.includes('workflow') || goalLowerCase.includes('process')) {
-          recommendedCategories.push("Automation & Workflow Optimization");
-        }
-        if (goalLowerCase.includes('ai') || goalLowerCase.includes('intelligen') || goalLowerCase.includes('predict')) {
-          recommendedCategories.push("AI & Machine Learning");
-        }
-        if (goalLowerCase.includes('data') || goalLowerCase.includes('analytic') || goalLowerCase.includes('insight')) {
-          recommendedCategories.push("Data Analytics & Business Intelligence");
-        }
-        if (goalLowerCase.includes('cloud') || goalLowerCase.includes('infrastruct') || goalLowerCase.includes('scale')) {
-          recommendedCategories.push("Cloud Solutions & Infrastructure");
-        }
-        if (goalLowerCase.includes('customer') || goalLowerCase.includes('experience') || goalLowerCase.includes('interface')) {
-          recommendedCategories.push("Digital Experience & Customer Journey");
-        }
-        if (goalLowerCase.includes('integrat') || goalLowerCase.includes('connect') || goalLowerCase.includes('system')) {
-          recommendedCategories.push("Enterprise Systems Integration");
-        }
-        if (goalLowerCase.includes('app') || goalLowerCase.includes('software') || goalLowerCase.includes('develop')) {
-          recommendedCategories.push("Custom Software Development");
-        }
-        if (goalLowerCase.includes('secur') || goalLowerCase.includes('complian') || goalLowerCase.includes('protect')) {
-          recommendedCategories.push("Cybersecurity & Compliance");
-        }
-        
-        // If no categories matched, provide default ones
-        if (recommendedCategories.length === 0) {
-          recommendedCategories.push("Automation & Workflow Optimization");
-          recommendedCategories.push("Data Analytics & Business Intelligence");
-        }
-        
-        // Limit to top 3 categories
-        const topCategories = recommendedCategories.slice(0, 3);
-        
-        // Timeline calculation
-        const timelineMonths = roiRequest.implementationTimeline === "ASAP" ? 3 : 
-                            roiRequest.implementationTimeline === "3-6 Months" ? 6 : 9;
-        
-        // Implementation stages with realistic durations
-        const implementationStages = [
-          {
-            stage: "Planning & Discovery", 
-            duration: `${Math.ceil(timelineMonths * 0.2)} weeks`,
-            description: "Requirements gathering, technical assessment, and solution design"
-          },
-          {
-            stage: "Development & Integration", 
-            duration: `${Math.ceil(timelineMonths * 0.5)} weeks`,
-            description: "Solution building, integration with existing systems, and initial testing"
-          },
-          {
-            stage: "Deployment & Training", 
-            duration: `${Math.ceil(timelineMonths * 0.2)} weeks`,
-            description: "Implementation, user training, and handover"
-          },
-          {
-            stage: "Optimization", 
-            duration: `${Math.ceil(timelineMonths * 0.3)} weeks`,
-            description: "Performance tuning, additional features, and feedback incorporation"
-          }
-        ];
-        
-        // Key benefits based on the goal and industry
-        const keyBenefits = [
-          `${finalROI}% ROI through improved efficiency and reduced operational costs`,
-          `Reduced manual workload allowing your team to focus on strategic initiatives`,
-          `Enhanced data-driven decision making with real-time insights`
-        ];
-        
-        // Complete fallback response with all fields
-        const fallbackResponse = {
-          estimatedROI: `${finalROI}%`,
-          costReduction: `$${(costReduction).toLocaleString()}/year`,
-          timelineMonths: timelineMonths,
-          potentialSavings: `$${(costReduction * 3).toLocaleString()}/year`,
-          recommendedServiceCategories: topCategories,
-          keyBenefits: keyBenefits,
-          implementationStages: implementationStages
-        };
-        
-        res.json(fallbackResponse);
+        // Return an error response instead of providing fallback data
+        res.status(500).json({ 
+          message: "AI service unavailable", 
+          error: error instanceof Error ? error.message : "Could not generate ROI calculation" 
+        });
       }
     } catch (error) {
       res.status(400).json({ message: "Invalid ROI calculation request", error });
