@@ -227,7 +227,7 @@ export default function Services() {
   };
   
   // Get the appropriate service icon
-  const getServiceIcon = (iconKey: string | undefined) => {
+  const getServiceIcon = (iconKey: string | undefined | null) => {
     switch(iconKey) {
       case 'lightning-bolt':
         return <Zap className="h-12 w-12 text-primary-500" />;
@@ -439,7 +439,7 @@ export default function Services() {
                 </div>
                 
                 {/* Accordion for services in this category */}
-                <Accordion type="single" collapsible className="w-full mt-2 border-t border-blue-500/20 pt-2">
+                <Accordion type="multiple" className="w-full mt-2 border-t border-blue-500/20 pt-2">
                   {allServices
                     .filter(service => service.category === "Automation & Workflow Optimization")
                     .map((service, i) => (
@@ -500,7 +500,7 @@ export default function Services() {
                 </div>
                 
                 {/* Accordion for services in this category */}
-                <Accordion type="single" collapsible className="w-full mt-2 border-t border-purple-500/20 pt-2">
+                <Accordion type="multiple" className="w-full mt-2 border-t border-purple-500/20 pt-2">
                   {allServices
                     .filter(service => service.category === "AI & Machine Learning")
                     .map((service, i) => (
@@ -561,7 +561,7 @@ export default function Services() {
                 </div>
                 
                 {/* Accordion for services in this category */}
-                <Accordion type="single" collapsible className="w-full mt-2 border-t border-orange-500/20 pt-2">
+                <Accordion type="multiple" className="w-full mt-2 border-t border-orange-500/20 pt-2">
                   {allServices
                     .filter(service => service.category === "Custom Software Development")
                     .map((service, i) => (
@@ -622,7 +622,7 @@ export default function Services() {
                 </div>
                 
                 {/* Accordion for services in this category */}
-                <Accordion type="single" collapsible className="w-full mt-2 border-t border-emerald-500/20 pt-2">
+                <Accordion type="multiple" className="w-full mt-2 border-t border-emerald-500/20 pt-2">
                   {allServices
                     .filter(service => service.category === "Data Analytics & Business Intelligence")
                     .map((service, i) => (
@@ -683,7 +683,7 @@ export default function Services() {
                 </div>
                 
                 {/* Accordion for services in this category */}
-                <Accordion type="single" collapsible className="w-full mt-2 border-t border-cyan-500/20 pt-2">
+                <Accordion type="multiple" className="w-full mt-2 border-t border-cyan-500/20 pt-2">
                   {allServices
                     .filter(service => service.category === "Cloud Solutions & Infrastructure")
                     .map((service, i) => (
@@ -744,7 +744,7 @@ export default function Services() {
                 </div>
                 
                 {/* Accordion for services in this category */}
-                <Accordion type="single" collapsible className="w-full mt-2 border-t border-indigo-500/20 pt-2">
+                <Accordion type="multiple" className="w-full mt-2 border-t border-indigo-500/20 pt-2">
                   {allServices
                     .filter(service => service.category === "Enterprise Systems Integration")
                     .map((service, i) => (
@@ -805,7 +805,7 @@ export default function Services() {
                 </div>
                 
                 {/* Accordion for services in this category */}
-                <Accordion type="single" collapsible className="w-full mt-2 border-t border-red-500/20 pt-2">
+                <Accordion type="multiple" className="w-full mt-2 border-t border-red-500/20 pt-2">
                   {allServices
                     .filter(service => service.category === "Cybersecurity & Compliance")
                     .map((service, i) => (
@@ -866,7 +866,7 @@ export default function Services() {
                 </div>
                 
                 {/* Accordion for services in this category */}
-                <Accordion type="single" collapsible className="w-full mt-2 border-t border-pink-500/20 pt-2">
+                <Accordion type="multiple" className="w-full mt-2 border-t border-pink-500/20 pt-2">
                   {allServices
                     .filter(service => service.category === "Digital Experience & Customer Journey")
                     .map((service, i) => (
@@ -1739,7 +1739,7 @@ function ImmersiveServiceCard({
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isHovered) return;
     
     const card = e.currentTarget;
@@ -1776,7 +1776,7 @@ function ImmersiveServiceCard({
   };
   
   // Get icon for category
-  const getServiceIcon = (iconKey: string | undefined) => {
+  const getServiceIcon = (iconKey: string | undefined | null) => {
     switch(iconKey) {
       case 'lightning-bolt':
         return <Zap className="h-12 w-12 text-blue-400" />;
