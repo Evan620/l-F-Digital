@@ -524,89 +524,15 @@ export default function Contact() {
                   
                   {contactMode === 'call' && (
                     <div className="bg-neutral-900/50 rounded-xl p-6 h-full flex flex-col">
-                      <h3 className="text-xl font-bold text-white mb-4">Gamified Calendar Booking</h3>
+                      <h3 className="text-xl font-bold text-white mb-4">Schedule a Consultation</h3>
                       <p className="text-neutral-300 mb-6">
-                        Select time slots to clear lines Tetris-style. Complete 3 lines to unlock bonus consultation time!
+                        Connect with our automation experts to discuss your business needs.
                       </p>
                       
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-neutral-300">Booking Points: {bookingPoints}</span>
-                        <span className="text-secondary-400 font-bold">Lines Completed: {completedGridLines}</span>
-                      </div>
-                      
-                      <div className="relative flex-1 bg-neutral-800/50 rounded-lg overflow-hidden mb-4">
-                        <div className="grid grid-cols-7 gap-1 p-2 h-full">
-                          {calendarGrid.map((row, rowIndex) => (
-                            row.map((cell, colIndex) => (
-                              <motion.div
-                                key={`${rowIndex}-${colIndex}`}
-                                className={`rounded p-1 flex items-center justify-center cursor-pointer text-xs text-center transition-colors ${
-                                  cell === 0 ? 'bg-neutral-800/20' : 
-                                  cell < 0 ? 'bg-secondary-500/40 border border-secondary-400/20' : 
-                                  'bg-primary-900/40 border border-primary-500/20 hover:bg-primary-800/40'
-                                }`}
-                                onClick={() => cell > 0 ? checkCompletedLines(rowIndex, colIndex) : null}
-                                whileHover={cell > 0 ? { scale: 1.05 } : {}}
-                              >
-                                {cell !== 0 && (
-                                  <div>
-                                    {Math.abs(cell) && timeSlots.find(slot => slot.id === Math.abs(cell))?.time}
-                                  </div>
-                                )}
-                              </motion.div>
-                            ))
-                          ))}
-                        </div>
-                        
-                        {completedGridLines >= 3 && (
-                          <div className="absolute inset-0 bg-neutral-900/80 flex items-center justify-center">
-                            <div className="text-center p-6">
-                              <span className="block text-2xl font-bold text-secondary-400 mb-2">
-                                Bonus Unlocked!
-                              </span>
-                              <p className="text-white mb-4">
-                                You've earned a 15-minute bonus consultation.
-                              </p>
-                              <Button className="bg-secondary-600 hover:bg-secondary-500">
-                                Claim Your Bonus
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      
-                      {selectedTimeSlot && (
-                        <div className="mb-4 p-3 bg-primary-900/20 rounded-lg border border-primary-500/20">
-                          <p className="text-white">
-                            You selected: {timeSlots.find(slot => slot.id === selectedTimeSlot)?.day},{' '}
-                            {timeSlots.find(slot => slot.id === selectedTimeSlot)?.time}
-                          </p>
-                        </div>
-                      )}
-                      
-                      <div className="grid grid-cols-2 gap-3">
-                        <Input 
-                          placeholder="Your Name" 
-                          value={contactName}
-                          onChange={(e) => setContactName(e.target.value)}
-                          className="bg-neutral-800 border-neutral-700"
-                        />
-                        <Input 
-                          placeholder="Your Email" 
-                          value={contactEmail}
-                          onChange={(e) => setContactEmail(e.target.value)}
-                          className="bg-neutral-800 border-neutral-700"
-                        />
-                        <div className="col-span-2">
-                          <Button 
-                            className="w-full bg-primary-600 hover:bg-primary-500 mt-2"
-                            onClick={handleSubmit}
-                            disabled={isSubmitting || !selectedTimeSlot}
-                          >
-                            {isSubmitting ? 'Booking...' : 'Schedule Consultation'}
-                          </Button>
-                        </div>
-                      </div>
+                      <GoogleCalendarBooking 
+                        serviceType="Business Automation Consultation" 
+                        redirectAfterBooking={false}
+                      />
                     </div>
                   )}
                   
@@ -623,7 +549,7 @@ export default function Contact() {
                             <p className="text-white text-xl mb-6">
                               AI agents mobilizing...
                             </p>
-                            <div className="w-64 h-6 bg-neutral-800 rounded-full overflow-hidden mx-auto">
+                            <div className="w-full h-6 bg-neutral-800 rounded-full overflow-hidden mx-auto">
                               <motion.div 
                                 className="h-full bg-red-500"
                                 initial={{ width: '0%' }}
@@ -944,7 +870,17 @@ export default function Contact() {
           transition={{ duration: 0.5 }}
           className="text-center mb-20"
         >
-          <Button size="lg" className="bg-white text-neutral-900 hover:bg-neutral-200">
+          <Button 
+            size="lg" 
+            className="bg-white text-neutral-900 hover:bg-neutral-200"
+            onClick={() => {
+              setContactMode('call');
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+              });
+            }}
+          >
             Start Your Automation Journey Now
           </Button>
         </motion.div>
