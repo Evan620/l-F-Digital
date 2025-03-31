@@ -966,36 +966,7 @@ export default function Services() {
             )}
           </div>
           
-          {/* Removed filters section as per request */}
-          
-          {/* Services grid with all services */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {isLoading ? (
-              Array(6).fill(0).map((_, i) => (
-                <motion.div
-                  key={`loading-grid-${i}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="h-80 bg-neutral-800/20 animate-pulse rounded-xl"
-                />
-              ))
-            ) : filteredServices.length > 0 ? (
-              filteredServices.map((service) => (
-                <SimpleServiceCard key={service.id} service={service} />
-              ))
-            ) : (
-              <div className="col-span-3 text-center py-16 bg-neutral-800/20 rounded-xl border border-neutral-700">
-                <p className="text-neutral-400">No services found matching your criteria.</p>
-                <Button variant="link" onClick={() => {
-                  setSearchQuery('');
-                  setSelectedCategory('all');
-                  setSelectedBudget('all');
-                }}>
-                  Reset filters
-                </Button>
-              </div>
-            )}
-          </div>
+          {/* Removed additional services grid as per request */}
         </section>
         
         {/* Success Stories - Interactive Case Cards */}
