@@ -1,6 +1,9 @@
 import OpenAI from "openai";
 import axios from 'axios';
 
+// OpenAI API key for standard OpenAI API usage
+const openAIApiKey = process.env.OPENAI_API_KEY;
+
 // Azure OpenAI configuration
 const azureOpenAIApiKey = process.env.AZURE_OPENAI_API_KEY;
 const azureOpenAIEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
@@ -9,24 +12,43 @@ const azureOpenAIDeploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME;
 // Check if Azure OpenAI credentials are available
 const azureCredentialsAvailable = !!(azureOpenAIApiKey && azureOpenAIEndpoint && azureOpenAIDeploymentName);
 
+// Check if standard OpenAI API key is available
+const standardOpenAIAvailable = !!openAIApiKey;
+
 // Check if using the models.inference.ai.azure.com endpoint
 const isModelInferenceEndpoint = azureOpenAIEndpoint?.includes('models.inference.ai.azure.com');
 
-// Configure OpenAI client - Azure OpenAI only, no standard OpenAI fallback
-export const openai = new OpenAI({ 
-  // Don't provide any API key if using models.inference.ai.azure.com
-  // This prevents using a local OPENAI_API_KEY env var by accident
-  apiKey: isModelInferenceEndpoint ? 'USING-DIRECT-AXIOS-FOR-AZURE-INFERENCE' : azureOpenAIApiKey,
-  baseURL: !isModelInferenceEndpoint && azureOpenAIEndpoint 
-    ? `${azureOpenAIEndpoint}/openai/deployments/${azureOpenAIDeploymentName}` 
-    : undefined,
-  defaultQuery: !isModelInferenceEndpoint && azureOpenAIEndpoint 
-    ? { "api-version": "2023-12-01-preview" } 
-    : undefined,
-  defaultHeaders: !isModelInferenceEndpoint && azureOpenAIEndpoint 
-    ? { "api-key": azureOpenAIApiKey } 
-    : undefined
-});
+// Create a mock OpenAI client if needed, or a real one if credentials are available
+export const openai = standardOpenAIAvailable || azureCredentialsAvailable ? 
+  new OpenAI({ 
+    apiKey: standardOpenAIAvailable && !azureCredentialsAvailable 
+      ? openAIApiKey  // Use standard OpenAI API key if Azure not available
+      : isModelInferenceEndpoint 
+        ? 'USING-DIRECT-AXIOS-FOR-AZURE-INFERENCE' 
+        : azureOpenAIApiKey,
+        
+    baseURL: !isModelInferenceEndpoint && azureOpenAIEndpoint && azureCredentialsAvailable
+      ? `${azureOpenAIEndpoint}/openai/deployments/${azureOpenAIDeploymentName}` 
+      : undefined,
+      
+    defaultQuery: !isModelInferenceEndpoint && azureOpenAIEndpoint && azureCredentialsAvailable
+      ? { "api-version": "2023-12-01-preview" } 
+      : undefined,
+      
+    defaultHeaders: !isModelInferenceEndpoint && azureOpenAIEndpoint && azureCredentialsAvailable
+      ? { "api-key": azureOpenAIApiKey } 
+      : undefined
+  }) :
+  // Mock OpenAI client when no credentials are available
+  {
+    chat: {
+      completions: {
+        create: async () => ({
+          choices: [{ message: { content: JSON.stringify({ message: "OpenAI service is not configured. Using OpenRouter instead." }) } }]
+        })
+      }
+    }
+  } as any;
 
 // Helper function to make chat completion requests - Azure OpenAI only
 export async function createChatCompletion(messages: Array<{ role: string; content: string }>, options: any = {}) {
@@ -39,18 +61,47 @@ export async function createChatCompletion(messages: Array<{ role: string; conte
   }));
   
   // Log credential status
-  console.log("Azure OpenAI credentials status:", {
-    keyAvailable: !!azureOpenAIApiKey,
-    endpointAvailable: !!azureOpenAIEndpoint,
-    deploymentNameAvailable: !!azureOpenAIDeploymentName,
-    isInferenceEndpoint: isModelInferenceEndpoint
+  console.log("AI credentials status:", {
+    standardOpenAIAvailable: standardOpenAIAvailable,
+    azureKeyAvailable: !!azureOpenAIApiKey,
+    azureEndpointAvailable: !!azureOpenAIEndpoint,
+    azureDeploymentNameAvailable: !!azureOpenAIDeploymentName,
+    isInferenceEndpoint: isModelInferenceEndpoint,
+    deploymentName: azureOpenAIDeploymentName // Log the deployment name (should be gpt-4o deployment)
   });
   
-  // If Azure credentials are not available, return a friendly message
-  if (!azureCredentialsAvailable) {
-    console.log("Azure OpenAI credentials not available, returning mock response");
+  // If standard OpenAI API key is available but Azure credentials are not
+  if (standardOpenAIAvailable && !azureCredentialsAvailable) {
+    console.log("Using standard OpenAI API with default model");
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo", // Use default model for standard OpenAI
+        messages: messages,
+        ...(options.response_format !== undefined ? { response_format: options.response_format } : {}),
+        ...options
+      });
+      
+      console.log("Standard OpenAI response received successfully");
+      return response.choices[0].message.content || '';
+    } catch (error: any) {
+      console.error("Standard OpenAI API error:", error instanceof Error ? error.message : String(error));
+      
+      if (error.response) {
+        console.error("Error details:", JSON.stringify(error.response || {}));
+      }
+      
+      return JSON.stringify({
+        message: "AI service is temporarily unavailable. Our team is investigating the issue.",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  }
+  
+  // If no AI credentials are available, return a friendly message
+  if (!azureCredentialsAvailable && !standardOpenAIAvailable) {
+    console.log("No OpenAI credentials available, will try to use OpenRouter instead");
     return JSON.stringify({ 
-      message: "AI service is currently in offline mode. Please check your Azure OpenAI credentials."
+      message: "OpenAI service is not configured. Using OpenRouter as fallback."
     });
   }
 

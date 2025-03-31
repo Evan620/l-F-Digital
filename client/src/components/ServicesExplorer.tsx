@@ -9,13 +9,17 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { type Service } from '@shared/schema';
 
-export default function ServicesExplorer() {
+interface ServicesExplorerProps {
+  fullView?: boolean;
+}
+
+export default function ServicesExplorer({ fullView = true }: ServicesExplorerProps) {
   const { toast } = useToast();
   const [businessChallenge, setBusinessChallenge] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Fetch all services
-  const { data: allServices = [], isLoading: isLoadingServices } = useQuery({
+  const { data: allServices = [], isLoading: isLoadingServices } = useQuery<Service[]>({
     queryKey: ['/api/services'],
   });
   
@@ -65,7 +69,7 @@ export default function ServicesExplorer() {
   };
   
   // Helper function to get the right icon for a service
-  const getServiceIcon = (iconKey: string | undefined) => {
+  const getServiceIcon = (iconKey: string | undefined | null) => {
     switch(iconKey) {
       case 'lightning-bolt':
         return <Zap className="h-20 w-20 text-white/20" />;
@@ -153,8 +157,8 @@ export default function ServicesExplorer() {
                 />
               ))
             ) : (
-              // Show regular services
-              allServices.slice(0, 3).map((service: Service, index: number) => (
+              // Show regular services - show all if fullView is true, otherwise just 3
+              (fullView ? allServices : allServices.slice(0, 3)).map((service: Service, index: number) => (
                 <ServiceCard 
                   key={`service-${service.id}`}
                   service={service}
@@ -226,7 +230,7 @@ function ServiceCard({
   };
   
   // Get service icon
-  const getServiceIcon = (iconKey: string | undefined) => {
+  const getServiceIcon = (iconKey: string | undefined | null) => {
     switch(iconKey) {
       case 'lightning-bolt':
         return <Zap className="h-20 w-20 text-white/20" />;

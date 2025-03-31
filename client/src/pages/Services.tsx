@@ -1,27 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
-import ValueCalculator from '@/components/ValueCalculator';
 import ServicesExplorer from '@/components/ServicesExplorer';
-import CaseStudyGenerator from '@/components/CaseStudyGenerator';
 import AIChatInterface from '@/components/AIChatInterface';
 
-export default function Home() {
+export default function Services() {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
-
-  // Handle scroll events for animations
-  useEffect(() => {
-    const handleScroll = () => {
-      setHasScrolled(window.scrollY > 50);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
@@ -42,10 +26,28 @@ export default function Home() {
       <Navbar />
       
       <main className="relative z-10">
-        <Hero />
-        <ValueCalculator />
-        <ServicesExplorer fullView={false} />
-        <CaseStudyGenerator />
+        {/* Page Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="container mx-auto px-4 sm:px-6 lg:px-8 py-16"
+        >
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <span className="inline-block px-3 py-1 rounded-full bg-primary-900/50 text-primary-400 text-sm font-medium mb-4">
+              Our Services
+            </span>
+            <h1 className="font-display font-bold text-5xl lg:text-6xl text-white mb-6">
+              AI-Powered Solutions for Business Growth
+            </h1>
+            <p className="text-neutral-300 text-lg max-w-2xl mx-auto">
+              Explore our full range of services or describe your business challenge to get personalized recommendations.
+            </p>
+          </div>
+        </motion.div>
+        
+        {/* Full Services Explorer */}
+        <ServicesExplorer fullView={true} />
       </main>
       
       {/* Chat interface */}

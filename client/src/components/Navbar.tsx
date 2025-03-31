@@ -20,8 +20,8 @@ export default function Navbar() {
 
   return (
     <nav 
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-neutral-900/90 backdrop-blur-lg border-b border-neutral-800' : 'bg-transparent'
+      className={`fixed top-0 w-full z-[100] transition-all duration-300 ${
+        isScrolled ? 'bg-neutral-900/90 backdrop-blur-lg border-b border-neutral-800' : 'bg-neutral-900/70 backdrop-blur-sm'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,26 +30,29 @@ export default function Navbar() {
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer">
               <div className="w-8 h-8 rounded-md bg-gradient-to-r from-primary-600 to-secondary-600 flex items-center justify-center">
-                <span className="font-display font-bold text-white">L&F</span>
+                <span className="font-display font-bold text-white">LÆF</span>
               </div>
-              <span className="font-display font-bold text-white">L&F Digital</span>
+              <div className="flex flex-col">
+                <span className="font-display font-bold text-white">LÆF Digital</span>
+                <span className="text-[10px] font-light italic text-neutral-300 -mt-1">Locus of Algorithmic</span>
+              </div>
             </div>
           </Link>
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#services" className="text-neutral-300 hover:text-white transition-colors duration-200">
+            <Link href="/services" className="text-neutral-300 hover:text-white transition-colors duration-200">
               Services
-            </a>
-            <a href="#ai-tools" className="text-neutral-300 hover:text-white transition-colors duration-200">
-              AI Tools
-            </a>
-            <a href="#case-studies" className="text-neutral-300 hover:text-white transition-colors duration-200">
+            </Link>
+            <Link href="/case-studies" className="text-neutral-300 hover:text-white transition-colors duration-200">
               Case Studies
-            </a>
-            <a href="#contact" className="text-neutral-300 hover:text-white transition-colors duration-200">
+            </Link>
+            <Link href="/ai-tools" className="text-neutral-300 hover:text-white transition-colors duration-200">
+              AI Tools
+            </Link>
+            <Link href="/contact" className="text-neutral-300 hover:text-white transition-colors duration-200">
               Contact
-            </a>
+            </Link>
           </div>
           
           {/* AI Chat Button */}
@@ -80,18 +83,18 @@ export default function Navbar() {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-neutral-800 border-b border-neutral-700">
           <div className="px-4 py-3 space-y-1">
-            <a href="#services" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
+            <Link href="/services" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               Services
-            </a>
-            <a href="#ai-tools" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
-              AI Tools
-            </a>
-            <a href="#case-studies" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
+            </Link>
+            <Link href="/case-studies" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               Case Studies
-            </a>
-            <a href="#contact" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
+            </Link>
+            <Link href="/ai-tools" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
+              AI Tools
+            </Link>
+            <Link href="/contact" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               Contact
-            </a>
+            </Link>
           </div>
         </div>
       )}

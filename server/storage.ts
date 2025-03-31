@@ -193,28 +193,107 @@ export class MemStorage implements IStorage {
   // Initialize with default services
   private initDefaultServices() {
     const defaultServices: InsertService[] = [
+      // Automation & Workflow Optimization Category
       {
-        name: "Workflow Automation",
-        description: "Eliminate repetitive tasks and streamline processes with custom AI-powered automation solutions.",
-        features: ["Custom workflow design", "API integrations", "24/7 automated execution"],
-        averageROI: "300%",
-        category: "Automation",
+        name: "Intelligent Process Automation",
+        description: "Eliminate repetitive tasks and streamline business processes with custom AI-powered automation solutions.",
+        features: ["Custom workflow design", "Document processing automation", "Cross-system integration", "Error handling & notifications", "Performance analytics"],
+        averageROI: "300-400%",
+        category: "Automation & Workflow Optimization",
         iconKey: "lightning-bolt"
       },
       {
-        name: "Predictive Analytics",
-        description: "Leverage AI to forecast trends, customer behavior, and business outcomes with precision.",
-        features: ["Custom ML models", "Interactive dashboards", "Trend forecasting"],
-        averageROI: "250%",
-        category: "Analytics",
-        iconKey: "chart-pie"
+        name: "Robotic Process Automation (RPA)",
+        description: "Deploy software robots to handle repetitive digital tasks with precision and speed.",
+        features: ["UI-based automation", "Scheduled execution", "Business rule integration", "Exception handling", "Workflow orchestration"],
+        averageROI: "250-350%",
+        category: "Automation & Workflow Optimization",
+        iconKey: "settings"
+      },
+      
+      // AI & Machine Learning Category
+      {
+        name: "Predictive Analytics Suite",
+        description: "Leverage advanced machine learning to forecast trends, customer behavior, and business outcomes with high precision.",
+        features: ["Custom ML models", "Interactive dashboards", "Trend forecasting", "Anomaly detection", "Prescriptive recommendations"],
+        averageROI: "250-320%",
+        category: "AI & Machine Learning",
+        iconKey: "bar-chart"
       },
       {
-        name: "AI Chatbots & Assistants",
-        description: "Enhance customer interactions with intelligent AI assistants that understand context and intent.",
-        features: ["Natural language processing", "Multilingual support", "Sentiment analysis"],
-        averageROI: "210%",
-        category: "Customer Experience",
+        name: "Conversational AI Platform",
+        description: "Enhance customer interactions with intelligent assistants that understand context, intent, and sentiment.",
+        features: ["Natural language processing", "Multilingual support", "Sentiment analysis", "Seamless handoff to humans", "Continuous learning"],
+        averageROI: "210-280%",
+        category: "AI & Machine Learning",
+        iconKey: "users"
+      },
+      
+      // Custom Software Development Category
+      {
+        name: "Enterprise Application Suite",
+        description: "Custom-built software solutions designed specifically for your business requirements and workflows.",
+        features: ["Tailored user experience", "Legacy system integration", "Scalable architecture", "Mobile companion apps", "Continuous delivery pipeline"],
+        averageROI: "180-300%",
+        category: "Custom Software Development",
+        iconKey: "rocket"
+      },
+      {
+        name: "Mobile Application Development",
+        description: "Native and cross-platform mobile solutions that deliver exceptional user experiences across all devices.",
+        features: ["iOS & Android development", "Offline functionality", "Push notifications", "Analytics integration", "Secure authentication"],
+        averageROI: "200-280%",
+        category: "Custom Software Development",
+        iconKey: "rocket"
+      },
+      
+      // Data Analytics & Business Intelligence Category
+      {
+        name: "Data Warehouse & Analytics",
+        description: "Centralize, organize, and analyze your business data to uncover insights and drive strategic decisions.",
+        features: ["ETL pipeline development", "Data modeling", "Interactive dashboards", "Self-service reporting", "Real-time analytics"],
+        averageROI: "220-330%",
+        category: "Data Analytics & Business Intelligence",
+        iconKey: "bar-chart"
+      },
+      
+      // Cloud Solutions & Infrastructure Category
+      {
+        name: "Cloud Migration & Optimization",
+        description: "Strategic migration to cloud platforms with architecture optimization for performance, cost, and scalability.",
+        features: ["Cloud readiness assessment", "Migration planning", "Infrastructure as Code", "Cost optimization", "24/7 monitoring"],
+        averageROI: "180-250%",
+        category: "Cloud Solutions & Infrastructure",
+        iconKey: "cloud"
+      },
+      
+      // Enterprise Systems Integration Category
+      {
+        name: "API Strategy & Integration",
+        description: "Connect disparate systems and platforms through robust API development and management.",
+        features: ["API design & development", "Integration strategy", "Middleware solutions", "Performance monitoring", "Documentation & security"],
+        averageROI: "190-280%",
+        category: "Enterprise Systems Integration",
+        iconKey: "layers"
+      },
+      
+      // Cybersecurity & Compliance Category
+      {
+        name: "Security Assessment & Implementation",
+        description: "Comprehensive security solutions that protect your critical assets and ensure regulatory compliance.",
+        features: ["Vulnerability assessment", "Security architecture", "Compliance frameworks", "Incident response planning", "Security monitoring"],
+        averageROI: "200-350%",
+        category: "Cybersecurity & Compliance",
+        iconKey: "shield"
+      },
+      
+      // Digital Experience & Customer Journey Category
+      {
+        name: "Customer Experience Transformation",
+        description: "Reimagine your customer interactions through digital channels with intuitive, engaging experiences.",
+        features: ["UX/UI design", "Customer journey mapping", "Omnichannel integration", "A/B testing", "Behavioral analytics"],
+        averageROI: "220-310%",
+        category: "Digital Experience & Customer Journey",
         iconKey: "users"
       }
     ];
@@ -239,6 +318,65 @@ export class MemStorage implements IStorage {
           "annualSavings": "$1.2M",
           "implementationTime": "6 mo"
         },
+        primaryServiceCategory: "AI & Machine Learning",
+        secondaryServiceCategories: ["Digital Experience & Customer Journey", "Data Analytics & Business Intelligence"],
+        timeline: "6 months",
+        teamSize: "4 specialists",
+        technologiesUsed: ["TensorFlow", "Python", "React", "AWS"],
+        isGenerated: false
+      },
+      {
+        title: "Healthcare Provider Achieves 64% Operational Efficiency with Process Automation",
+        industry: "Healthcare",
+        challenge: "A regional healthcare network struggled with manual, paper-based processes across 12 facilities, leading to administrative bottlenecks, delayed patient care, and high error rates in record management.",
+        solution: "We developed a comprehensive Intelligent Process Automation solution that digitized intake workflows, automated insurance verification, and created a centralized patient record system with secure cross-facility access. The solution included custom OCR for legacy document processing and real-time analytics dashboards.",
+        results: "Administrative processing time decreased by 64%, patient wait times reduced by 38%, and record errors fell by 87%. Staff reported 92% satisfaction with the new system after training.",
+        metrics: {
+          "efficiencyGain": "64%",
+          "errorReduction": "87%",
+          "ROI": "320%"
+        },
+        primaryServiceCategory: "Automation & Workflow Optimization",
+        secondaryServiceCategories: ["Custom Software Development", "Data Analytics & Business Intelligence"],
+        timeline: "9 months",
+        teamSize: "6 specialists",
+        technologiesUsed: ["UiPath", "Azure", "Power BI", "SQL Server"],
+        isGenerated: false
+      },
+      {
+        title: "Manufacturing Giant Saves $3.8M Annually with Cloud Transformation",
+        industry: "Manufacturing",
+        challenge: "A global manufacturer with operations in 8 countries was struggling with aging on-premises infrastructure, increasing IT maintenance costs, and inability to scale during peak production periods.",
+        solution: "We designed and executed a comprehensive cloud migration strategy that included containerizing legacy applications, implementing infrastructure as code for consistent deployments, and creating a global data mesh for real-time production analytics.",
+        results: "The company reduced IT infrastructure costs by 42%, achieved 99.99% system availability (up from 97%), and can now scale computing resources on-demand during peak seasons.",
+        metrics: {
+          "costReduction": "$3.8M annually",
+          "uptimeImprovement": "99.99%",
+          "deploymentSpeed": "85% faster"
+        },
+        primaryServiceCategory: "Cloud Solutions & Infrastructure",
+        secondaryServiceCategories: ["Enterprise Systems Integration", "Data Analytics & Business Intelligence"],
+        timeline: "12 months",
+        teamSize: "8 specialists",
+        technologiesUsed: ["AWS", "Kubernetes", "Terraform", "Docker", "Snowflake"],
+        isGenerated: false
+      },
+      {
+        title: "Financial Services Firm Prevents $4.5M in Fraud with AI",
+        industry: "Financial Services",
+        challenge: "A mid-sized financial services company was experiencing increasing fraud attempts, with traditional rule-based detection systems missing sophisticated attacks and generating too many false positives.",
+        solution: "We implemented an advanced AI-powered fraud detection system that uses machine learning to analyze transaction patterns in real-time. The system continuously learns from new data, adapting to emerging fraud techniques while reducing false positive alerts.",
+        results: "The new system prevented an estimated $4.5M in fraud in the first year, reduced false positive alerts by 76%, and improved analyst efficiency by 62% through better prioritization of high-risk cases.",
+        metrics: {
+          "fraudPrevention": "$4.5M",
+          "falsePositiveReduction": "76%",
+          "implementationTime": "5 months"
+        },
+        primaryServiceCategory: "AI & Machine Learning",
+        secondaryServiceCategories: ["Cybersecurity & Compliance", "Data Analytics & Business Intelligence"],
+        timeline: "5 months",
+        teamSize: "5 specialists",
+        technologiesUsed: ["Python", "TensorFlow", "Kafka", "Elasticsearch", "Neo4j"],
         isGenerated: false
       }
     ];

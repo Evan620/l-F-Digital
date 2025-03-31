@@ -34,8 +34,8 @@ export async function generateChatCompletion(
   }
 
   try {
-    // Default to Claude 3 Sonnet (free tier available model)
-    const model = options.model || "anthropic/claude-3-sonnet";
+    // Use the deepseek-r1-distill-qwen-32b model per requirements
+    const model = options.model || "deepseek/deepseek-r1-distill-qwen-32b:free";
     
     // Format response for JSON if needed
     const responseFormat = options.jsonMode 
