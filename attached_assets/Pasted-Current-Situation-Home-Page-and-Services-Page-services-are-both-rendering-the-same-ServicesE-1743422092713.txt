@@ -1,0 +1,121 @@
+Current Situation
+Home Page (/) and Services Page (/services) are both rendering the same ServicesExplorer component
+
+This results in duplicated content:
+
+"Our Services" heading
+
+Service cards grid
+
+AI recommendations
+
+Why This is Problematic
+Poor SEO: Duplicate content harms search rankings
+
+Confusing UX: Users expect different content on separate pages
+
+Wasted Potential: Home page should convert visitors, Services page should detail offerings
+
+Recommended Restructuring
+1. Home Page (/) - Landing/Marketing Focus
+tsx
+Copy
+// components/Home.tsx
+export default function Home() {
+  return (
+    <>
+      <HeroSection>
+        <h1>Automate Your Growth with AI</h1>
+        <ROICalculator />
+      </HeroSection>
+
+      <ClientTestimonials />
+
+      <FeaturedCaseStudyCarousel />
+
+      <CTASection>
+        <h2>Ready for 300% ROI?</h2>
+        <ServicePreviewGrid /> {/* Show 3-4 key services */}
+      </CTASection>
+    </>
+  )
+}
+2. Services Page (/services) - Detailed Offerings
+tsx
+Copy
+// components/ServicesExplorer.tsx
+export default function ServicesExplorer() {
+  return (
+    <>
+      <ServiceCategoriesFilter />
+      
+      <AdvancedSearch 
+        filters={["Industry", "Budget", "Tech Stack"]}
+      />
+
+      <FullServiceGrid withPricing={true} />
+
+      <ComparisonTool 
+        compareServices={["Basic Automation", "Full AI Integration"]}
+      />
+    </>
+  )
+}
+Technical Implementation Steps
+Fix Routing Configuration
+
+tsx
+Copy
+// App.tsx
+import { Route } from 'wouter'
+
+function App() {
+  return (
+    <>
+      <Route path="/" component={Home} />
+      <Route path="/services" component={ServicesExplorer} />
+    </>
+  )
+}
+Separate API Endpoints
+
+typescript
+Copy
+// routes.ts
+// Home Page Data
+export const getHomeData = async () => {
+  return {
+    heroContent: await db.heroContent.findFirst(),
+    featuredServices: await db.services.find({ limit: 3 }),
+    testimonials: await db.testimonials.find()
+  }
+}
+
+// Services Page Data
+export const getAllServices = async () => {
+  return {
+    categories: await db.serviceCategories.find(),
+    fullServiceList: await db.services.find()
+  }
+}
+Update SEO Metadata
+
+tsx
+Copy
+// Home page SEO
+<Helmet>
+  <title>L&F Digital - AI-Powered Business Automation</title>
+  <meta name="description" content="Transform your business with 300% ROI using our AI automation solutions"/>
+</Helmet>
+
+// Services page SEO 
+<Helmet>
+  <title>Our Services | AI Automation Solutions</title>
+  <meta name="description" content="Detailed list of web development, marketing automation, and AI integration services"/>
+</Helmet>
+Visual Differentiation
+Section	Home Page	Services Page
+Primary Focus	Conversion/ROI Promise	Service Comparisons
+Visual Style	Dark gradients + Motion	Clean cards + Tables
+Interactions	ROI Calculator	Filter/Sort Services
+CTA	"Start Free Audit"	"Compare Packages"

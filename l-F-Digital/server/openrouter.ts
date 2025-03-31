@@ -34,8 +34,9 @@ export async function generateChatCompletion(
   }
 
   try {
-    // Default to DeepSeek model
-    const model = options.model || "deepseek/deepseek-coder";
+    // Use a widely available model from OpenRouter
+    // Changed from deepseek/deepseek-coder which was returning 404
+    const model = options.model || "anthropic/claude-3-opus-20240229";
     
     // Format response for JSON if needed
     const responseFormat = options.jsonMode 
