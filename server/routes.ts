@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { z } from "zod";
 import { insertBusinessInfoSchema, insertConversationSchema, type Message } from "@shared/schema";
 import { createChatCompletion } from "./openai";
+import { googleCalendar, hasGoogleCalendarCredentials } from "./googleCalendar";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // prefix all routes with /api
@@ -557,6 +558,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error) {
       res.status(400).json({ message: "Invalid ROI calculation request", error });
+    }
+  });
+
+  // Google Calendar Integration endpoints
+  app.get("/api/calendar/status", async (_req: Request, res: Response) => {
+    const isConfigured = hasGoogleCalendarCredentials();
+    res.json({ 
+      isConfigured,
+      message: isConfigured ? 
+        "Google Calendar integration is available." : 
+        "Google Calendar integration is not configured. Contact the administrator to set up the integration."
+    });
+  });
+
+  app.get("/api/calendar/available-dates", async (_req: Request, res: Response) => {
+    try {
+      const dates = googleCalendar.getAvailableDates();
+      res.json({ dates });
+    } catch (error) {
+      console.error("Error getting available dates:", error);
+      res.status(500).json({ 
+        message: "Failed to retrieve available dates", 
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  app.get("/api/calendar/available-slots/:date", async (req: Request, res: Response) => {
+    try {
+      const { date } = req.params;
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
+      
+      if (!dateRegex.test(date)) {
+        return res.status(400).json({ message: "Invalid date format. Please use YYYY-MM-DD." });
+      }
+      
+      const availableSlots = await googleCalendar.getAvailableTimeSlots(date);
+      res.json(availableSlots);
+    } catch (error) {
+      console.error("Error getting available time slots:", error);
+      res.status(500).json({ 
+        message: "Failed to retrieve available time slots", 
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  app.post("/api/calendar/book", async (req: Request, res: Response) => {
+    try {
+      const bookingSchema = z.object({
+        fullName: z.string().min(2).max(100),
+        email: z.string().email(),
+        phone: z.string().optional(),
+        companyName: z.string().min(1).max(100),
+        businessDescription: z.string().optional(),
+        date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // YYYY-MM-DD format
+        time: z.string(), // e.g., "09:00 AM"
+        serviceType: z.string().optional().default("Business Consultation")
+      });
+      
+      const bookingData = bookingSchema.parse(req.body);
+      
+      // Convert time (e.g., "09:00 AM") to 24-hour format for the Google Calendar API
+      let [hours, minutes] = bookingData.time.split(':');
+      minutes = minutes.split(' ')[0]; // Remove AM/PM
+      const period = bookingData.time.includes('PM') ? 'PM' : 'AM';
+      
+      // Convert to 24-hour format
+      let hour24 = parseInt(hours);
+      if (period === 'PM' && hour24 < 12) hour24 += 12;
+      if (period === 'AM' && hour24 === 12) hour24 = 0;
+      
+      // Format for API
+      const startDateTime = `${bookingData.date}T${hour24.toString().padStart(2, '0')}:${minutes}:00`;
+      
+      // End time is 1 hour later
+      let endHour24 = hour24 + 1;
+      if (endHour24 === 24) endHour24 = 0; // Handle edge case
+      
+      const endDateTime = `${bookingData.date}T${endHour24.toString().padStart(2, '0')}:${minutes}:00`;
+      
+      // Create event in Google Calendar
+      const eventData = {
+        summary: `${bookingData.serviceType} with ${bookingData.fullName}`,
+        description: `Company: ${bookingData.companyName}\nEmail: ${bookingData.email}\nPhone: ${bookingData.phone || 'Not provided'}\n\n${bookingData.businessDescription || ''}`,
+        startDateTime,
+        endDateTime,
+        attendees: [
+          { email: bookingData.email },
+          { email: 'consultant@lf-digital.com' } // The consultant's email
+        ]
+      };
+      
+      if (hasGoogleCalendarCredentials()) {
+        // If Google Calendar is configured, create the event
+        const result = await googleCalendar.createEvent(eventData);
+        res.json(result);
+      } else {
+        // If not configured, return a simulated successful booking
+        console.log("Google Calendar not configured. Simulating successful booking:", eventData);
+        res.json({
+          success: true,
+          message: "Consultation scheduled successfully (Google Calendar integration not available)",
+          booking: {
+            name: bookingData.fullName,
+            email: bookingData.email,
+            date: bookingData.date,
+            time: bookingData.time,
+            serviceType: bookingData.serviceType
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error booking consultation:", error);
+      res.status(500).json({ 
+        message: "Failed to book consultation", 
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 

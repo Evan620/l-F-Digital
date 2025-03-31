@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import GoogleCalendarBooking from '@/components/GoogleCalendarBooking';
 
 export default function AITools() {
   const { toast } = useToast();
@@ -31,6 +32,8 @@ export default function AITools() {
     implementationTimeline: 'medium'
   });
   const [roiProjection, setRoiProjection] = useState<any | null>(null);
+  const [showGoogleCalendar, setShowGoogleCalendar] = useState(false);
+  const [serviceTypeForBooking, setServiceTypeForBooking] = useState('');
   
   // Service recommendation mutation
   const serviceRecommendationMutation = useMutation({
@@ -155,8 +158,26 @@ export default function AITools() {
     roiCalculatorMutation.mutate();
   };
   
+  // Handle booking a consultation
+  const handleBookConsultation = (serviceType: string) => {
+    setServiceTypeForBooking(serviceType);
+    setShowGoogleCalendar(true);
+    
+    toast({
+      title: "Scheduling Consultation",
+      description: `Let's book a consultation for ${serviceType}`,
+    });
+  };
+  
   return (
     <div className="relative min-h-screen bg-neutral-900 text-neutral-100">
+      {/* Google Calendar Booking Dialog */}
+      {showGoogleCalendar && (
+        <GoogleCalendarBooking 
+          onClose={() => setShowGoogleCalendar(false)}
+          serviceType={serviceTypeForBooking}
+        />
+      )}
       {/* Background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-full">
@@ -280,9 +301,23 @@ export default function AITools() {
                                 <span className="text-xs bg-primary-900/40 text-primary-300 px-2 py-1 rounded">
                                   {service.category}
                                 </span>
-                                <Button variant="ghost" size="sm" className="text-primary-400 hover:text-primary-300">
-                                  Learn More
-                                </Button>
+                                <div className="flex gap-2">
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="text-primary-400 hover:text-primary-300"
+                                  >
+                                    Learn More
+                                  </Button>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="text-primary-400 hover:text-primary-300"
+                                    onClick={() => handleBookConsultation(service.name)}
+                                  >
+                                    Book
+                                  </Button>
+                                </div>
                               </div>
                             </motion.div>
                           ))}
@@ -371,10 +406,20 @@ export default function AITools() {
                             <span className="text-white font-medium">{generatedCaseStudy.roi}</span>
                           </div>
                           
-                          <Button variant="outline" size="sm" className="text-neutral-300">
-                            <Share className="h-4 w-4 mr-2" />
-                            Share Case Study
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm" className="text-neutral-300">
+                              <Share className="h-4 w-4 mr-2" />
+                              Share Case Study
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="text-secondary-400 hover:text-secondary-300"
+                              onClick={() => handleBookConsultation(generatedCaseStudy.title)}
+                            >
+                              Book Consultation
+                            </Button>
+                          </div>
                         </div>
                       </motion.div>
                     )}
@@ -544,10 +589,20 @@ export default function AITools() {
                           <span className="text-white font-medium">Based on similar businesses in your industry</span>
                         </div>
                         
-                        <Button variant="outline" size="sm" className="text-neutral-300">
-                          <Share className="h-4 w-4 mr-2" />
-                          Share Projection
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" className="text-neutral-300">
+                            <Share className="h-4 w-4 mr-2" />
+                            Share Projection
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-primary-400 hover:text-primary-300"
+                            onClick={() => handleBookConsultation('ROI Implementation')}
+                          >
+                            Book Consultation
+                          </Button>
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -571,7 +626,11 @@ export default function AITools() {
               Schedule a consultation with our experts to discover how our AI-powered solutions can accelerate your business growth.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button size="lg" className="bg-primary-600 hover:bg-primary-500">
+              <Button 
+                size="lg" 
+                className="bg-primary-600 hover:bg-primary-500"
+                onClick={() => handleBookConsultation('General Consultation')}
+              >
                 <MessageSquare className="mr-2 h-5 w-5" />
                 Schedule Consultation
               </Button>

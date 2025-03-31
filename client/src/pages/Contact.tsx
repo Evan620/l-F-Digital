@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/tabs';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import GoogleCalendarBooking from '@/components/GoogleCalendarBooking';
 
 export default function Contact() {
   const { toast } = useToast();
@@ -210,6 +211,8 @@ export default function Contact() {
   };
   
   // Handle form submission
+  const [showGoogleCalendar, setShowGoogleCalendar] = useState(false);
+
   const handleSubmit = () => {
     if (!contactName || !contactEmail) {
       toast({
@@ -217,6 +220,12 @@ export default function Contact() {
         description: "Please provide your name and email address to continue.",
         variant: "destructive",
       });
+      return;
+    }
+    
+    // If we have a selected time slot, open the Google Calendar booking component
+    if (selectedTimeSlot) {
+      setShowGoogleCalendar(true);
       return;
     }
     
@@ -285,6 +294,13 @@ export default function Contact() {
   
   return (
     <div className="relative min-h-screen bg-neutral-900 text-neutral-100">
+      {/* Google Calendar Booking Dialog */}
+      {showGoogleCalendar && (
+        <GoogleCalendarBooking 
+          onClose={() => setShowGoogleCalendar(false)}
+          serviceType="Business Process Consultation"
+        />
+      )}
       {/* Background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-full">
