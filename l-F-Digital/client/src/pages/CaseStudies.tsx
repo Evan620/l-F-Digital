@@ -194,7 +194,7 @@ export default function CaseStudies() {
             </motion.div>
           </div>
           
-          <div className="relative z-20 px-8 py-20 md:px-16 md:py-24">
+          <div className="relative z-20 px-6 py-16 sm:px-8 md:px-16 md:py-24">
             <motion.div 
               className="max-w-3xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
@@ -204,8 +204,8 @@ export default function CaseStudies() {
               <span className="inline-block px-4 py-1.5 rounded-full bg-secondary-500/30 text-secondary-300 text-sm font-medium mb-4 backdrop-blur-sm">
                 Success Stories
               </span>
-              <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight">
-                From 0 → 300% ROI: <br />Watch It Happen.
+              <h1 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight">
+                From 0 → 300% ROI: <br className="hidden sm:block" />Watch It Happen.
               </h1>
               
               {/* Personalized Industry Hook */}
@@ -217,12 +217,12 @@ export default function CaseStudies() {
                   transition={{ duration: 0.5, delay: 0.5 }}
                 >
                   <div className="flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-secondary-500/20 flex items-center justify-center flex-shrink-0 mr-4">
-                      <Sparkles className="w-5 h-5 text-secondary-400" />
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-secondary-500/20 flex items-center justify-center flex-shrink-0 mr-3 sm:mr-4">
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-secondary-400" />
                     </div>
-                    <div>
-                      <p className="text-lg text-white font-medium mb-1">Perfect For {userIndustry.charAt(0).toUpperCase() + userIndustry.slice(1)}:</p>
-                      <p className="text-neutral-300">
+                    <div className="flex-1">
+                      <p className="text-base sm:text-lg text-white font-medium mb-1">Perfect For {userIndustry.charAt(0).toUpperCase() + userIndustry.slice(1)}:</p>
+                      <p className="text-sm sm:text-base text-neutral-300">
                         {userIndustry === 'retail' && 'How we helped an e-commerce store increase conversions by 45% with smart inventory management.'}
                         {userIndustry === 'finance' && 'How we helped a financial services firm reduce reporting time from 3 days to 3 hours.'}
                         {userIndustry === 'healthcare' && 'How we helped a healthcare provider improve patient scheduling and reduce no-shows by 62%.'}
