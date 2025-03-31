@@ -160,11 +160,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         let parsedResponse;
         try {
-          // First attempt to clean response - remove markdown code blocks if present
+          // First attempt to clean response - handle various formatting issues
           let cleanedContent = responseContent;
-          if (responseContent.includes("```json")) {
-            cleanedContent = responseContent.replace(/```json\n|\n```/g, "");
+          
+          // Remove markdown code blocks if present
+          if (cleanedContent.includes("```json")) {
+            cleanedContent = cleanedContent.replace(/```json\n|\n```/g, "");
           }
+          
+          // Remove LaTeX \boxed{} wrapper if present (from DeepSeek model)
+          if (cleanedContent.includes("\\boxed{")) {
+            cleanedContent = cleanedContent.replace(/\\boxed\{\s*|\s*\}/g, "");
+          }
+          
+          // Log what we're trying to parse to help with debugging
+          console.log("Attempting to parse JSON:", cleanedContent.substring(0, 100) + "...");
           
           parsedResponse = JSON.parse(cleanedContent);
           
@@ -303,11 +313,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         let parsedResponse;
         try {
-          // First attempt to clean response - remove markdown code blocks if present
+          // First attempt to clean response - handle various formatting issues
           let cleanedContent = responseContent;
-          if (responseContent.includes("```json")) {
-            cleanedContent = responseContent.replace(/```json\n|\n```/g, "");
+          
+          // Remove markdown code blocks if present
+          if (cleanedContent.includes("```json")) {
+            cleanedContent = cleanedContent.replace(/```json\n|\n```/g, "");
           }
+          
+          // Remove LaTeX \boxed{} wrapper if present (from DeepSeek model)
+          if (cleanedContent.includes("\\boxed{")) {
+            cleanedContent = cleanedContent.replace(/\\boxed\{\s*|\s*\}/g, "");
+          }
+          
+          // Log what we're trying to parse to help with debugging
+          console.log("Attempting to parse JSON:", cleanedContent.substring(0, 100) + "...");
           
           parsedResponse = JSON.parse(cleanedContent);
           
@@ -659,7 +679,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         let parsedResponse;
         try {
-          parsedResponse = JSON.parse(responseContent);
+          // First attempt to clean response - handle various formatting issues
+          let cleanedContent = responseContent;
+          
+          // Remove markdown code blocks if present
+          if (cleanedContent.includes("```json")) {
+            cleanedContent = cleanedContent.replace(/```json\n|\n```/g, "");
+          }
+          
+          // Remove LaTeX \boxed{} wrapper if present (from DeepSeek model)
+          if (cleanedContent.includes("\\boxed{")) {
+            cleanedContent = cleanedContent.replace(/\\boxed\{\s*|\s*\}/g, "");
+          }
+          
+          // Log what we're trying to parse to help with debugging
+          console.log("Attempting to parse ROI JSON:", cleanedContent.substring(0, 100) + "...");
+          
+          parsedResponse = JSON.parse(cleanedContent);
           
           // Check if we got an error message instead of ROI data
           if (parsedResponse.message && !parsedResponse.estimatedROI) {

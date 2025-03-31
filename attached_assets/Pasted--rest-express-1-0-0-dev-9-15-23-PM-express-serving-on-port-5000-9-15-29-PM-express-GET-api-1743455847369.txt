@@ -1,0 +1,71 @@
+
+> rest-express@1.0.0 dev
+9:15:23 PM [express] serving on port 5000
+9:15:29 PM [express] GET /api/services 304 in 2ms :: [{"name":"Intelligent Process Automation","desc…
+9:15:29 PM [express] POST /api/conversations 201 in 3ms :: {"messages":[{"role":"assistant","content…
+9:15:29 PM [express] POST /api/conversations 201 in 1ms :: {"messages":[{"role":"assistant","content…
+9:15:31 PM [express] POST /api/conversations 201 in 1ms :: {"messages":[{"role":"assistant","content…
+9:15:31 PM [express] GET /api/services 304 in 0ms :: [{"name":"Intelligent Process Automation","desc…
+9:15:31 PM [express] GET /api/case-studies 304 in 0ms :: [{"title":"How We Increased Customer Retent…
+9:15:31 PM [express] POST /api/conversations 201 in 1ms :: {"messages":[{"role":"assistant","content…
+9:15:33 PM [express] POST /api/conversations 201 in 1ms :: {"messages":[{"role":"assistant","content…
+9:15:33 PM [express] POST /api/conversations 201 in 7ms :: {"messages":[{"role":"assistant","content…
+9:15:33 PM [express] GET /api/services 304 in 1ms :: [{"name":"Intelligent Process Automation","desc…
+9:15:43 PM [express] POST /api/conversations 201 in 1ms :: {"messages":[{"role":"assistant","content…
+9:15:43 PM [express] POST /api/conversations 201 in 1ms :: {"messages":[{"role":"assistant","content…
+9:15:43 PM [express] GET /api/services 304 in 1ms :: [{"name":"Intelligent Process Automation","desc…
+Using OpenRouter with DeepSeek for service recommendation
+OpenRouter chat completion request: {
+  messageCount: 1,
+  firstRole: 'user',
+  lastRole: 'user',
+  options: '{"model":"deepseek/deepseek-r1-zero:free","jsonMode":true}'
+}
+OpenRouter response received successfully
+OpenRouter response received successfully
+Failed to parse AI response or received error: SyntaxError: Unexpected token '\', "\boxed{
+{
+"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at <anonymous> (/home/runner/workspace/server/routes.ts:169:33)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+9:16:09 PM [express] POST /api/ai/service-recommendation 500 in 17872ms :: {"message":"AI service er…
+Using OpenRouter with DeepSeek for service recommendation
+OpenRouter chat completion request: {
+  messageCount: 1,
+  firstRole: 'user',
+  lastRole: 'user',
+  options: '{"model":"deepseek/deepseek-r1-zero:free","jsonMode":true}'
+}
+OpenRouter response received successfully
+OpenRouter response received successfully
+Trying Anthropic for service recommendation
+Anthropic chat completion request: {
+  messageCount: 1,
+  firstRole: 'user',
+  lastRole: 'user',
+  options: '{"model":"claude-3-7-sonnet-20250219"}'
+}
+Anthropic API key not available, returning mock response
+Anthropic response received successfully
+AI service unavailable, using fallback: Anthropic AI service is currently unavailable. Please check your API credentials.
+Failed to parse AI response or received error: Error: AI service unavailable
+    at <anonymous> (/home/runner/workspace/server/routes.ts:174:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+9:16:31 PM [express] POST /api/ai/service-recommendation 500 in 14392ms :: {"message":"AI service er…
+Using OpenRouter with DeepSeek for service recommendation
+OpenRouter chat completion request: {
+  messageCount: 1,
+  firstRole: 'user',
+  lastRole: 'user',
+  options: '{"model":"deepseek/deepseek-r1-zero:free","jsonMode":true}'
+}
+OpenRouter response received successfully
+OpenRouter response received successfully
+Failed to parse AI response or received error: SyntaxError: Unexpected token '\', "\boxed{
+{
+"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at <anonymous> (/home/runner/workspace/server/routes.ts:169:33)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+9:17:13 PM [express] POST /api/ai/service-recommendation 500 in 16906ms :: {"message":"AI service er…
