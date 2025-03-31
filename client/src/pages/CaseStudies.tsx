@@ -32,10 +32,7 @@ import { AIProvider } from '@/context/AIContext';
 
 export default function CaseStudies() {
   const { toast } = useToast();
-  return (
-    <AIProvider>
-      {() => {
-        const { isChatOpen, toggleChat } = useAI();
+  const { isChatOpen, toggleChat } = useAI();
   const [selectedIndustry, setSelectedIndustry] = useState('');
   const [selectedChallengeType, setSelectedChallengeType] = useState('');
   const [resultsTimeframe, setResultsTimeframe] = useState(6);
@@ -475,7 +472,5 @@ export default function CaseStudies() {
       {/* AI Chat Interface */}
       <AIChatInterface isOpen={isChatOpen} onToggle={toggleChat} />
     </div>
-  )}}
-    </AIProvider>
   );
 }
