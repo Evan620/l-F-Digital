@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Play, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import GoogleCalendarBooking from '@/components/GoogleCalendarBooking';
 
 export default function Hero() {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showGoogleCalendar, setShowGoogleCalendar] = useState(false);
   
   useEffect(() => {
     setIsLoaded(true);
@@ -12,6 +14,12 @@ export default function Hero() {
   
   return (
     <section className="relative pt-20 lg:pt-24 overflow-hidden">
+      {showGoogleCalendar && (
+        <GoogleCalendarBooking 
+          onClose={() => setShowGoogleCalendar(false)}
+          serviceType="Business Consultation"
+        />
+      )}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-12 py-12 lg:py-24">
           {/* Hero Text */}
@@ -26,7 +34,7 @@ export default function Hero() {
             </div>
             <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl leading-tight">
               <span className="block">Transform Your Business with</span>
-              <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">AI-Driven Solutions</span>
+              <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent font-bold tracking-tight">AI-Driven Solutions</span>
             </h1>
             <p className="text-lg text-neutral-300 max-w-xl">
               Revolutionize your workflows, automate processes, and unlock growth with our cutting-edge AI solutions tailored to your industry's unique challenges.
@@ -35,6 +43,7 @@ export default function Hero() {
             {/* CTA Buttons */}
             <div className="pt-6 flex flex-col sm:flex-row gap-4">
               <Button 
+                onClick={() => window.location.href = '/services'}
                 className="px-6 py-3 bg-primary-600 hover:bg-primary-500 shadow-lg hover:shadow-xl hover:shadow-primary-900/20 flex items-center justify-center gap-2 h-auto"
                 size="lg"
               >
@@ -42,12 +51,12 @@ export default function Hero() {
                 <ArrowRight className="h-5 w-5" />
               </Button>
               <Button 
+                onClick={() => setShowGoogleCalendar(true)}
                 variant="outline" 
                 className="px-6 py-3 border-neutral-700 hover:border-neutral-600 flex items-center justify-center gap-2 h-auto"
                 size="lg"
               >
-                <Play className="h-5 w-5 text-secondary-400" />
-                Watch Demo
+                Send a Quote
               </Button>
             </div>
             
