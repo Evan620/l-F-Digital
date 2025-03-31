@@ -114,48 +114,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       `;
       
       try {
-        // Try each AI service in order: OpenRouter (DeepSeek), Anthropic, then OpenAI
+        // Try Azure OpenAI first, then fallback to other services if needed
         let responseContent;
         
-        // First try OpenRouter with DeepSeek model
-        if (hasOpenRouterCredentials()) {
-          console.log("Using OpenRouter with DeepSeek for service recommendation");
-          try {
-            responseContent = await generateOpenRouterCompletion([
-              { role: "user", content: prompt }
-            ], { 
-              model: "deepseek/deepseek-r1-zero:free",
-              jsonMode: true 
-            });
-            console.log("OpenRouter response received successfully");
-          } catch (orError) {
-            console.error("OpenRouter error:", orError);
-            // Continue to fallback options
-          }
-        }
-        
-        // If OpenRouter failed or unavailable, try Anthropic (if available)
-        if (!responseContent && hasAnthropicCredentials()) {
-          try {
-            console.log("Trying Anthropic for service recommendation");
-            responseContent = await generateAnthropicCompletion([
-              { role: "user", content: prompt }
-            ], {
-              model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
-            });
-            console.log("Anthropic response received successfully");
-          } catch (anthropicError) {
-            console.error("Anthropic error:", anthropicError);
-            // Continue to final fallback
-          }
-        }
-        
-        // Final fallback to OpenAI
-        if (!responseContent) {
-          console.log("Falling back to OpenAI (GPT-4o) for service recommendation");
+        // Start with Azure OpenAI (GPT-4o)
+        try {
+          console.log("Using Azure OpenAI (GPT-4o) for service recommendation");
           responseContent = await createChatCompletion([
             { role: "user", content: prompt }
           ]);
+          console.log("Azure OpenAI response received successfully");
+        } catch (azureError) {
+          console.error("Azure OpenAI error:", azureError);
+          
+          // Try OpenRouter as a fallback if available
+          if (hasOpenRouterCredentials()) {
+            console.log("Trying OpenRouter as fallback for service recommendation");
+            try {
+              responseContent = await generateOpenRouterCompletion([
+                { role: "user", content: prompt }
+              ], { 
+                model: "deepseek/deepseek-r1-zero:free",
+                jsonMode: true 
+              });
+              console.log("OpenRouter response received successfully");
+            } catch (orError) {
+              console.error("OpenRouter error:", orError);
+            }
+          }
+          
+          // Try Anthropic as a last resort if available
+          if (!responseContent && hasAnthropicCredentials()) {
+            try {
+              console.log("Trying Anthropic as final fallback for service recommendation");
+              responseContent = await generateAnthropicCompletion([
+                { role: "user", content: prompt }
+              ], {
+                model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+              });
+              console.log("Anthropic response received successfully");
+            } catch (anthropicError) {
+              console.error("Anthropic error:", anthropicError);
+            }
+          }
         }
         
         let parsedResponse;
@@ -267,48 +268,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       `;
       
       try {
-        // Try each AI service in order: OpenRouter (DeepSeek), Anthropic, then OpenAI
+        // Try Azure OpenAI first, then fallback to other services if needed
         let responseContent;
         
-        // First try OpenRouter with DeepSeek model
-        if (hasOpenRouterCredentials()) {
-          console.log("Using OpenRouter with DeepSeek for case study generation");
-          try {
-            responseContent = await generateOpenRouterCompletion([
-              { role: "user", content: prompt }
-            ], { 
-              model: "deepseek/deepseek-r1-zero:free",
-              jsonMode: true 
-            });
-            console.log("OpenRouter response received successfully");
-          } catch (orError) {
-            console.error("OpenRouter error:", orError);
-            // Continue to fallback options
-          }
-        }
-        
-        // If OpenRouter failed or unavailable, try Anthropic (if available)
-        if (!responseContent && hasAnthropicCredentials()) {
-          try {
-            console.log("Trying Anthropic for case study generation");
-            responseContent = await generateAnthropicCompletion([
-              { role: "user", content: prompt }
-            ], {
-              model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
-            });
-            console.log("Anthropic response received successfully");
-          } catch (anthropicError) {
-            console.error("Anthropic error:", anthropicError);
-            // Continue to final fallback
-          }
-        }
-        
-        // Final fallback to OpenAI
-        if (!responseContent) {
-          console.log("Falling back to Azure OpenAI (GPT-4o) for case study generation");
+        // Start with Azure OpenAI (GPT-4o)
+        try {
+          console.log("Using Azure OpenAI (GPT-4o) for case study generation");
           responseContent = await createChatCompletion([
             { role: "user", content: prompt }
           ]);
+          console.log("Azure OpenAI response received successfully");
+        } catch (azureError) {
+          console.error("Azure OpenAI error:", azureError);
+          
+          // Try OpenRouter as a fallback if available
+          if (hasOpenRouterCredentials()) {
+            console.log("Trying OpenRouter as fallback for case study generation");
+            try {
+              responseContent = await generateOpenRouterCompletion([
+                { role: "user", content: prompt }
+              ], { 
+                model: "deepseek/deepseek-r1-zero:free",
+                jsonMode: true 
+              });
+              console.log("OpenRouter response received successfully");
+            } catch (orError) {
+              console.error("OpenRouter error:", orError);
+            }
+          }
+          
+          // Try Anthropic as a last resort if available
+          if (!responseContent && hasAnthropicCredentials()) {
+            try {
+              console.log("Trying Anthropic as final fallback for case study generation");
+              responseContent = await generateAnthropicCompletion([
+                { role: "user", content: prompt }
+              ], {
+                model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+              });
+              console.log("Anthropic response received successfully");
+            } catch (anthropicError) {
+              console.error("Anthropic error:", anthropicError);
+            }
+          }
         }
         
         let parsedResponse;
@@ -479,43 +481,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ...messages.map(m => ({ role: m.role, content: m.content }))
         ];
         
-        // Try each AI service in order: OpenRouter (DeepSeek), Anthropic, then OpenAI
+        // Try Azure OpenAI first, then fallback to other services if needed
         let responseContent;
         
-        // First try OpenRouter with DeepSeek model
-        if (hasOpenRouterCredentials()) {
-          console.log("Using OpenRouter with DeepSeek for chat response");
-          try {
-            responseContent = await generateOpenRouterCompletion(openAIMessages, { 
-              model: "deepseek/deepseek-r1-zero:free"
-            });
-            console.log("OpenRouter response received successfully");
-          } catch (orError) {
-            console.error("OpenRouter error:", orError);
-            // Continue to fallback options
-          }
-        }
-        
-        // If OpenRouter failed or unavailable, try Anthropic
-        if (!responseContent) {
-          try {
-            console.log("Trying Anthropic for chat response");
-            responseContent = await generateAnthropicCompletion(openAIMessages, {
-              model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
-            });
-            console.log("Anthropic response received successfully");
-          } catch (anthropicError) {
-            console.error("Anthropic error:", anthropicError);
-            // Continue to final fallback
-          }
-        }
-        
-        // Final fallback to OpenAI
-        if (!responseContent) {
-          console.log("Falling back to OpenAI (GPT-4o) for chat response");
+        // Start with Azure OpenAI (GPT-4o)
+        try {
+          console.log("Using Azure OpenAI (GPT-4o) for chat response");
           responseContent = await createChatCompletion(openAIMessages, {
             response_format: undefined  // Chat doesn't need JSON format
           });
+          console.log("Azure OpenAI response received successfully");
+        } catch (azureError) {
+          console.error("Azure OpenAI error:", azureError);
+          
+          // Try OpenRouter as a fallback if available
+          if (hasOpenRouterCredentials()) {
+            console.log("Trying OpenRouter as fallback for chat response");
+            try {
+              responseContent = await generateOpenRouterCompletion(openAIMessages, { 
+                model: "deepseek/deepseek-r1-zero:free"
+              });
+              console.log("OpenRouter response received successfully");
+            } catch (orError) {
+              console.error("OpenRouter error:", orError);
+            }
+          }
+          
+          // Try Anthropic as a last resort if available
+          if (!responseContent && hasAnthropicCredentials()) {
+            try {
+              console.log("Trying Anthropic as final fallback for chat response");
+              responseContent = await generateAnthropicCompletion(openAIMessages, {
+                model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+              });
+              console.log("Anthropic response received successfully");
+            } catch (anthropicError) {
+              console.error("Anthropic error:", anthropicError);
+            }
+          }
         }
         
         // Check if we got an error message from the AI service
@@ -633,48 +636,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       `;
       
       try {
-        // Try each AI service in order: OpenRouter (DeepSeek), Anthropic, then OpenAI
+        // Try Azure OpenAI first, then fallback to other services if needed
         let responseContent;
         
-        // First try OpenRouter with DeepSeek model
-        if (hasOpenRouterCredentials()) {
-          console.log("Using OpenRouter with DeepSeek for ROI calculation");
-          try {
-            responseContent = await generateOpenRouterCompletion([
-              { role: "user", content: prompt }
-            ], { 
-              model: "deepseek/deepseek-r1-zero:free",
-              jsonMode: true 
-            });
-            console.log("OpenRouter response received successfully");
-          } catch (orError) {
-            console.error("OpenRouter error:", orError);
-            // Continue to fallback options
-          }
-        }
-        
-        // If OpenRouter failed or unavailable, try Anthropic
-        if (!responseContent) {
-          try {
-            console.log("Trying Anthropic for ROI calculation");
-            responseContent = await generateAnthropicCompletion([
-              { role: "user", content: prompt }
-            ], {
-              model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
-            });
-            console.log("Anthropic response received successfully");
-          } catch (anthropicError) {
-            console.error("Anthropic error:", anthropicError);
-            // Continue to final fallback
-          }
-        }
-        
-        // Final fallback to OpenAI
-        if (!responseContent) {
-          console.log("Falling back to Azure OpenAI (GPT-4o) for ROI calculation");
+        // Start with Azure OpenAI (GPT-4o)
+        try {
+          console.log("Using Azure OpenAI (GPT-4o) for ROI calculation");
           responseContent = await createChatCompletion([
             { role: "user", content: prompt }
           ]);
+          console.log("Azure OpenAI response received successfully");
+        } catch (azureError) {
+          console.error("Azure OpenAI error:", azureError);
+          
+          // Try OpenRouter as a fallback if available
+          if (hasOpenRouterCredentials()) {
+            console.log("Trying OpenRouter as fallback for ROI calculation");
+            try {
+              responseContent = await generateOpenRouterCompletion([
+                { role: "user", content: prompt }
+              ], { 
+                model: "deepseek/deepseek-r1-zero:free",
+                jsonMode: true 
+              });
+              console.log("OpenRouter response received successfully");
+            } catch (orError) {
+              console.error("OpenRouter error:", orError);
+            }
+          }
+          
+          // Try Anthropic as a last resort if available
+          if (!responseContent && hasAnthropicCredentials()) {
+            try {
+              console.log("Trying Anthropic as final fallback for ROI calculation");
+              responseContent = await generateAnthropicCompletion([
+                { role: "user", content: prompt }
+              ], {
+                model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+              });
+              console.log("Anthropic response received successfully");
+            } catch (anthropicError) {
+              console.error("Anthropic error:", anthropicError);
+            }
+          }
         }
         
         let parsedResponse;
