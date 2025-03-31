@@ -20,8 +20,8 @@ export default function Navbar() {
 
   return (
     <nav 
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-neutral-900/90 backdrop-blur-lg border-b border-neutral-800' : 'bg-transparent'
+      className={`fixed top-0 w-full z-[100] transition-all duration-300 ${
+        isScrolled ? 'bg-neutral-900/90 backdrop-blur-lg border-b border-neutral-800' : 'bg-neutral-900/70 backdrop-blur-sm'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,9 +30,12 @@ export default function Navbar() {
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer">
               <div className="w-8 h-8 rounded-md bg-gradient-to-r from-primary-600 to-secondary-600 flex items-center justify-center">
-                <span className="font-display font-bold text-white">L&F</span>
+                <span className="font-display font-bold text-white">LÆF</span>
               </div>
-              <span className="font-display font-bold text-white">L&F Digital</span>
+              <div className="flex flex-col">
+                <span className="font-display font-bold text-white">LÆF Digital</span>
+                <span className="text-[10px] font-light italic text-neutral-300 -mt-1">Locus of Algorithmic</span>
+              </div>
             </div>
           </Link>
           
@@ -44,9 +47,9 @@ export default function Navbar() {
             <Link href="/case-studies" className="text-neutral-300 hover:text-white transition-colors duration-200">
               Case Studies
             </Link>
-            <a href="#ai-tools" className="text-neutral-300 hover:text-white transition-colors duration-200">
+            <Link href="/ai-tools" className="text-neutral-300 hover:text-white transition-colors duration-200">
               AI Tools
-            </a>
+            </Link>
             <Link href="/contact" className="text-neutral-300 hover:text-white transition-colors duration-200">
               Contact
             </Link>
@@ -86,9 +89,9 @@ export default function Navbar() {
             <Link href="/case-studies" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               Case Studies
             </Link>
-            <a href="#ai-tools" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
+            <Link href="/ai-tools" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               AI Tools
-            </a>
+            </Link>
             <Link href="/contact" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               Contact
             </Link>

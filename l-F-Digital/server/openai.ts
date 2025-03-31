@@ -66,7 +66,8 @@ export async function createChatCompletion(messages: Array<{ role: string; conte
     azureKeyAvailable: !!azureOpenAIApiKey,
     azureEndpointAvailable: !!azureOpenAIEndpoint,
     azureDeploymentNameAvailable: !!azureOpenAIDeploymentName,
-    isInferenceEndpoint: isModelInferenceEndpoint
+    isInferenceEndpoint: isModelInferenceEndpoint,
+    deploymentName: azureOpenAIDeploymentName // Log the deployment name (should be gpt-4o deployment)
   });
   
   // If standard OpenAI API key is available but Azure credentials are not
