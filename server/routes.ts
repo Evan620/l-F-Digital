@@ -124,7 +124,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             responseContent = await generateOpenRouterCompletion([
               { role: "user", content: prompt }
             ], { 
-              model: "deepseek/deepseek-r1-distill-qwen-32b:free",
+              model: "deepseek/deepseek-r1-zero:free",
               jsonMode: true 
             });
             console.log("OpenRouter response received successfully");
@@ -257,19 +257,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       `;
       
       try {
-        // Always try to use OpenRouter first
+        // Try each AI service in order: OpenRouter (DeepSeek), Anthropic, then OpenAI
         let responseContent;
+        
+        // First try OpenRouter with DeepSeek model
         if (hasOpenRouterCredentials()) {
           console.log("Using OpenRouter with DeepSeek for case study generation");
-          responseContent = await generateOpenRouterCompletion([
-            { role: "user", content: prompt }
-          ], { 
-            model: "deepseek/deepseek-r1-distill-qwen-32b:free",
-            jsonMode: true 
-          });
-        } else {
-          // Fall back to Azure OpenAI or standard OpenAI only if OpenRouter fails
-          console.log("OpenRouter unavailable, falling back to OpenAI for case study generation");
+          try {
+            responseContent = await generateOpenRouterCompletion([
+              { role: "user", content: prompt }
+            ], { 
+              model: "deepseek/deepseek-r1-zero:free",
+              jsonMode: true 
+            });
+            console.log("OpenRouter response received successfully");
+          } catch (orError) {
+            console.error("OpenRouter error:", orError);
+            // Continue to fallback options
+          }
+        }
+        
+        // If OpenRouter failed or unavailable, try Anthropic
+        if (!responseContent) {
+          try {
+            console.log("Trying Anthropic for case study generation");
+            responseContent = await generateAnthropicCompletion([
+              { role: "user", content: prompt }
+            ], {
+              model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+            });
+            console.log("Anthropic response received successfully");
+          } catch (anthropicError) {
+            console.error("Anthropic error:", anthropicError);
+            // Continue to final fallback
+          }
+        }
+        
+        // Final fallback to OpenAI
+        if (!responseContent) {
+          console.log("Falling back to Azure OpenAI (GPT-4o) for case study generation");
           responseContent = await createChatCompletion([
             { role: "user", content: prompt }
           ]);
@@ -441,7 +467,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log("Using OpenRouter with DeepSeek for chat response");
           try {
             responseContent = await generateOpenRouterCompletion(openAIMessages, { 
-              model: "deepseek/deepseek-r1-distill-qwen-32b:free"
+              model: "deepseek/deepseek-r1-zero:free"
             });
             console.log("OpenRouter response received successfully");
           } catch (orError) {
@@ -597,7 +623,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             responseContent = await generateOpenRouterCompletion([
               { role: "user", content: prompt }
             ], { 
-              model: "deepseek/deepseek-r1-distill-qwen-32b:free",
+              model: "deepseek/deepseek-r1-zero:free",
               jsonMode: true 
             });
             console.log("OpenRouter response received successfully");

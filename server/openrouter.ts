@@ -34,8 +34,8 @@ export async function generateChatCompletion(
   }
 
   try {
-    // Use the deepseek-r1-distill-qwen-32b model per requirements
-    const model = options.model || "deepseek/deepseek-r1-distill-qwen-32b:free";
+    // Use the deepseek-r1-zero model per user requirements
+    const model = options.model || "deepseek/deepseek-r1-zero:free";
     
     // Format response for JSON if needed
     const responseFormat = options.jsonMode 
