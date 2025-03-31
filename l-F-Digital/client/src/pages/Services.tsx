@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, createContext, useContext } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { 
@@ -719,26 +719,61 @@ export default function Services() {
                     title="Manual Data Entry" 
                     description="Your team spends hours entering data into multiple systems"
                     icon={<Input className="h-4 w-4" />}
+                    onSelect={(title, isSelected) => {
+                      if (isSelected) {
+                        setSelectedChallenges(prev => [...prev, title]);
+                      } else {
+                        setSelectedChallenges(prev => prev.filter(t => t !== title));
+                      }
+                    }}
                   />
                   <Challenge 
                     title="Disjointed Workflows" 
                     description="Information gets lost between teams and departments"
                     icon={<Settings className="h-4 w-4" />}
+                    onSelect={(title, isSelected) => {
+                      if (isSelected) {
+                        setSelectedChallenges(prev => [...prev, title]);
+                      } else {
+                        setSelectedChallenges(prev => prev.filter(t => t !== title));
+                      }
+                    }}
                   />
                   <Challenge 
                     title="Customer Churn" 
                     description="Unable to identify at-risk customers before they leave"
                     icon={<Users className="h-4 w-4" />}
+                    onSelect={(title, isSelected) => {
+                      if (isSelected) {
+                        setSelectedChallenges(prev => [...prev, title]);
+                      } else {
+                        setSelectedChallenges(prev => prev.filter(t => t !== title));
+                      }
+                    }}
                   />
                   <Challenge 
                     title="Slow Reporting" 
                     description="Business insights take too long to compile and analyze"
                     icon={<BarChart className="h-4 w-4" />}
+                    onSelect={(title, isSelected) => {
+                      if (isSelected) {
+                        setSelectedChallenges(prev => [...prev, title]);
+                      } else {
+                        setSelectedChallenges(prev => prev.filter(t => t !== title));
+                      }
+                    }}
                   />
                   <Challenge 
                     title="Unpredictable Revenue" 
                     description="Sales forecasting is more guesswork than science"
                     icon={<LineChart className="h-4 w-4" />}
+                    onSelect={(title, isSelected) => {
+                      if (isSelected) {
+                        setSelectedChallenges(prev => [...prev, title]);
+                      } else {
+                        setSelectedChallenges(prev => prev.filter(t => t !== title));
+                      }
+                    }}
                   />
                 </div>
                 
@@ -1599,29 +1634,34 @@ function ExchangeItem({ title, description, icon }: { title: string, description
 }
 
 // Challenge Item Component
-function Challenge({ title, description, icon }: { title: string, description: string, icon: React.ReactNode }) {
+function Challenge({ 
+  title, 
+  description, 
+  icon, 
+  onSelect 
+}: { 
+  title: string, 
+  description: string, 
+  icon: React.ReactNode,
+  onSelect?: (title: string, isSelected: boolean) => void 
+}) {
   const [selected, setSelected] = useState(false);
   
-  // Add to global state for challenges when selected
-  useEffect(() => {
-    if (selected) {
-      setSelectedChallenges((prev: string[]) => {
-        if (!prev.includes(title)) {
-          return [...prev, title];
-        }
-        return prev;
-      });
-    } else {
-      setSelectedChallenges((prev: string[]) => prev.filter((challenge: string) => challenge !== title));
+  // Call the parent's onSelect callback when selected state changes
+  const handleSelect = () => {
+    const newSelected = !selected;
+    setSelected(newSelected);
+    if (onSelect) {
+      onSelect(title, newSelected);
     }
-  }, [selected, title]);
+  };
   
   return (
     <motion.div
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
       className={`p-4 rounded-lg border ${selected ? 'bg-primary-900/20 border-primary-500/40' : 'bg-neutral-800/40 border-neutral-700'} cursor-pointer`}
-      onClick={() => setSelected(!selected)}
+      onClick={handleSelect}
     >
       <div className="flex items-start gap-3">
         <div className={`w-6 h-6 rounded-full ${selected ? 'bg-primary-500' : 'bg-neutral-700'} flex items-center justify-center flex-shrink-0`}>
