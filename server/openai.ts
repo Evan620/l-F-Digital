@@ -155,11 +155,8 @@ export async function createChatCompletion(messages: Array<{ role: string; conte
           console.error("Error request sent but no response received");
         }
         
-        // Return a friendly error response with more details
-        return JSON.stringify({
-          message: "AI service is temporarily unavailable. Our team is investigating the issue.",
-          error: error instanceof Error ? error.message : String(error)
-        });
+        // Throw the error to allow fallback to other models
+        throw new Error(`Azure OpenAI API error: ${error instanceof Error ? error.message : String(error)}`);
       }
     } else {
       // Standard Azure OpenAI
@@ -182,11 +179,8 @@ export async function createChatCompletion(messages: Array<{ role: string; conte
           console.error("Error details:", JSON.stringify(error.response || {}));
         }
         
-        // Return a friendly error response with more details
-        return JSON.stringify({
-          message: "AI service is temporarily unavailable. Our team is investigating the issue.",
-          error: error instanceof Error ? error.message : String(error)
-        });
+        // Throw the error to allow fallback to other models
+        throw new Error(`Azure OpenAI API error: ${error instanceof Error ? error.message : String(error)}`);
       }
     }
   } catch (error) {

@@ -1,10 +1,9 @@
-import axios from 'axios';
-import { generateChatCompletion as generateOpenRouterCompletion } from './openrouter';
+import { generateChatCompletion as generatePerplexityCompletion } from './perplexity';
 
-// This script tests the Qwen model on OpenRouter
-async function testQwenModel() {
+// This script tests the Perplexity API integration
+async function testPerplexityModel() {
   try {
-    console.log("Testing Qwen model on OpenRouter...");
+    console.log("Testing Perplexity API integration...");
     
     const prompt = `
       Generate a realistic case study based on this query: "Manufacturing automation for a mid-sized automotive parts manufacturer"
@@ -58,27 +57,24 @@ async function testQwenModel() {
       - Make the case study realistic, data-driven, and highly compelling
     `;
     
-    // Test direct API call to Qwen model via OpenRouter
-    const qwenResponse = await generateOpenRouterCompletion([
+    // Test API call to Perplexity
+    const perplexityResponse = await generatePerplexityCompletion([
+      { role: "system", content: "You are a helpful assistant that generates realistic business case studies in JSON format." },
       { role: "user", content: prompt }
     ], { 
-      model: "qwen/qwen2.5-vl-32b-instruct:free",
-      jsonMode: true 
+      model: "llama-3.1-sonar-small-128k-online",
+      jsonMode: true,
+      temperature: 0.3
     });
     
-    console.log("Qwen model response received");
+    console.log("Perplexity API response received");
     
     // Attempt to parse the response
-    let cleanedContent = qwenResponse;
+    let cleanedContent = perplexityResponse;
     
     // Remove markdown code blocks if present
     if (cleanedContent.includes("```json")) {
       cleanedContent = cleanedContent.replace(/```json\n|\n```/g, "");
-    }
-    
-    // Remove LaTeX \boxed{} wrapper if present (from DeepSeek model)
-    if (cleanedContent.includes("\\boxed{")) {
-      cleanedContent = cleanedContent.replace(/\\boxed\{\s*|\s*\}/g, "");
     }
     
     console.log("Cleaned JSON:\n", cleanedContent.substring(0, 200) + "...");
@@ -99,12 +95,12 @@ async function testQwenModel() {
     }
     
   } catch (error) {
-    console.error("Error testing Qwen model:", error instanceof Error ? error.message : String(error));
+    console.error("Error testing Perplexity API:", error instanceof Error ? error.message : String(error));
   }
 }
 
 // Run the test
-testQwenModel().then(() => {
+testPerplexityModel().then(() => {
   console.log("Test completed");
 }).catch(err => {
   console.error("Test failed:", err);
