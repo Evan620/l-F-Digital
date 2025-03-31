@@ -6,6 +6,7 @@ import { insertBusinessInfoSchema, insertConversationSchema, type Message } from
 import { createChatCompletion } from "./openai";
 import { googleCalendar, hasGoogleCalendarCredentials } from "./googleCalendar";
 import { generateChatCompletion as huggingfaceGenerateChatCompletion, hasHuggingFaceCredentials } from "./huggingface";
+import { generateChatCompletion as openrouterGenerateChatCompletion, hasOpenRouterCredentials } from "./openrouter";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // prefix all routes with /api
@@ -98,35 +99,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let responseContent: string | null = null;
       
       try {
-        // First try Azure OpenAI with GPT-4o model
-        try {
-          console.log("Using Azure OpenAI GPT-4o for service recommendations");
-          responseContent = await createChatCompletion([
-            { role: "user", content: prompt }
-          ], {
-            response_format: { type: "json_object" }
-          });
-        } catch (openaiError) {
-          console.log("Azure OpenAI failed, trying Hugging Face as fallback for service recommendations");
-          
-          // Try Hugging Face as fallback if OpenAI fails
-          if (hasHuggingFaceCredentials()) {
-            try {
-              // Format the prompt for Hugging Face
-              responseContent = await huggingfaceGenerateChatCompletion(
-                [{ role: "user", content: prompt }],
-                "mistralai/Mistral-7B-Instruct-v0.2", // Default model but can be configured
-                { max_new_tokens: 1000 }
-              );
-              console.log("Successfully generated service recommendations with Hugging Face");
-            } catch (huggingfaceError) {
-              console.error("Hugging Face fallback also failed:", huggingfaceError);
-              throw huggingfaceError;
-            }
-          } else {
-            console.log("No Hugging Face credentials available for fallback");
-            throw openaiError;
+        if (hasHuggingFaceCredentials()) {
+          try {
+            console.log("Using Hugging Face DeepSeek-R1 for service recommendations");
+            // Format the prompt for Hugging Face
+            responseContent = await huggingfaceGenerateChatCompletion(
+              [{ role: "user", content: prompt }],
+              "deepseek-ai/DeepSeek-R1",
+              { max_new_tokens: 1500 }
+            );
+            console.log("Successfully generated service recommendations with Hugging Face");
+          } catch (huggingfaceError) {
+            console.error("Hugging Face service failed:", huggingfaceError);
+            throw huggingfaceError;
           }
+        } else {
+          console.log("No Hugging Face credentials available");
+          throw new Error("Hugging Face API key is not available");
         }
         
         if (!responseContent) {
@@ -236,35 +225,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let responseContent: string | null = null;
       
       try {
-        // First try Azure OpenAI with GPT-4o model
-        try {
-          console.log("Using Azure OpenAI GPT-4o for case study generation");
-          responseContent = await createChatCompletion([
-            { role: "user", content: prompt }
-          ], {
-            response_format: { type: "json_object" }
-          });
-        } catch (openaiError) {
-          console.log("Azure OpenAI failed, trying Hugging Face as fallback for case study generation");
-          
-          // Try Hugging Face as fallback if OpenAI fails
-          if (hasHuggingFaceCredentials()) {
-            try {
-              // Format the prompt for Hugging Face
-              responseContent = await huggingfaceGenerateChatCompletion(
-                [{ role: "user", content: prompt }],
-                "mistralai/Mistral-7B-Instruct-v0.2", // Default model but can be configured
-                { max_new_tokens: 1500 }
-              );
-              console.log("Successfully generated case study with Hugging Face");
-            } catch (huggingfaceError) {
-              console.error("Hugging Face fallback also failed:", huggingfaceError);
-              throw huggingfaceError;
-            }
-          } else {
-            console.log("No Hugging Face credentials available for fallback");
-            throw openaiError;
+        if (hasHuggingFaceCredentials()) {
+          try {
+            console.log("Using Hugging Face DeepSeek-R1 for case study generation");
+            // Format the prompt for Hugging Face
+            responseContent = await huggingfaceGenerateChatCompletion(
+              [{ role: "user", content: prompt }],
+              "deepseek-ai/DeepSeek-R1",
+              { max_new_tokens: 1500 }
+            );
+            console.log("Successfully generated case study with Hugging Face");
+          } catch (huggingfaceError) {
+            console.error("Hugging Face service failed:", huggingfaceError);
+            throw huggingfaceError;
           }
+        } else {
+          console.log("No Hugging Face credentials available");
+          throw new Error("Hugging Face API key is not available");
         }
         
         if (!responseContent) {
@@ -436,49 +413,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         let responseContent: string | null = null;
         
-        // First try Azure OpenAI with GPT-4o model
-        try {
-          console.log("Using Azure OpenAI GPT-4o for chat response");
-          responseContent = await createChatCompletion(formattedMessages, {
-            response_format: undefined  // Chat doesn't need JSON format
-          });
-          
-          // Check if we got an error message from the AI service
-          let errorMessage = null;
+        if (hasHuggingFaceCredentials()) {
           try {
-            // Try to parse as JSON to check if it's an error response
-            const parsedResponse = JSON.parse(responseContent || "{}");
-            if (parsedResponse.message && typeof parsedResponse.message === 'string') {
-              console.log("Received error from Azure OpenAI:", parsedResponse.message);
-              errorMessage = parsedResponse.message;
-            }
-          } catch (parseError) {
-            // Not JSON or not an error message, this is the normal flow
+            console.log("Using Hugging Face DeepSeek-R1 for chat response");
+            responseContent = await huggingfaceGenerateChatCompletion(
+              formattedMessages,
+              "deepseek-ai/DeepSeek-R1",
+              { max_new_tokens: 800 }
+            );
+            console.log("Successfully generated response with Hugging Face");
+          } catch (huggingfaceError) {
+            console.error("Hugging Face service failed:", huggingfaceError);
+            throw huggingfaceError;
           }
-          
-          if (errorMessage) {
-            throw new Error("Azure OpenAI unavailable: " + errorMessage);
-          }
-        } catch (openaiError) {
-          console.log("Azure OpenAI failed, trying Hugging Face as fallback");
-          
-          // Try Hugging Face as fallback if OpenAI fails
-          if (hasHuggingFaceCredentials()) {
-            try {
-              responseContent = await huggingfaceGenerateChatCompletion(
-                formattedMessages,
-                "mistralai/Mistral-7B-Instruct-v0.2", // Default model but can be configured
-                { max_new_tokens: 500 }
-              );
-              console.log("Successfully generated response with Hugging Face");
-            } catch (huggingfaceError) {
-              console.error("Hugging Face fallback also failed:", huggingfaceError);
-              throw huggingfaceError;
-            }
-          } else {
-            console.log("No Hugging Face credentials available for fallback");
-            throw openaiError;
-          }
+        } else {
+          console.log("No Hugging Face credentials available");
+          throw new Error("Hugging Face API key is not available");
         }
         
         if (!responseContent) {
@@ -585,35 +535,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let responseContent: string | null = null;
       
       try {
-        // First try Azure OpenAI with GPT-4o model
-        try {
-          console.log("Using Azure OpenAI GPT-4o for ROI calculation");
-          responseContent = await createChatCompletion([
-            { role: "user", content: prompt }
-          ], {
-            response_format: { type: "json_object" }
-          });
-        } catch (openaiError) {
-          console.log("Azure OpenAI failed, trying Hugging Face as fallback for ROI calculation");
-          
-          // Try Hugging Face as fallback if OpenAI fails
-          if (hasHuggingFaceCredentials()) {
-            try {
-              // Format the prompt for Hugging Face
-              responseContent = await huggingfaceGenerateChatCompletion(
-                [{ role: "user", content: prompt }],
-                "mistralai/Mistral-7B-Instruct-v0.2", // Default model but can be configured
-                { max_new_tokens: 1000 }
-              );
-              console.log("Successfully generated ROI with Hugging Face");
-            } catch (huggingfaceError) {
-              console.error("Hugging Face fallback also failed:", huggingfaceError);
-              throw huggingfaceError;
-            }
-          } else {
-            console.log("No Hugging Face credentials available for fallback");
-            throw openaiError;
+        if (hasHuggingFaceCredentials()) {
+          try {
+            console.log("Using Hugging Face DeepSeek-R1 for ROI calculation");
+            // Format the prompt for Hugging Face
+            responseContent = await huggingfaceGenerateChatCompletion(
+              [{ role: "user", content: prompt }],
+              "deepseek-ai/DeepSeek-R1",
+              { max_new_tokens: 1500 }
+            );
+            console.log("Successfully generated ROI with Hugging Face");
+          } catch (huggingfaceError) {
+            console.error("Hugging Face service failed:", huggingfaceError);
+            throw huggingfaceError;
           }
+        } else {
+          console.log("No Hugging Face credentials available");
+          throw new Error("Hugging Face API key is not available");
         }
         
         if (!responseContent) {

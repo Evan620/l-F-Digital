@@ -21,7 +21,7 @@ export function hasHuggingFaceCredentials(): boolean {
  */
 export async function generateTextCompletion(
   prompt: string,
-  modelId: string = "mistralai/Mistral-7B-Instruct-v0.2",
+  modelId: string = "deepseek-ai/DeepSeek-R1",
   options: Record<string, any> = {}
 ): Promise<string> {
   if (!hasHuggingFaceCredentials()) {
@@ -76,7 +76,7 @@ export async function generateTextCompletion(
  */
 export async function generateChatCompletion(
   messages: Array<{ role: string; content: string }>,
-  modelId: string = "mistralai/Mistral-7B-Instruct-v0.2",
+  modelId: string = "deepseek-ai/DeepSeek-R1",
   options: Record<string, any> = {}
 ): Promise<string> {
   if (!hasHuggingFaceCredentials()) {
