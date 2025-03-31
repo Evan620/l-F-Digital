@@ -185,16 +185,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const prompt = `
         Generate a realistic case study based on this query: "${query}"
         
-        L&F Digital is a full-spectrum technology solutions provider with expertise in:
+        L&F Digital offers a full spectrum of technology solutions across the following categories:
         
-        1. Custom Software Development (enterprise applications, mobile apps, web portals)
-        2. AI & Machine Learning (NLP, computer vision, predictive models, recommendation engines)
-        3. Automation & Workflow Optimization (RPA, document processing, business process reengineering)
-        4. Cloud Solutions & Infrastructure (migration, serverless, DevOps, IaC)
-        5. Data Analytics & Business Intelligence (data warehousing, dashboards, real-time analytics)
-        6. Digital Experience & Customer Journey (UX/UI, customer portals, engagement platforms)
-        7. Enterprise Systems Integration (legacy modernization, API management, middleware)
-        8. Cybersecurity & Compliance (security assessment, compliance frameworks, monitoring)
+        - Automation & Workflow Optimization: Process automation, document digitization, RPA, workflow redesign, business process management
+        
+        - AI & Machine Learning: Predictive models, computer vision, NLP, conversational AI, recommendation systems, machine learning operations
+        
+        - Custom Software Development: Enterprise applications, mobile apps, web platforms, IoT solutions, microservices architecture 
+        
+        - Data Analytics & Business Intelligence: Data warehousing, interactive dashboards, predictive analytics, data visualization, data modeling
+        
+        - Cloud Solutions & Infrastructure: Cloud migration, serverless computing, containerization, infrastructure as code, DevOps implementation
+        
+        - Enterprise Systems Integration: API development, middleware solutions, systems consolidation, ETL pipelines, legacy system modernization
+        
+        - Cybersecurity & Compliance: Security assessments, compliance frameworks, attack surface reduction, incident response, security monitoring
+        
+        - Digital Experience & Customer Journey: UX/UI design, customer portals, engagement platforms, personalization engines, omnichannel solutions
         
         Based on the query, create a detailed case study showcasing how L&F Digital's technology solutions solved a specific business challenge. The solution should be comprehensive and may involve multiple service categories.
         
@@ -356,56 +363,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
         You are an AI assistant for L&F Digital (styled as "LÆF"), a full-spectrum digital solutions company.
         Your name is L&F Digital Assistant.
         
-        L&F Digital offers a comprehensive range of technology services across these categories:
+        L&F Digital offers a full spectrum of technology solutions across the following categories:
         
-        1. Custom Software Development
-          - Enterprise applications
-          - Mobile apps (iOS, Android, cross-platform)
-          - Web applications and portals
-          - API development and integration
+        - Automation & Workflow Optimization
+          - Process automation and workflow redesign
+          - Robotic Process Automation (RPA)
+          - Document digitization and processing
+          - Business process management and optimization
+          - Automated quality assurance and testing
         
-        2. AI & Machine Learning Solutions
-          - NLP and conversational AI systems
-          - Computer vision applications
-          - Predictive analytics models
+        - AI & Machine Learning
+          - Predictive analytics and forecasting models
+          - Computer vision solutions
+          - Natural language processing
+          - Conversational AI and chatbots
           - Recommendation systems
-          - Large language model fine-tuning
+          - Machine learning operations (MLOps)
         
-        3. Automation & Workflow Optimization
-          - Process automation (RPA)
-          - Workflow digitization
-          - Document processing
-          - Business process reengineering
+        - Custom Software Development
+          - Enterprise application suites
+          - Mobile applications (iOS, Android, cross-platform)
+          - Web platforms and portals
+          - IoT solutions and embedded systems
+          - Microservices architecture
+          - Low-code/no-code solutions
         
-        4. Cloud Solutions & Infrastructure 
-          - Cloud migration and optimization
-          - Serverless architecture
-          - DevOps implementation
-          - Infrastructure as Code
-        
-        5. Data Analytics & Business Intelligence
-          - Data warehouse design and implementation
-          - Interactive dashboard development
+        - Data Analytics & Business Intelligence
+          - Data warehousing and data lakes
+          - Interactive dashboards and visualization
+          - Predictive analytics and forecasting
+          - Data modeling and ETL/ELT pipelines
           - Real-time analytics systems
-          - ETL/ELT pipeline development
         
-        6. Digital Experience & Customer Journey
-          - UX/UI design
-          - Customer portal development
-          - Engagement platforms
-          - User behavior analytics
+        - Cloud Solutions & Infrastructure
+          - Cloud migration and optimization
+          - Serverless computing and containerization
+          - Infrastructure as Code (IaC)
+          - DevOps implementation and CI/CD
+          - Multi-cloud strategies
         
-        7. Enterprise Systems Integration
-          - Legacy system modernization
-          - API management
+        - Enterprise Systems Integration
+          - API development and management
           - Middleware solutions
-          - SSO and identity management
+          - Legacy system modernization
+          - Systems consolidation
+          - ETL pipelines
         
-        8. Cybersecurity & Compliance
-          - Security assessment and implementation
-          - Compliance frameworks (GDPR, HIPAA, SOC2)
-          - Penetration testing
-          - Security monitoring and response
+        - Cybersecurity & Compliance
+          - Security assessments and audits
+          - Compliance frameworks implementation
+          - Attack surface reduction
+          - Incident response planning
+          - Security monitoring and remediation
+        
+        - Digital Experience & Customer Journey
+          - UX/UI design and development
+          - Customer portals and engagement platforms
+          - Personalization engines
+          - Omnichannel solution implementation
+          - Customer journey mapping and optimization
         
         Our approach: We don't sell pre-packaged solutions. We design custom technology solutions based on each client's unique business challenges and objectives.
         
@@ -506,15 +522,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         - Current Automation Level: ${roiRequest.automationLevel}
         - Implementation Timeline: ${roiRequest.implementationTimeline}
         
-        L&F Digital provides a full spectrum of technology solutions, including:
-        1. Custom Software Development
-        2. AI & Machine Learning
-        3. Automation & Workflow Optimization
-        4. Cloud Solutions & Infrastructure
-        5. Data Analytics & Business Intelligence
-        6. Digital Experience & Customer Journey
-        7. Enterprise Systems Integration
-        8. Cybersecurity & Compliance
+        L&F Digital offers a full spectrum of technology solutions across the following categories:
+        
+        - Automation & Workflow Optimization: Process automation, document digitization, RPA, workflow redesign, business process management
+        
+        - AI & Machine Learning: Predictive models, computer vision, NLP, conversational AI, recommendation systems, machine learning operations
+        
+        - Custom Software Development: Enterprise applications, mobile apps, web platforms, IoT solutions, microservices architecture 
+        
+        - Data Analytics & Business Intelligence: Data warehousing, interactive dashboards, predictive analytics, data visualization, data modeling
+        
+        - Cloud Solutions & Infrastructure: Cloud migration, serverless computing, containerization, infrastructure as code, DevOps implementation
+        
+        - Enterprise Systems Integration: API development, middleware solutions, systems consolidation, ETL pipelines, legacy system modernization
+        
+        - Cybersecurity & Compliance: Security assessments, compliance frameworks, attack surface reduction, incident response, security monitoring
+        
+        - Digital Experience & Customer Journey: UX/UI design, customer portals, engagement platforms, personalization engines, omnichannel solutions
         
         Based on the business goal and parameters, determine which service categories would be most beneficial, and calculate a comprehensive ROI projection.
         
