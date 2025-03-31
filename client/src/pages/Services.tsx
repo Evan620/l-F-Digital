@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, createContext, useContext } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
+import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { 
   ArrowRight, ChevronDown, Download, Filter, CheckCircle2, ArrowDown, Database, 
@@ -1001,7 +1002,7 @@ export default function Services() {
                 />
               ))
             ) : caseStudies.length > 0 ? (
-              caseStudies.slice(0, 6).map((caseStudy, index) => (
+              caseStudies.slice(0, 3).map((caseStudy, index) => (
                 <motion.div
                   key={caseStudy.id || index}
                   initial={{ opacity: 0, y: 20 }}
@@ -1061,10 +1062,12 @@ export default function Services() {
           </div>
           
           <div className="text-center">
-            <Button variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800">
-              View All Case Studies
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
+            <Link href="/case-studies">
+              <Button variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800">
+                View All Case Studies
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </section>
         
