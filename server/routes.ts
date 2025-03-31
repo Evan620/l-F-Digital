@@ -89,12 +89,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           { role: "user", content: prompt }
         ]);
         
-        const parsedResponse = JSON.parse(responseContent);
-        
-        res.json(parsedResponse);
+        let parsedResponse;
+        try {
+          parsedResponse = JSON.parse(responseContent);
+          
+          // Check if we got an error message instead of actual service suggestions
+          if (parsedResponse.message && !parsedResponse.serviceSuggestions) {
+            console.log("AI service unavailable, using fallback:", parsedResponse.message);
+            throw new Error("AI service unavailable");
+          }
+          
+          res.json(parsedResponse);
+        } catch (parseError) {
+          console.error("Failed to parse AI response or received error:", parseError);
+          throw new Error("Invalid AI response format");
+        }
       } catch (error) {
-        console.error("OpenAI API error:", error);
-        // Fallback to return some default services if OpenAI API fails
+        console.error("AI service error:", error instanceof Error ? error.message : String(error));
+        // Fallback to return some default services
         const defaultServices = await storage.getAllServices();
         const fallbackResponse = {
           serviceSuggestions: defaultServices.slice(0, 3).map(service => ({
@@ -147,17 +159,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
           { role: "user", content: prompt }
         ]);
         
-        const parsedResponse = JSON.parse(responseContent);
-        
-        // Save the generated case study
-        if (parsedResponse.caseStudy) {
-          const newCaseStudy = await storage.createCaseStudy(parsedResponse.caseStudy);
-          parsedResponse.caseStudy.id = newCaseStudy.id;
+        let parsedResponse;
+        try {
+          parsedResponse = JSON.parse(responseContent);
+          
+          // Check if we got an error message instead of an actual case study
+          if (parsedResponse.message && !parsedResponse.caseStudy) {
+            console.log("AI service unavailable, using fallback:", parsedResponse.message);
+            throw new Error("AI service unavailable");
+          }
+          
+          // Save the generated case study
+          if (parsedResponse.caseStudy) {
+            const newCaseStudy = await storage.createCaseStudy(parsedResponse.caseStudy);
+            parsedResponse.caseStudy.id = newCaseStudy.id;
+          }
+          
+          res.json(parsedResponse);
+        } catch (parseError) {
+          console.error("Failed to parse AI response or received error:", parseError);
+          throw new Error("Invalid AI response format");
         }
-        
-        res.json(parsedResponse);
       } catch (error) {
-        console.error("OpenAI API error:", error);
+        console.error("AI service error:", error instanceof Error ? error.message : String(error));
         // Return a fallback case study
         const existingCaseStudies = await storage.getAllCaseStudies();
         const fallbackCaseStudy = existingCaseStudies.length > 0 
@@ -245,6 +269,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           response_format: undefined  // Chat doesn't need JSON format
         });
         
+        // Check if we got an error message from the AI service
+        let errorMessage = null;
+        try {
+          // Try to parse as JSON to check if it's an error response
+          const parsedResponse = JSON.parse(responseContent);
+          if (parsedResponse.message && typeof parsedResponse.message === 'string') {
+            console.log("Received error from AI service:", parsedResponse.message);
+            errorMessage = parsedResponse.message;
+          }
+        } catch (parseError) {
+          // Not JSON or not an error message, this is the normal flow
+        }
+        
+        if (errorMessage) {
+          throw new Error("AI service unavailable: " + errorMessage);
+        }
+        
         // Add assistant message
         const assistantMessage: Message = {
           role: "assistant",
@@ -257,9 +298,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         res.json({ message: assistantMessage, conversation: updatedConversation });
       } catch (error) {
-        console.error("OpenAI API error:", error);
+        console.error("AI chat service error:", error instanceof Error ? error.message : String(error));
         
-        // Fallback response if OpenAI fails
+        // Fallback response if AI service fails
         const fallbackMessage: Message = {
           role: "assistant",
           content: "I'm currently experiencing some technical difficulties. Please try again later or contact our team directly for immediate assistance.",
@@ -314,13 +355,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
           { role: "user", content: prompt }
         ]);
         
-        const parsedResponse = JSON.parse(responseContent);
-        
-        res.json(parsedResponse);
+        let parsedResponse;
+        try {
+          parsedResponse = JSON.parse(responseContent);
+          
+          // Check if we got an error message instead of ROI data
+          if (parsedResponse.message && !parsedResponse.estimatedROI) {
+            console.log("AI service unavailable, using fallback:", parsedResponse.message);
+            throw new Error("AI service unavailable");
+          }
+          
+          res.json(parsedResponse);
+          return; // Exit early if successful
+        } catch (parseError) {
+          console.error("Failed to parse AI response or received error:", parseError);
+          throw new Error("Invalid AI response format");
+        }
       } catch (error) {
-        console.error("OpenAI API error:", error);
+        console.error("AI service error:", error instanceof Error ? error.message : String(error));
         
-        // Fallback ROI calculation if OpenAI fails
+        // Fallback ROI calculation if AI service fails
         const baseROI = roiRequest.automationLevel === "Very Low" ? 300 : 
                       roiRequest.automationLevel === "Low" ? 250 :
                       roiRequest.automationLevel === "Medium" ? 200 :
