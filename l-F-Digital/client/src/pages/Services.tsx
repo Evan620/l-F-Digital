@@ -2,9 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { 
-  Filter, CheckCircle2, ArrowDown, Database, Settings, ChevronRight, 
-  Zap, PieChart, Users, Clock, TrendingUp, PlusCircle, MinusCircle,
-  BarChart, LineChart, Rocket, Check
+  ArrowRight, ChevronDown, Download, Filter, CheckCircle2, ArrowDown, Database, 
+  Settings, ChevronRight, Zap, PieChart, Users, Clock, TrendingUp, PlusCircle, 
+  MinusCircle, BarChart, LineChart, Rocket, Check, Sliders, 
+  Terminal, Star
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import { Card, CardContent } from '@/components/ui/card';
@@ -48,6 +49,11 @@ export default function Services() {
   // AI recommendation states
   const [recommendedServices, setRecommendedServices] = useState<(Service & { explanation?: string })[]>([]);
   const [showRecommendations, setShowRecommendations] = useState(false);
+  
+  // Custom solution states
+  const [selectedChallenges, setSelectedChallenges] = useState<string[]>([]);
+  const [customSolutions, setCustomSolutions] = useState<Service[]>([]);
+  const [showCustomSolutions, setShowCustomSolutions] = useState(false);
   
   // Quiz/Game state
   const [quizVisible, setQuizVisible] = useState(false);
@@ -547,72 +553,7 @@ export default function Services() {
             )}
           </div>
           
-          {/* Services filters */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-neutral-800/20 rounded-xl border border-neutral-700 p-5 mb-10"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* Search input */}
-              <div className="md:col-span-2">
-                <div className="relative">
-                  <Input 
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search services..." 
-                    className="w-full bg-neutral-800/40 border-neutral-700 placeholder-neutral-400"
-                  />
-                </div>
-              </div>
-              
-              {/* Category filter */}
-              <div>
-                <Select 
-                  value={selectedCategory} 
-                  onValueChange={setSelectedCategory}
-                >
-                  <SelectTrigger className="bg-neutral-800/40 border-neutral-700">
-                    <span className="flex items-center">
-                      <Filter className="w-4 h-4 mr-2" />
-                      <SelectValue placeholder="Category" />
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {/* Budget filter */}
-              <div>
-                <Select 
-                  value={selectedBudget} 
-                  onValueChange={setSelectedBudget}
-                >
-                  <SelectTrigger className="bg-neutral-800/40 border-neutral-700">
-                    <span className="flex items-center">
-                      <Database className="w-4 h-4 mr-2" />
-                      <SelectValue placeholder="Budget" />
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Any Budget</SelectItem>
-                    <SelectItem value="low">$1K-5K</SelectItem>
-                    <SelectItem value="medium">$5K-15K</SelectItem>
-                    <SelectItem value="high">$15K+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </motion.div>
+          {/* Removed filters section as per request */}
           
           {/* Services grid with all services */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -644,7 +585,7 @@ export default function Services() {
           </div>
         </section>
         
-        {/* Social Proof - Automation in Action (Case Studies) */}
+        {/* Success Stories - Interactive Case Cards */}
         <section className="mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -654,144 +595,92 @@ export default function Services() {
             className="text-center mb-12"
           >
             <span className="inline-block px-3 py-1 rounded-full bg-neutral-800 text-secondary-400 text-sm font-medium mb-4">
-              Automation in Action
+              Success Stories
             </span>
             <h2 className="font-display font-bold text-3xl md:text-4xl text-white mb-4">
               Real Results for Real Businesses
             </h2>
             <p className="text-neutral-300 max-w-2xl mx-auto">
-              Swipe through our case studies to see how we've helped businesses like yours achieve transformative results
+              Quick glimpses of how we've helped businesses solve real challenges with our solutions
             </p>
           </motion.div>
           
-          {/* Case Studies Swiper */}
-          <div className="relative max-w-4xl mx-auto mb-12 h-96">
+          {/* Interactive Mini-Case Study Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {isLoadingCaseStudies ? (
-              <div className="h-full bg-neutral-800/20 animate-pulse rounded-xl"></div>
+              Array(3).fill(0).map((_, i) => (
+                <motion.div
+                  key={`loading-case-${i}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="h-80 bg-neutral-800/20 animate-pulse rounded-xl"
+                />
+              ))
             ) : caseStudies.length > 0 ? (
-              <div className="relative h-full">
-                <AnimatePresence initial={false} mode="wait">
-                  <motion.div
-                    key={activeIndex}
-                    className="absolute inset-0"
-                    initial={{ 
-                      opacity: 0, 
-                      x: swipeDirection === 'left' ? 300 : swipeDirection === 'right' ? -300 : 0
-                    }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ 
-                      opacity: 0, 
-                      x: swipeDirection === 'left' ? -300 : swipeDirection === 'right' ? 300 : 0
-                    }}
-                    transition={{ duration: 0.3 }}
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
-                    dragElastic={0.1}
-                    onDragEnd={(e, { offset, velocity }) => {
-                      const swipe = Math.abs(offset.x) > 100 || Math.abs(velocity.x) > 300;
-                      if (swipe) {
-                        const direction = offset.x > 0 ? 'right' : 'left';
-                        handleSwipe(direction);
-                      }
-                    }}
-                  >
-                    <div className="h-full bg-gradient-to-br from-neutral-800/80 to-neutral-900/80 rounded-xl border border-neutral-700 overflow-hidden shadow-xl">
-                      <div className="h-full p-8 flex flex-col">
-                        <div className="flex justify-between items-start mb-6">
-                          <div>
-                            <span className="inline-block px-2.5 py-1 bg-secondary-900/40 text-secondary-400 text-xs font-medium rounded mb-2">
-                              {caseStudies[activeIndex].industry}
-                            </span>
-                            <h3 className="text-2xl font-bold text-white">{caseStudies[activeIndex].title}</h3>
-                          </div>
-                          <div className="flex gap-1">
-                            {caseStudies.map((_, idx) => (
-                              <motion.div 
-                                key={idx} 
-                                className={`w-2 h-2 rounded-full ${idx === activeIndex ? 'bg-secondary-500' : 'bg-neutral-600'}`}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
-                          <div className="flex flex-col">
-                            <div className="mb-4">
-                              <h4 className="text-neutral-400 text-sm uppercase tracking-wider mb-2">Challenge</h4>
-                              <p className="text-white">{caseStudies[activeIndex].challenge}</p>
-                            </div>
-                            <div>
-                              <h4 className="text-neutral-400 text-sm uppercase tracking-wider mb-2">Solution</h4>
-                              <p className="text-white">{caseStudies[activeIndex].solution}</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex flex-col">
-                            <div className="mb-6">
-                              <h4 className="text-neutral-400 text-sm uppercase tracking-wider mb-2">Results</h4>
-                              <p className="text-white">{caseStudies[activeIndex].results}</p>
-                            </div>
-                            
-                            <div className="mt-auto grid grid-cols-3 gap-2">
-                              {Object.entries(caseStudies[activeIndex].metrics).map(([key, value], idx) => (
-                                <motion.div 
-                                  key={key}
-                                  initial={{ opacity: 0, y: 20 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{ delay: idx * 0.1 }}
-                                  className="bg-neutral-800/40 rounded-lg p-3 text-center"
-                                >
-                                  <span className="block text-2xl font-bold text-secondary-400">{value}</span>
-                                  <span className="text-xs text-neutral-400">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                </motion.div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
+              caseStudies.slice(0, 6).map((caseStudy, index) => (
+                <motion.div
+                  key={caseStudy.id || index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  className="bg-gradient-to-br from-neutral-800/50 to-neutral-900/80 rounded-xl border border-neutral-700 overflow-hidden shadow-xl h-full flex flex-col"
+                >
+                  <div className="p-5 flex flex-col h-full">
+                    <div className="mb-3">
+                      <span className="inline-block px-2.5 py-1 rounded bg-secondary-900/40 text-secondary-400 text-xs font-medium">
+                        {caseStudy.industry}
+                      </span>
+                    </div>
+                    
+                    <h3 className="text-lg font-bold text-white mb-3">{caseStudy.title}</h3>
+                    
+                    <div className="space-y-3 mb-4 flex-grow">
+                      <div>
+                        <h4 className="text-sm text-neutral-400 uppercase font-medium">Challenge</h4>
+                        <p className="text-sm text-neutral-300 line-clamp-2">{caseStudy.challenge}</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-sm text-neutral-400 uppercase font-medium">Solution</h4>
+                        <p className="text-sm text-neutral-300 line-clamp-2">{caseStudy.solution}</p>
                       </div>
                     </div>
-                  </motion.div>
-                </AnimatePresence>
-                
-                {/* Swipe instruction */}
-                <motion.div 
-                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-neutral-400 text-sm flex items-center gap-2 bg-neutral-800/40 px-3 py-1.5 rounded-full"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1 }}
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <motion.path 
-                      d="M10 19l-7-7m0 0l7-7m-7 7h18" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                      initial={{ x: 5 }}
-                      animate={{ x: 0 }}
-                      transition={{ repeat: Infinity, duration: 1, repeatType: "mirror" }}
-                    />
-                  </svg>
-                  Swipe to explore more case studies
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <motion.path 
-                      d="M14 5l7 7m0 0l-7 7m7-7H3" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                      initial={{ x: -5 }}
-                      animate={{ x: 0 }}
-                      transition={{ repeat: Infinity, duration: 1, repeatType: "mirror" }}
-                    />
-                  </svg>
+                    
+                    <div className="mt-auto">
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="text-sm text-neutral-400 uppercase font-medium">Key Result</h4>
+                      </div>
+                      
+                      <div className="bg-neutral-800/40 rounded-lg p-2 text-center border border-neutral-700">
+                        {Object.entries(caseStudy.metrics)[0] && (
+                          <>
+                            <span className="block text-lg font-bold text-secondary-400">
+                              {Object.entries(caseStudy.metrics)[0][1]}
+                            </span>
+                            <span className="text-xs text-neutral-400">
+                              {Object.entries(caseStudy.metrics)[0][0].replace(/([A-Z])/g, ' $1').trim()}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
-              </div>
+              ))
             ) : (
-              <div className="h-full flex items-center justify-center bg-neutral-800/20 rounded-xl border border-neutral-700">
+              <div className="col-span-3 text-center py-16 bg-neutral-800/20 rounded-xl border border-neutral-700">
                 <p className="text-neutral-400">No case studies available</p>
               </div>
             )}
+          </div>
+          
+          <div className="text-center">
+            <Button variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800">
+              View All Case Studies
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </section>
         
@@ -854,33 +743,142 @@ export default function Services() {
                 </div>
                 
                 <div className="mt-6">
-                  <Button className="bg-primary-600 hover:bg-primary-500 w-full">
-                    Generate Custom Solution Stack
+                  <Button 
+                    className="bg-primary-600 hover:bg-primary-500 w-full"
+                    disabled={loading || selectedChallenges.length === 0}
+                    onClick={async () => {
+                      if (selectedChallenges.length === 0) {
+                        toast({
+                          title: "No challenges selected",
+                          description: "Please select at least one business challenge",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      
+                      setLoading(true);
+                      try {
+                        // In a real app, we would call API with selected challenges
+                        // For now, filter services that match the challenges
+                        const challengeKeywords = selectedChallenges.flatMap(
+                          challenge => challenge.toLowerCase().split(' ')
+                        );
+                        
+                        // Find services related to the selected challenges
+                        const matchingServices = allServices.filter(service => {
+                          // Check if service description or features match any challenge keywords
+                          const description = service.description.toLowerCase();
+                          const features = service.features?.join(' ').toLowerCase() || '';
+                          
+                          return challengeKeywords.some(keyword => 
+                            description.includes(keyword) || features.includes(keyword)
+                          );
+                        });
+                        
+                        // Use top 3 services or fallback to first 3 services
+                        setCustomSolutions(
+                          matchingServices.length > 0 
+                            ? matchingServices.slice(0, 3) 
+                            : allServices.slice(0, 3)
+                        );
+                        setShowCustomSolutions(true);
+                        
+                        // In future, we would use OpenAI API to get better recommendations
+                        toast({
+                          title: "Solution Stack Generated",
+                          description: `Based on your ${selectedChallenges.length} selected challenges`,
+                        });
+                      } catch (error) {
+                        toast({
+                          title: "Failed to generate solution",
+                          description: "Please try again or contact support",
+                          variant: "destructive",
+                        });
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                  >
+                    {loading ? 'Generating...' : 'Generate Custom Solution Stack'}
                   </Button>
                 </div>
               </div>
               
               <div className="bg-neutral-900/50 rounded-xl border border-neutral-800 p-6">
                 <h3 className="text-xl font-bold text-white mb-4">Your Solution Preview</h3>
-                <div className="flex items-center justify-center h-64">
-                  <div className="text-center text-neutral-400">
-                    <svg 
-                      className="w-12 h-12 mx-auto mb-3 text-neutral-500" 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={1} 
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" 
-                      />
-                    </svg>
-                    <p>Select challenges to build your custom solution stack</p>
+                
+                {showCustomSolutions && customSolutions.length > 0 ? (
+                  <div className="space-y-4">
+                    {customSolutions.map((service, index) => (
+                      <motion.div
+                        key={service.id || index}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        className="bg-neutral-800/40 border border-neutral-700 rounded-lg p-3 flex items-start gap-3"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-primary-900/40 text-primary-400 flex items-center justify-center flex-shrink-0">
+                          {index === 0 ? (
+                            <Star className="h-4 w-4" />
+                          ) : (
+                            <CheckCircle2 className="h-4 w-4" />
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="text-white font-medium">{service.name}</h4>
+                          <p className="text-xs text-neutral-400 line-clamp-2 mt-1">{service.description}</p>
+                          
+                          {index === 0 && (
+                            <div className="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-primary-900/30 text-primary-400 text-xs rounded">
+                              <Star className="h-3 w-3" /> Primary recommendation
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                    
+                    <div className="mt-4 pt-4 border-t border-neutral-800">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full justify-center border-primary-500/30 text-primary-400 hover:bg-primary-900/20"
+                      >
+                        View detailed implementation plan
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="flex items-center justify-center h-64">
+                    <div className="text-center text-neutral-400">
+                      {selectedChallenges.length > 0 ? (
+                        <>
+                          <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-primary-500/50" />
+                          <p>{selectedChallenges.length} challenge{selectedChallenges.length !== 1 ? 's' : ''} selected</p>
+                          <p className="mt-2 text-sm">Click "Generate Custom Solution Stack" to continue</p>
+                        </>
+                      ) : (
+                        <>
+                          <svg 
+                            className="w-12 h-12 mx-auto mb-3 text-neutral-500" 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={1} 
+                              d="M12 6v6m0 0v6m0-6h6m-6 0H6" 
+                            />
+                          </svg>
+                          <p>Select challenges to build your custom solution stack</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
@@ -1603,6 +1601,20 @@ function ExchangeItem({ title, description, icon }: { title: string, description
 // Challenge Item Component
 function Challenge({ title, description, icon }: { title: string, description: string, icon: React.ReactNode }) {
   const [selected, setSelected] = useState(false);
+  
+  // Add to global state for challenges when selected
+  useEffect(() => {
+    if (selected) {
+      setSelectedChallenges((prev: string[]) => {
+        if (!prev.includes(title)) {
+          return [...prev, title];
+        }
+        return prev;
+      });
+    } else {
+      setSelectedChallenges((prev: string[]) => prev.filter((challenge: string) => challenge !== title));
+    }
+  }, [selected, title]);
   
   return (
     <motion.div
