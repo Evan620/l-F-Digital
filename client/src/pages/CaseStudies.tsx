@@ -39,6 +39,7 @@ export default function CaseStudies() {
   const [estimatedRoi, setEstimatedRoi] = useState('0');
   const [userIndustry, setUserIndustry] = useState('technology');
   const [showGalaxy, setShowGalaxy] = useState(false);
+  const [showGoogleCalendar, setShowGoogleCalendar] = useState(false);
 
   // Detect industry based on referrer (simplified version)
   useEffect(() => {
@@ -485,10 +486,21 @@ export default function CaseStudies() {
                     </Progress>
                   </div>
 
-                  <Button className="w-full">
+                  <Button 
+                    className="w-full"
+                    onClick={() => setShowGoogleCalendar(true)}
+                  >
                     Begin Your Success Story
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </Button>
+
+                  {/* Google Calendar Booking Dialog */}
+                  {showGoogleCalendar && (
+                    <GoogleCalendarBooking 
+                      onClose={() => setShowGoogleCalendar(false)}
+                      serviceType="Business Consultation"
+                    />
+                  )}
                 </div>
               </div>
             </div>
