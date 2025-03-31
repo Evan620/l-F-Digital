@@ -25,11 +25,14 @@ import InteractiveCaseStudyCard from '@/components/InteractiveCaseStudyCard';
 import SocialProofGalaxy from '@/components/SocialProofGalaxy';
 import CaseStudyGenerator from '@/components/CaseStudyGenerator';
 import ROICalculator from '@/components/ROICalculator';
+import AIChatInterface from '@/components/AIChatInterface';
+import { useAI } from '@/context/AIContext';
 
 export default function CaseStudies() {
   const { toast } = useToast();
-  const [selectedIndustry, setSelectedIndustry] = useState('all');
-  const [selectedChallengeType, setSelectedChallengeType] = useState('all');
+  const { isChatOpen, toggleChat } = useAI();
+  const [selectedIndustry, setSelectedIndustry] = useState('');
+  const [selectedChallengeType, setSelectedChallengeType] = useState('');
   const [resultsTimeframe, setResultsTimeframe] = useState(6);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedCaseStudy, setSelectedCaseStudy] = useState<CaseStudy | null>(null);
@@ -64,17 +67,17 @@ export default function CaseStudies() {
   // Filter case studies based on selected filters
   const filteredCaseStudies = caseStudies.filter((study) => {
     const matchesIndustry = 
-      selectedIndustry === 'all' || 
+      selectedIndustry === '' || 
       study.industry.toLowerCase() === selectedIndustry.toLowerCase();
 
     // Simplified challenge type matching - this would be more sophisticated in a real app
-    const matchesChallengeType = selectedChallengeType === 'all';
+    const matchesChallengeType = selectedChallengeType === '';
 
     return matchesIndustry && matchesChallengeType;
   });
 
   // Get unique industries for filtering
-  const industries = ['all', ...Array.from(new Set(caseStudies.map(study => study.industry.toLowerCase())))];
+  const industries = ['', ...Array.from(new Set(caseStudies.map(study => study.industry.toLowerCase())))];
 
   // Handle selecting a case study for details
   const handleSelectCaseStudy = (caseStudy: CaseStudy) => {
@@ -237,7 +240,7 @@ export default function CaseStudies() {
             </p>
           </motion.div>
 
-          
+
 
           {/* Case Study Cards Grid - Interactive Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
@@ -262,8 +265,8 @@ export default function CaseStudies() {
                 <Button 
                   variant="outline" 
                   onClick={() => {
-                    setSelectedIndustry('all');
-                    setSelectedChallengeType('all');
+                    setSelectedIndustry('');
+                    setSelectedChallengeType('');
                   }}
                 >
                   Reset Filters
@@ -463,6 +466,9 @@ export default function CaseStudies() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* AI Chat Interface */}
+      <AIChatInterface isOpen={isChatOpen} onToggle={toggleChat} />
     </div>
   );
 }
