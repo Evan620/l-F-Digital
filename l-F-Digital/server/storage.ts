@@ -193,28 +193,107 @@ export class MemStorage implements IStorage {
   // Initialize with default services
   private initDefaultServices() {
     const defaultServices: InsertService[] = [
+      // Automation & Workflow Optimization Category
       {
-        name: "Workflow Automation",
-        description: "Eliminate repetitive tasks and streamline processes with custom AI-powered automation solutions.",
-        features: ["Custom workflow design", "API integrations", "24/7 automated execution"],
-        averageROI: "300%",
-        category: "Automation",
+        name: "Intelligent Process Automation",
+        description: "Eliminate repetitive tasks and streamline business processes with custom AI-powered automation solutions.",
+        features: ["Custom workflow design", "Document processing automation", "Cross-system integration", "Error handling & notifications", "Performance analytics"],
+        averageROI: "300-400%",
+        category: "Automation & Workflow Optimization",
         iconKey: "lightning-bolt"
       },
       {
-        name: "Predictive Analytics",
-        description: "Leverage AI to forecast trends, customer behavior, and business outcomes with precision.",
-        features: ["Custom ML models", "Interactive dashboards", "Trend forecasting"],
-        averageROI: "250%",
-        category: "Analytics",
-        iconKey: "chart-pie"
+        name: "Robotic Process Automation (RPA)",
+        description: "Deploy software robots to handle repetitive digital tasks with precision and speed.",
+        features: ["UI-based automation", "Scheduled execution", "Business rule integration", "Exception handling", "Workflow orchestration"],
+        averageROI: "250-350%",
+        category: "Automation & Workflow Optimization",
+        iconKey: "settings"
+      },
+      
+      // AI & Machine Learning Category
+      {
+        name: "Predictive Analytics Suite",
+        description: "Leverage advanced machine learning to forecast trends, customer behavior, and business outcomes with high precision.",
+        features: ["Custom ML models", "Interactive dashboards", "Trend forecasting", "Anomaly detection", "Prescriptive recommendations"],
+        averageROI: "250-320%",
+        category: "AI & Machine Learning",
+        iconKey: "bar-chart"
       },
       {
-        name: "AI Chatbots & Assistants",
-        description: "Enhance customer interactions with intelligent AI assistants that understand context and intent.",
-        features: ["Natural language processing", "Multilingual support", "Sentiment analysis"],
-        averageROI: "210%",
-        category: "Customer Experience",
+        name: "Conversational AI Platform",
+        description: "Enhance customer interactions with intelligent assistants that understand context, intent, and sentiment.",
+        features: ["Natural language processing", "Multilingual support", "Sentiment analysis", "Seamless handoff to humans", "Continuous learning"],
+        averageROI: "210-280%",
+        category: "AI & Machine Learning",
+        iconKey: "users"
+      },
+      
+      // Custom Software Development Category
+      {
+        name: "Enterprise Application Suite",
+        description: "Custom-built software solutions designed specifically for your business requirements and workflows.",
+        features: ["Tailored user experience", "Legacy system integration", "Scalable architecture", "Mobile companion apps", "Continuous delivery pipeline"],
+        averageROI: "180-300%",
+        category: "Custom Software Development",
+        iconKey: "rocket"
+      },
+      {
+        name: "Mobile Application Development",
+        description: "Native and cross-platform mobile solutions that deliver exceptional user experiences across all devices.",
+        features: ["iOS & Android development", "Offline functionality", "Push notifications", "Analytics integration", "Secure authentication"],
+        averageROI: "200-280%",
+        category: "Custom Software Development",
+        iconKey: "rocket"
+      },
+      
+      // Data Analytics & Business Intelligence Category
+      {
+        name: "Data Warehouse & Analytics",
+        description: "Centralize, organize, and analyze your business data to uncover insights and drive strategic decisions.",
+        features: ["ETL pipeline development", "Data modeling", "Interactive dashboards", "Self-service reporting", "Real-time analytics"],
+        averageROI: "220-330%",
+        category: "Data Analytics & Business Intelligence",
+        iconKey: "bar-chart"
+      },
+      
+      // Cloud Solutions & Infrastructure Category
+      {
+        name: "Cloud Migration & Optimization",
+        description: "Strategic migration to cloud platforms with architecture optimization for performance, cost, and scalability.",
+        features: ["Cloud readiness assessment", "Migration planning", "Infrastructure as Code", "Cost optimization", "24/7 monitoring"],
+        averageROI: "180-250%",
+        category: "Cloud Solutions & Infrastructure",
+        iconKey: "cloud"
+      },
+      
+      // Enterprise Systems Integration Category
+      {
+        name: "API Strategy & Integration",
+        description: "Connect disparate systems and platforms through robust API development and management.",
+        features: ["API design & development", "Integration strategy", "Middleware solutions", "Performance monitoring", "Documentation & security"],
+        averageROI: "190-280%",
+        category: "Enterprise Systems Integration",
+        iconKey: "layers"
+      },
+      
+      // Cybersecurity & Compliance Category
+      {
+        name: "Security Assessment & Implementation",
+        description: "Comprehensive security solutions that protect your critical assets and ensure regulatory compliance.",
+        features: ["Vulnerability assessment", "Security architecture", "Compliance frameworks", "Incident response planning", "Security monitoring"],
+        averageROI: "200-350%",
+        category: "Cybersecurity & Compliance",
+        iconKey: "shield"
+      },
+      
+      // Digital Experience & Customer Journey Category
+      {
+        name: "Customer Experience Transformation",
+        description: "Reimagine your customer interactions through digital channels with intuitive, engaging experiences.",
+        features: ["UX/UI design", "Customer journey mapping", "Omnichannel integration", "A/B testing", "Behavioral analytics"],
+        averageROI: "220-310%",
+        category: "Digital Experience & Customer Journey",
         iconKey: "users"
       }
     ];

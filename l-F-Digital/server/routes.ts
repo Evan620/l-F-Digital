@@ -54,10 +54,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const services = await storage.getAllServices();
 
       const prompt = `
-        Based on the following business challenge: "${businessChallenge}"
+        As a senior digital transformation consultant for L&F Digital, analyze this business challenge: "${businessChallenge}"
         
-        Please recommend up to 3 of our services that would be most helpful.
-        Choose from this list of our services:
+        L&F Digital offers a full spectrum of technology solutions including:
+        1. Custom Software Development - Building tailored applications, platforms, and digital products
+        2. AI & Machine Learning Solutions - Predictive models, NLP, computer vision, recommendation systems
+        3. Automation & Workflow Optimization - Process automation, workflow digitization, RPA
+        4. Cloud Solutions & Infrastructure - Cloud migration, serverless architecture, DevOps
+        5. Data Analytics & Business Intelligence - Data warehousing, dashboards, predictive analytics
+        6. Digital Experience & Customer Journey - UX/UI design, customer portals, engagement platforms
+        7. Enterprise Systems Integration - API development, system integration, middleware solutions
+        8. Cybersecurity & Compliance - Security audits, implementation, incident response strategies
+        
+        Here are our existing services:
         ${services.map(service => `
           - ${service.name}: ${service.description}
             Features: ${service.features.join(', ')}
@@ -66,23 +75,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ID: ${service.id}
         `).join('\n')}
         
+        Instructions:
+        1. Recommend 3 solutions that directly address the business challenge
+        2. Be creative - if our existing services don't perfectly match the needs, suggest NEW custom solutions that would fit
+        3. For new suggested services, use id: 0 and set isNew: true
+        4. For each service, explain specifically how it addresses this business challenge
+        5. Include estimated timeline and ROI projections customized to this scenario
+        
         Return your recommendation as JSON in this exact format:
         {
           "serviceSuggestions": [
             {
               "id": number,
               "name": string,
-              "description": string,
+              "description": string, 
               "features": string[],
               "averageROI": string,
               "category": string,
               "iconKey": string,
-              "explanation": string
+              "explanation": string,
+              "implementationTimeWeeks": number,
+              "isNew": boolean
             }
           ]
         }
         
-        Include an "explanation" field for each service explaining why it's a good fit for this specific challenge.
+        For iconKey, choose from: "rocket", "zap", "bar-chart", "users", "settings", "layers", "shield", "cloud"
+        Make recommendations highly relevant, specific, and tailored to the exact business challenge.
       `;
       
       try {
@@ -158,7 +177,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const prompt = `
         Generate a realistic case study based on this query: "${query}"
         
-        The case study should demonstrate how L&F Digital's AI solutions solved a specific business problem.
+        L&F Digital is a full-spectrum technology solutions provider with expertise in:
+        
+        1. Custom Software Development (enterprise applications, mobile apps, web portals)
+        2. AI & Machine Learning (NLP, computer vision, predictive models, recommendation engines)
+        3. Automation & Workflow Optimization (RPA, document processing, business process reengineering)
+        4. Cloud Solutions & Infrastructure (migration, serverless, DevOps, IaC)
+        5. Data Analytics & Business Intelligence (data warehousing, dashboards, real-time analytics)
+        6. Digital Experience & Customer Journey (UX/UI, customer portals, engagement platforms)
+        7. Enterprise Systems Integration (legacy modernization, API management, middleware)
+        8. Cybersecurity & Compliance (security assessment, compliance frameworks, monitoring)
+        
+        Based on the query, create a detailed case study showcasing how L&F Digital's technology solutions solved a specific business challenge. The solution should be comprehensive and may involve multiple service categories.
         
         Return your case study as JSON in this exact format:
         {
@@ -168,17 +198,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "challenge": string,
             "solution": string,
             "results": string,
+            "primaryServiceCategory": string,
+            "secondaryServiceCategories": string[],
             "metrics": {
               "key1": "value1",
               "key2": "value2",
               "key3": "value3"
             },
+            "timeline": string,
+            "teamSize": string,
+            "technologiesUsed": string[],
             "isGenerated": true
           }
         }
         
-        The metrics should include 3 key performance indicators with their values.
-        Make sure the case study is realistic, data-driven, and showcases impressive but believable results.
+        - The challenge should be specific and detail the actual business problems faced
+        - The solution should describe the technical implementation with enough detail to be credible
+        - Include relevant technologies and approaches used
+        - The metrics should include 3 key performance indicators with impressive but believable values
+        - Make the case study realistic, data-driven, and highly compelling
       `;
       
       try {
@@ -307,19 +345,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Use OpenAI to generate a response
       const systemPrompt = `
-        You are an AI assistant for L&F Digital, a company that provides AI-driven digital transformation solutions.
+        You are an AI assistant for L&F Digital (styled as "LÆF"), a full-spectrum digital solutions company.
         Your name is L&F Digital Assistant.
         
-        L&F Digital offers services like:
-        - Workflow Automation
-        - Predictive Analytics
-        - AI Chatbots & Assistants
-        - Custom AI Models
-        - Integration Services
+        L&F Digital offers a comprehensive range of technology services across these categories:
+        
+        1. Custom Software Development
+          - Enterprise applications
+          - Mobile apps (iOS, Android, cross-platform)
+          - Web applications and portals
+          - API development and integration
+        
+        2. AI & Machine Learning Solutions
+          - NLP and conversational AI systems
+          - Computer vision applications
+          - Predictive analytics models
+          - Recommendation systems
+          - Large language model fine-tuning
+        
+        3. Automation & Workflow Optimization
+          - Process automation (RPA)
+          - Workflow digitization
+          - Document processing
+          - Business process reengineering
+        
+        4. Cloud Solutions & Infrastructure 
+          - Cloud migration and optimization
+          - Serverless architecture
+          - DevOps implementation
+          - Infrastructure as Code
+        
+        5. Data Analytics & Business Intelligence
+          - Data warehouse design and implementation
+          - Interactive dashboard development
+          - Real-time analytics systems
+          - ETL/ELT pipeline development
+        
+        6. Digital Experience & Customer Journey
+          - UX/UI design
+          - Customer portal development
+          - Engagement platforms
+          - User behavior analytics
+        
+        7. Enterprise Systems Integration
+          - Legacy system modernization
+          - API management
+          - Middleware solutions
+          - SSO and identity management
+        
+        8. Cybersecurity & Compliance
+          - Security assessment and implementation
+          - Compliance frameworks (GDPR, HIPAA, SOC2)
+          - Penetration testing
+          - Security monitoring and response
+        
+        Our approach: We don't sell pre-packaged solutions. We design custom technology solutions based on each client's unique business challenges and objectives.
         
         Keep responses professional but conversational, helpful, and concise.
         If asked about pricing, explain that it depends on project scope and suggest a consultation.
         If you don't know something specific about L&F Digital, be honest about it.
+        Emphasize the full breadth of our services - we are not just an AI or automation company.
       `;
       
       try {
@@ -404,7 +489,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Try to use OpenAI to generate a realistic ROI projection
       const prompt = `
-        Calculate a realistic ROI projection for a business with these parameters:
+        As a digital transformation financial analyst, calculate a detailed ROI projection for implementing technology solutions for a business with these parameters:
+        
         - Industry: ${roiRequest.industry}
         - Annual Revenue: ${roiRequest.annualRevenue}
         - Business Goal: ${roiRequest.businessGoal}
@@ -412,15 +498,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         - Current Automation Level: ${roiRequest.automationLevel}
         - Implementation Timeline: ${roiRequest.implementationTimeline}
         
+        L&F Digital provides a full spectrum of technology solutions, including:
+        1. Custom Software Development
+        2. AI & Machine Learning
+        3. Automation & Workflow Optimization
+        4. Cloud Solutions & Infrastructure
+        5. Data Analytics & Business Intelligence
+        6. Digital Experience & Customer Journey
+        7. Enterprise Systems Integration
+        8. Cybersecurity & Compliance
+        
+        Based on the business goal and parameters, determine which service categories would be most beneficial, and calculate a comprehensive ROI projection.
+        
         Return your projection as JSON in this exact format:
         {
           "estimatedROI": "percentage",
           "costReduction": "dollar amount per year",
           "timelineMonths": number,
-          "potentialSavings": "dollar amount per year"
+          "potentialSavings": "dollar amount per year",
+          "recommendedServiceCategories": ["Category 1", "Category 2"],
+          "keyBenefits": ["Benefit 1", "Benefit 2", "Benefit 3"],
+          "implementationStages": [
+            {"stage": "Planning", "duration": "X weeks", "description": "Description"},
+            {"stage": "Development", "duration": "X weeks", "description": "Description"},
+            {"stage": "Deployment", "duration": "X weeks", "description": "Description"},
+            {"stage": "Optimization", "duration": "X weeks", "description": "Description"}
+          ]
         }
         
-        Make the projection realistic but impressive, with higher ROI for businesses with low automation and urgent implementation timelines.
+        The projection should be realistic but impressive, with:
+        - Higher ROI for businesses with low automation
+        - Faster timelines for urgent implementation
+        - Industry-specific insights and terminology
+        - Specific technology recommendations matching the business goals
       `;
       
       try {
@@ -477,12 +587,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const finalROI = Math.round(baseROI * timelineMultiplier);
         const costReduction = Math.round(revenueEstimate * finalROI / 100 * 0.05);
         
+        // Enhanced fallback with more dynamic content based on the business goal
+        const goalLowerCase = roiRequest.businessGoal.toLowerCase();
+        
+        // Determine relevant service categories based on keywords in the goal
+        const recommendedCategories = [];
+        if (goalLowerCase.includes('automat') || goalLowerCase.includes('workflow') || goalLowerCase.includes('process')) {
+          recommendedCategories.push("Automation & Workflow Optimization");
+        }
+        if (goalLowerCase.includes('ai') || goalLowerCase.includes('intelligen') || goalLowerCase.includes('predict')) {
+          recommendedCategories.push("AI & Machine Learning");
+        }
+        if (goalLowerCase.includes('data') || goalLowerCase.includes('analytic') || goalLowerCase.includes('insight')) {
+          recommendedCategories.push("Data Analytics & Business Intelligence");
+        }
+        if (goalLowerCase.includes('cloud') || goalLowerCase.includes('infrastruct') || goalLowerCase.includes('scale')) {
+          recommendedCategories.push("Cloud Solutions & Infrastructure");
+        }
+        if (goalLowerCase.includes('customer') || goalLowerCase.includes('experience') || goalLowerCase.includes('interface')) {
+          recommendedCategories.push("Digital Experience & Customer Journey");
+        }
+        if (goalLowerCase.includes('integrat') || goalLowerCase.includes('connect') || goalLowerCase.includes('system')) {
+          recommendedCategories.push("Enterprise Systems Integration");
+        }
+        if (goalLowerCase.includes('app') || goalLowerCase.includes('software') || goalLowerCase.includes('develop')) {
+          recommendedCategories.push("Custom Software Development");
+        }
+        if (goalLowerCase.includes('secur') || goalLowerCase.includes('complian') || goalLowerCase.includes('protect')) {
+          recommendedCategories.push("Cybersecurity & Compliance");
+        }
+        
+        // If no categories matched, provide default ones
+        if (recommendedCategories.length === 0) {
+          recommendedCategories.push("Automation & Workflow Optimization");
+          recommendedCategories.push("Data Analytics & Business Intelligence");
+        }
+        
+        // Limit to top 3 categories
+        const topCategories = recommendedCategories.slice(0, 3);
+        
+        // Timeline calculation
+        const timelineMonths = roiRequest.implementationTimeline === "ASAP" ? 3 : 
+                            roiRequest.implementationTimeline === "3-6 Months" ? 6 : 9;
+        
+        // Implementation stages with realistic durations
+        const implementationStages = [
+          {
+            stage: "Planning & Discovery", 
+            duration: `${Math.ceil(timelineMonths * 0.2)} weeks`,
+            description: "Requirements gathering, technical assessment, and solution design"
+          },
+          {
+            stage: "Development & Integration", 
+            duration: `${Math.ceil(timelineMonths * 0.5)} weeks`,
+            description: "Solution building, integration with existing systems, and initial testing"
+          },
+          {
+            stage: "Deployment & Training", 
+            duration: `${Math.ceil(timelineMonths * 0.2)} weeks`,
+            description: "Implementation, user training, and handover"
+          },
+          {
+            stage: "Optimization", 
+            duration: `${Math.ceil(timelineMonths * 0.3)} weeks`,
+            description: "Performance tuning, additional features, and feedback incorporation"
+          }
+        ];
+        
+        // Key benefits based on the goal and industry
+        const keyBenefits = [
+          `${finalROI}% ROI through improved efficiency and reduced operational costs`,
+          `Reduced manual workload allowing your team to focus on strategic initiatives`,
+          `Enhanced data-driven decision making with real-time insights`
+        ];
+        
+        // Complete fallback response with all fields
         const fallbackResponse = {
           estimatedROI: `${finalROI}%`,
           costReduction: `$${(costReduction).toLocaleString()}/year`,
-          timelineMonths: roiRequest.implementationTimeline === "ASAP" ? 3 : 
-                        roiRequest.implementationTimeline === "3-6 Months" ? 6 : 9,
-          potentialSavings: `$${(costReduction * 3).toLocaleString()}/year`
+          timelineMonths: timelineMonths,
+          potentialSavings: `$${(costReduction * 3).toLocaleString()}/year`,
+          recommendedServiceCategories: topCategories,
+          keyBenefits: keyBenefits,
+          implementationStages: implementationStages
         };
         
         res.json(fallbackResponse);
