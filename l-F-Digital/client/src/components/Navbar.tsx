@@ -38,14 +38,14 @@ export default function Navbar() {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#services" className="text-neutral-300 hover:text-white transition-colors duration-200">
+            <Link href="/services" className="text-neutral-300 hover:text-white transition-colors duration-200">
               Services
-            </a>
+            </Link>
+            <Link href="/case-studies" className="text-neutral-300 hover:text-white transition-colors duration-200">
+              Case Studies
+            </Link>
             <a href="#ai-tools" className="text-neutral-300 hover:text-white transition-colors duration-200">
               AI Tools
-            </a>
-            <a href="#case-studies" className="text-neutral-300 hover:text-white transition-colors duration-200">
-              Case Studies
             </a>
             <a href="#contact" className="text-neutral-300 hover:text-white transition-colors duration-200">
               Contact
@@ -80,14 +80,14 @@ export default function Navbar() {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-neutral-800 border-b border-neutral-700">
           <div className="px-4 py-3 space-y-1">
-            <a href="#services" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
+            <Link href="/services" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               Services
-            </a>
+            </Link>
+            <Link href="/case-studies" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
+              Case Studies
+            </Link>
             <a href="#ai-tools" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               AI Tools
-            </a>
-            <a href="#case-studies" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
-              Case Studies
             </a>
             <a href="#contact" className="block py-2 text-neutral-300 hover:text-white transition-colors duration-200">
               Contact
