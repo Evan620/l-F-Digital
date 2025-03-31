@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import { insertBusinessInfoSchema, insertConversationSchema, type Message } from "@shared/schema";
+import { createChatCompletion } from "./openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // prefix all routes with /api
@@ -49,16 +50,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
         businessChallenge: z.string().min(5).max(500),
       }).parse(req.body);
       
-      // Get services to filter a relevant set based on the business challenge
-      const services = await storage.getAllServices();
+      const prompt = `
+        Based on this business challenge: "${businessChallenge}"
+        
+        Recommend the most appropriate services from L&F Digital's offerings to address this challenge.
+        L&F Digital offers a full spectrum of technology solutions across the following categories:
+        
+        - Automation & Workflow Optimization: Process automation, document digitization, RPA, workflow redesign, business process management
+        
+        - AI & Machine Learning: Predictive models, computer vision, NLP, conversational AI, recommendation systems, machine learning operations
+        
+        - Custom Software Development: Enterprise applications, mobile apps, web platforms, IoT solutions, microservices architecture 
+        
+        - Data Analytics & Business Intelligence: Data warehousing, interactive dashboards, predictive analytics, data visualization, data modeling
+        
+        - Cloud Solutions & Infrastructure: Cloud migration, serverless computing, containerization, infrastructure as code, DevOps implementation
+        
+        - Enterprise Systems Integration: API development, middleware solutions, systems consolidation, ETL pipelines, legacy system modernization
+        
+        - Cybersecurity & Compliance: Security assessments, compliance frameworks, attack surface reduction, incident response, security monitoring
+        
+        - Digital Experience & Customer Journey: UX/UI design, customer portals, engagement platforms, personalization engines, omnichannel solutions
+        
+        Return a JSON response with three service recommendations from our catalog that would best address the business challenge. Format your response as follows:
+        {
+          "serviceSuggestions": [
+            {
+              "id": 1, 
+              "name": "Service Name",
+              "description": "Detailed service description",
+              "category": "Category from the list above",
+              "features": ["Feature 1", "Feature 2", "Feature 3"],
+              "benefits": ["Benefit 1", "Benefit 2", "Benefit 3"],
+              "timeline": "Estimated implementation timeline",
+              "maturityLevel": "Established"
+            },
+            {second suggestion with same structure},
+            {third suggestion with same structure}
+          ]
+        }
+
+        Each suggestion should be comprehensive, tailored to the specific business challenge, and match one of our existing service categories. Be specific with the service name and provide a detailed, compelling description.
+      `;
       
-      // Return placeholder response - this is temporary until we implement a new AI service
-      res.status(503).json({
-        message: "Service recommendation AI temporarily unavailable",
-        error: "AI services are being reconfigured. Please try again later."
-      });
+      try {
+        // Use Azure OpenAI with GPT-4o model
+        console.log("Using Azure OpenAI GPT-4o for service recommendations");
+        const responseContent = await createChatCompletion([
+          { role: "user", content: prompt }
+        ], {
+          response_format: { type: "json_object" }
+        });
+        
+        if (!responseContent) {
+          throw new Error("No response received from AI service");
+        }
+        
+        let parsedResponse;
+        try {
+          // First attempt to clean response - handle various formatting issues
+          let cleanedContent = responseContent;
+          
+          // Remove markdown code blocks if present
+          if (cleanedContent.includes("```json")) {
+            cleanedContent = cleanedContent.replace(/```json\n|\n```/g, "");
+          }
+          
+          // Log what we're trying to parse to help with debugging
+          console.log("Attempting to parse service recommendation JSON:", cleanedContent.substring(0, 100) + "...");
+          
+          parsedResponse = JSON.parse(cleanedContent);
+          
+          // Check if we got an error message instead of recommendations
+          if (parsedResponse.message && !parsedResponse.serviceSuggestions) {
+            console.log("AI service unavailable, using fallback:", parsedResponse.message);
+            throw new Error("AI service unavailable");
+          }
+          
+          res.json(parsedResponse);
+          return; // Exit early if successful
+        } catch (parseError) {
+          console.error("Failed to parse AI response or received error:", parseError);
+          throw new Error("Invalid AI response format");
+        }
+      } catch (error) {
+        console.error("AI service error:", error instanceof Error ? error.message : String(error));
+        
+        // Return an error response instead of providing fallback data
+        res.status(500).json({ 
+          message: "AI service unavailable", 
+          error: error instanceof Error ? error.message : "Could not generate service recommendations" 
+        });
+      }
     } catch (error) {
-      res.status(400).json({ message: "Invalid request", error });
+      res.status(400).json({ message: "Invalid service recommendation request", error });
     }
   });
   
@@ -122,79 +207,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       `;
       
       try {
-        // Prioritize OpenRouter with DeepSeek-R1 model
-        let responseContent;
+        // Use Azure OpenAI with GPT-4o model
+        console.log("Using Azure OpenAI GPT-4o for case study generation");
+        const responseContent = await createChatCompletion([
+          { role: "user", content: prompt }
+        ], {
+          response_format: { type: "json_object" }
+        });
         
-        // Start with OpenRouter using DeepSeek-R1 model
-        if (hasOpenRouterCredentials()) {
-          try {
-            console.log("Using OpenRouter with DeepSeek-R1 model for case study generation");
-            responseContent = await generateOpenRouterCompletion([
-              { role: "user", content: prompt }
-            ], { 
-              model: "deepseek/deepseek-r1:free",
-              jsonMode: true 
-            });
-            console.log("OpenRouter DeepSeek response received successfully");
-          } catch (deepseekError) {
-            console.error("OpenRouter DeepSeek error:", deepseekError);
-            
-            // Try other OpenRouter models as fallbacks
-            try {
-              console.log("Trying OpenRouter with Claude as fallback for case study generation");
-              responseContent = await generateOpenRouterCompletion([
-                { role: "user", content: prompt }
-              ], { 
-                model: "anthropic/claude-3.5-haiku-20241022:beta",
-                jsonMode: true 
-              });
-              console.log("OpenRouter Claude response received successfully");
-            } catch (claudeError) {
-              console.error("OpenRouter Claude error:", claudeError);
-              
-              // Try Qwen as a secondary fallback
-              try {
-                console.log("Trying OpenRouter with Qwen as secondary fallback for case study generation");
-                responseContent = await generateOpenRouterCompletion([
-                  { role: "user", content: prompt }
-                ], { 
-                  model: "qwen/qwen2.5-vl-32b-instruct:free",
-                  jsonMode: true 
-                });
-                console.log("OpenRouter Qwen response received successfully");
-              } catch (qwenError) {
-                console.error("OpenRouter Qwen error:", qwenError);
-              }
-            }
-          }
-        }
-        
-        // Try Azure OpenAI as a fallback if OpenRouter fails
         if (!responseContent) {
-          try {
-            console.log("Trying Azure OpenAI (GPT-4o) as fallback for case study generation");
-            responseContent = await createChatCompletion([
-              { role: "user", content: prompt }
-            ]);
-            console.log("Azure OpenAI response received successfully");
-          } catch (azureError) {
-            console.error("Azure OpenAI error:", azureError);
-          }
-        }
-        
-        // Try Anthropic as a final fallback if available
-        if (!responseContent && hasAnthropicCredentials()) {
-          try {
-            console.log("Trying Anthropic as final fallback for case study generation");
-            responseContent = await generateAnthropicCompletion([
-              { role: "user", content: prompt }
-            ], {
-              model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
-            });
-            console.log("Anthropic response received successfully");
-          } catch (anthropicError) {
-            console.error("Anthropic error:", anthropicError);
-          }
+          throw new Error("No response received from AI service");
         }
         
         let parsedResponse;
@@ -205,11 +227,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Remove markdown code blocks if present
           if (cleanedContent.includes("```json")) {
             cleanedContent = cleanedContent.replace(/```json\n|\n```/g, "");
-          }
-          
-          // Remove LaTeX \boxed{} wrapper if present (from DeepSeek model)
-          if (cleanedContent.includes("\\boxed{")) {
-            cleanedContent = cleanedContent.replace(/\\boxed\{\s*|\s*\}/g, "");
           }
           
           // Log what we're trying to parse to help with debugging
@@ -285,7 +302,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const messages = [...conversation.messages, userMessage];
       
-      // Use OpenAI to generate a response
+      // Use Azure OpenAI to generate a response
       const systemPrompt = `
         You are an AI assistant for L&F Digital (styled as "LÆF"), a full-spectrum digital solutions company.
         Your name is L&F Digital Assistant.
@@ -365,68 +382,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ...messages.map(m => ({ role: m.role, content: m.content }))
         ];
         
-        // Prioritize OpenRouter with DeepSeek-R1 model
-        let responseContent;
+        // Use Azure OpenAI with GPT-4o model
+        console.log("Using Azure OpenAI GPT-4o for chat response");
+        const responseContent = await createChatCompletion(openAIMessages, {
+          response_format: undefined  // Chat doesn't need JSON format
+        });
         
-        // Start with OpenRouter using DeepSeek-R1 model
-        if (hasOpenRouterCredentials()) {
-          try {
-            console.log("Using OpenRouter with DeepSeek-R1 model for chat response");
-            responseContent = await generateOpenRouterCompletion(openAIMessages, { 
-              model: "deepseek/deepseek-r1:free" 
-            });
-            console.log("OpenRouter DeepSeek response received successfully");
-          } catch (deepseekError) {
-            console.error("OpenRouter DeepSeek error:", deepseekError);
-            
-            // Try OpenRouter with Claude as a fallback if available
-            try {
-              console.log("Trying OpenRouter with Claude-3.5-Haiku as fallback for chat response");
-              responseContent = await generateOpenRouterCompletion(openAIMessages, { 
-                model: "anthropic/claude-3.5-haiku-20241022:beta"
-              });
-              console.log("OpenRouter Claude response received successfully");
-            } catch (claudeError) {
-              console.error("OpenRouter Claude error:", claudeError);
-              
-              // Try Qwen as a secondary fallback
-              try {
-                console.log("Trying OpenRouter with Qwen as secondary fallback");
-                responseContent = await generateOpenRouterCompletion(openAIMessages, { 
-                  model: "qwen/qwen2.5-vl-32b-instruct:free" 
-                });
-                console.log("OpenRouter Qwen response received successfully");
-              } catch (qwenError) {
-                console.error("OpenRouter Qwen error:", qwenError);
-              }
-            }
-          }
-        }
-        
-        // Try Azure OpenAI if OpenRouter failed
         if (!responseContent) {
-          try {
-            console.log("Trying Azure OpenAI (GPT-4o) as fallback for chat response");
-            responseContent = await createChatCompletion(openAIMessages, {
-              response_format: undefined  // Chat doesn't need JSON format
-            });
-            console.log("Azure OpenAI response received successfully");
-          } catch (azureError) {
-            console.error("Azure OpenAI error:", azureError);
-          }
-        }
-        
-        // Try Anthropic as a final fallback if available
-        if (!responseContent && hasAnthropicCredentials()) {
-          try {
-            console.log("Trying Anthropic as final fallback for chat response");
-            responseContent = await generateAnthropicCompletion(openAIMessages, {
-              model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
-            });
-            console.log("Anthropic response received successfully");
-          } catch (anthropicError) {
-            console.error("Anthropic error:", anthropicError);
-          }
+          throw new Error("No response received from AI service");
         }
         
         // Check if we got an error message from the AI service
@@ -489,7 +452,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         implementationTimeline: z.string()
       }).parse(req.body);
       
-      // Try to use OpenAI to generate a realistic ROI projection
+      // Use Azure OpenAI to generate a realistic ROI projection
       const prompt = `
         As a digital transformation financial analyst, calculate a detailed ROI projection for implementing technology solutions for a business with these parameters:
         
@@ -544,79 +507,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       `;
       
       try {
-        // Prioritize OpenRouter with DeepSeek-R1 model
-        let responseContent;
+        // Use Azure OpenAI with GPT-4o model
+        console.log("Using Azure OpenAI GPT-4o for ROI calculation");
+        const responseContent = await createChatCompletion([
+          { role: "user", content: prompt }
+        ], {
+          response_format: { type: "json_object" }
+        });
         
-        // Start with OpenRouter using DeepSeek-R1 model
-        if (hasOpenRouterCredentials()) {
-          try {
-            console.log("Using OpenRouter with DeepSeek-R1 model for ROI calculation");
-            responseContent = await generateOpenRouterCompletion([
-              { role: "user", content: prompt }
-            ], { 
-              model: "deepseek/deepseek-r1:free",
-              jsonMode: true 
-            });
-            console.log("OpenRouter DeepSeek response received successfully");
-          } catch (deepseekError) {
-            console.error("OpenRouter DeepSeek error:", deepseekError);
-            
-            // Try OpenRouter with Claude as a fallback if available
-            try {
-              console.log("Trying OpenRouter with Claude-3.5-Haiku as fallback for ROI calculation");
-              responseContent = await generateOpenRouterCompletion([
-                { role: "user", content: prompt }
-              ], { 
-                model: "anthropic/claude-3.5-haiku-20241022:beta",
-                jsonMode: true 
-              });
-              console.log("OpenRouter Claude response received successfully");
-            } catch (claudeError) {
-              console.error("OpenRouter Claude error:", claudeError);
-              
-              // Try Qwen as a secondary fallback
-              try {
-                console.log("Trying OpenRouter with Qwen as secondary fallback for ROI calculation");
-                responseContent = await generateOpenRouterCompletion([
-                  { role: "user", content: prompt }
-                ], { 
-                  model: "qwen/qwen2.5-vl-32b-instruct:free",
-                  jsonMode: true 
-                });
-                console.log("OpenRouter Qwen response received successfully");
-              } catch (qwenError) {
-                console.error("OpenRouter Qwen error:", qwenError);
-              }
-            }
-          }
-        }
-        
-        // Try Azure OpenAI if OpenRouter failed
         if (!responseContent) {
-          try {
-            console.log("Trying Azure OpenAI (GPT-4o) as fallback for ROI calculation");
-            responseContent = await createChatCompletion([
-              { role: "user", content: prompt }
-            ]);
-            console.log("Azure OpenAI response received successfully");
-          } catch (azureError) {
-            console.error("Azure OpenAI error:", azureError);
-          }
-        }
-        
-        // Try Anthropic as a final fallback if available
-        if (!responseContent && hasAnthropicCredentials()) {
-          try {
-            console.log("Trying Anthropic as final fallback for ROI calculation");
-            responseContent = await generateAnthropicCompletion([
-              { role: "user", content: prompt }
-            ], {
-              model: "claude-3-7-sonnet-20250219" // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
-            });
-            console.log("Anthropic response received successfully");
-          } catch (anthropicError) {
-            console.error("Anthropic error:", anthropicError);
-          }
+          throw new Error("No response received from AI service");
         }
         
         let parsedResponse;
@@ -627,11 +527,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Remove markdown code blocks if present
           if (cleanedContent.includes("```json")) {
             cleanedContent = cleanedContent.replace(/```json\n|\n```/g, "");
-          }
-          
-          // Remove LaTeX \boxed{} wrapper if present (from DeepSeek model)
-          if (cleanedContent.includes("\\boxed{")) {
-            cleanedContent = cleanedContent.replace(/\\boxed\{\s*|\s*\}/g, "");
           }
           
           // Log what we're trying to parse to help with debugging

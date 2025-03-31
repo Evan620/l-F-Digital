@@ -6,8 +6,9 @@ const openAIApiKey = process.env.OPENAI_API_KEY;
 
 // Azure OpenAI configuration
 const azureOpenAIApiKey = process.env.AZURE_OPENAI_API_KEY;
-const azureOpenAIEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
-const azureOpenAIDeploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME;
+// Hard-code the Azure endpoint and model name based on the latest information
+const azureOpenAIEndpoint = "https://models.inference.ai.azure.com";
+const azureOpenAIDeploymentName = "gpt-4o";
 
 // Check if Azure OpenAI credentials are available
 const azureCredentialsAvailable = !!(azureOpenAIApiKey && azureOpenAIEndpoint && azureOpenAIDeploymentName);
