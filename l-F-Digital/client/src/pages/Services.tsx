@@ -54,6 +54,7 @@ export default function Services() {
   const [selectedChallenges, setSelectedChallenges] = useState<string[]>([]);
   const [customSolutions, setCustomSolutions] = useState<Service[]>([]);
   const [showCustomSolutions, setShowCustomSolutions] = useState(false);
+  const [showTimelineSection, setShowTimelineSection] = useState(false);
   
   // Quiz/Game state
   const [quizVisible, setQuizVisible] = useState(false);
@@ -714,6 +715,30 @@ export default function Services() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-xl font-bold text-white mb-4">Select Your Challenges</h3>
+                
+                {/* Custom challenge input */}
+                <div className="mb-6 space-y-2">
+                  <label htmlFor="customChallenge" className="text-white font-medium">
+                    Describe your specific business challenge:
+                  </label>
+                  <Input
+                    id="customChallenge"
+                    placeholder="Example: We need to automate our customer support processes..."
+                    className="bg-neutral-800/40 border-neutral-700 text-white"
+                    value={businessChallenge}
+                    onChange={(e) => setBusinessChallenge(e.target.value)}
+                  />
+                  <p className="text-xs text-neutral-400">
+                    Your custom challenge will be analyzed alongside your selections below.
+                  </p>
+                </div>
+                
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-neutral-300 mb-2">
+                    Common challenges (select all that apply):
+                  </h4>
+                </div>
+                
                 <div className="space-y-3">
                   <Challenge 
                     title="Manual Data Entry" 
@@ -780,12 +805,12 @@ export default function Services() {
                 <div className="mt-6">
                   <Button 
                     className="bg-primary-600 hover:bg-primary-500 w-full"
-                    disabled={loading || selectedChallenges.length === 0}
+                    disabled={loading || (selectedChallenges.length === 0 && !businessChallenge.trim())}
                     onClick={async () => {
-                      if (selectedChallenges.length === 0) {
+                      if (selectedChallenges.length === 0 && !businessChallenge.trim()) {
                         toast({
-                          title: "No challenges selected",
-                          description: "Please select at least one business challenge",
+                          title: "No input provided",
+                          description: "Please select at least one challenge or describe your business challenge",
                           variant: "destructive",
                         });
                         return;
@@ -793,36 +818,49 @@ export default function Services() {
                       
                       setLoading(true);
                       try {
-                        // In a real app, we would call API with selected challenges
-                        // For now, filter services that match the challenges
-                        const challengeKeywords = selectedChallenges.flatMap(
-                          challenge => challenge.toLowerCase().split(' ')
-                        );
+                        // Create a challenge description from both user input and selected challenges
+                        const challengeDescription = [
+                          businessChallenge.trim(),
+                          ...selectedChallenges
+                        ].filter(Boolean).join(". ");
                         
-                        // Find services related to the selected challenges
-                        const matchingServices = allServices.filter(service => {
-                          // Check if service description or features match any challenge keywords
-                          const description = service.description.toLowerCase();
-                          const features = service.features?.join(' ').toLowerCase() || '';
+                        // Call the AI service recommendation endpoint
+                        const response = await apiRequest('POST', '/api/ai/service-recommendation', {
+                          businessChallenge: challengeDescription,
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.serviceSuggestions && data.serviceSuggestions.length > 0) {
+                          // Use the AI-generated recommendations
+                          setCustomSolutions(data.serviceSuggestions);
+                          setShowCustomSolutions(true);
                           
-                          return challengeKeywords.some(keyword => 
-                            description.includes(keyword) || features.includes(keyword)
-                          );
-                        });
-                        
-                        // Use top 3 services or fallback to first 3 services
-                        setCustomSolutions(
-                          matchingServices.length > 0 
-                            ? matchingServices.slice(0, 3) 
-                            : allServices.slice(0, 3)
-                        );
-                        setShowCustomSolutions(true);
-                        
-                        // In future, we would use OpenAI API to get better recommendations
-                        toast({
-                          title: "Solution Stack Generated",
-                          description: `Based on your ${selectedChallenges.length} selected challenges`,
-                        });
+                          // Also update the ROI timeline section with the suggested solutions
+                          setShowTimelineSection(true);
+                          
+                          toast({
+                            title: "Custom Solution Generated",
+                            description: "Our AI has analyzed your challenges and created a tailored solution stack",
+                          });
+                        } else {
+                          // Fallback if AI recommendations fail
+                          toast({
+                            title: "Recommendation issue",
+                            description: "We couldn't generate AI recommendations. Using fallback options.",
+                            variant: "destructive",
+                          });
+                          
+                          // Use top matches from existing services as fallback
+                          const fallbackSolutions = allServices.slice(0, 3).map(service => ({
+                            ...service,
+                            explanation: "This service might help address aspects of your business challenge."
+                          }));
+                          
+                          setCustomSolutions(fallbackSolutions);
+                          setShowCustomSolutions(true);
+                          setShowTimelineSection(true);
+                        }
                       } catch (error) {
                         toast({
                           title: "Failed to generate solution",
@@ -877,6 +915,13 @@ export default function Services() {
                         variant="outline" 
                         size="sm" 
                         className="w-full justify-center border-primary-500/30 text-primary-400 hover:bg-primary-900/20"
+                        onClick={() => {
+                          // Scroll to the ROI timeline section
+                          document.getElementById('roi-timeline')?.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                          });
+                        }}
                       >
                         View detailed implementation plan
                         <ArrowRight className="ml-2 h-4 w-4" />
@@ -920,7 +965,7 @@ export default function Services() {
         </section>
         
         {/* Pricing Transparency - Without Numbers */}
-        <section className="mb-20">
+        {showTimelineSection && (<section id="roi-timeline" className="mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1060,7 +1105,7 @@ export default function Services() {
               </div>
             </div>
           </motion.div>
-        </section>
+        </section>)}
         
         {/* CTA Section - Gamified Engagement */}
         <motion.div
