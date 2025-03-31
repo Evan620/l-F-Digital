@@ -27,6 +27,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { type Service, type CaseStudy } from '@shared/schema';
 import AIChatInterface from '@/components/AIChatInterface';
+import ServiceDetailModal from '@/components/ServiceDetailModal';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -529,6 +530,7 @@ export default function Services() {
                   service={service}
                   index={index}
                   isRecommended={true}
+                  allServices={allServices}
                 />
               ))
             ) : (
@@ -539,6 +541,7 @@ export default function Services() {
                   service={service}
                   index={index}
                   isRecommended={false}
+                  allServices={allServices}
                 />
               ))
             )}
@@ -1259,13 +1262,17 @@ export default function Services() {
 function ImmersiveServiceCard({ 
   service, 
   index, 
-  isRecommended 
+  isRecommended,
+  allServices
 }: { 
   service: Service & { explanation?: string }, 
   index: number,
-  isRecommended: boolean 
+  isRecommended: boolean,
+  allServices: Service[]
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [additionalRecommendations, setAdditionalRecommendations] = useState<Service[]>([]);
   
   // Card tilt effect with mouse
   const [rotateX, setRotateX] = useState(0);
@@ -1322,87 +1329,116 @@ function ImmersiveServiceCard({
   };
   
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className={`rounded-xl overflow-hidden shadow-xl group perspective transform-gpu cursor-pointer ${isRecommended ? 'ring-2 ring-secondary-500/50' : ''}`}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={resetTilt}
-      style={{
-        transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-        transition: 'transform 0.2s ease-out',
-      }}
-    >
-      <div className={`bg-gradient-to-br ${getCategoryColor(service.category)} h-full flex flex-col`}>
-        {isRecommended && (
-          <div className="bg-secondary-500/20 border-b border-secondary-500/30 py-1.5 px-4 text-center">
-            <span className="text-xs font-semibold text-secondary-300">AI Recommended</span>
-          </div>
-        )}
-        
-        <div className="p-6 flex-grow flex flex-col">
-          {/* Header with icon and category */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                {getServiceIcon(service.iconKey)}
-              </div>
-              <span className="text-sm font-medium text-neutral-300">{service.category}</span>
-            </div>
-            
-            {/* ROI Badge */}
-            {service.averageROI && (
-              <div className="bg-white/10 py-1 px-2.5 rounded backdrop-blur-sm">
-                <span className="text-xs font-semibold text-white">ROI: </span>
-                <span className="text-xs font-bold text-secondary-300">{service.averageROI}</span>
-              </div>
-            )}
-          </div>
-          
-          <h3 className="font-display font-bold text-xl text-white mb-3 group-hover:text-secondary-300 transition-colors duration-300">
-            {service.name}
-          </h3>
-          
-          <p className="text-neutral-300 mb-5">{service.description}</p>
-          
-          {/* Recommendation explanation */}
-          {isRecommended && service.explanation && (
-            <div className="mb-4 p-3 bg-white/5 backdrop-blur-sm rounded-lg">
-              <p className="text-sm text-neutral-200 italic">"{service.explanation}"</p>
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+        className={`rounded-xl overflow-hidden shadow-xl group perspective transform-gpu cursor-pointer ${isRecommended ? 'ring-2 ring-secondary-500/50' : ''}`}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={resetTilt}
+        style={{
+          transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+          transition: 'transform 0.2s ease-out',
+        }}
+      >
+        <div className={`bg-gradient-to-br ${getCategoryColor(service.category)} h-full flex flex-col`}>
+          {isRecommended && (
+            <div className="bg-secondary-500/20 border-b border-secondary-500/30 py-1.5 px-4 text-center">
+              <span className="text-xs font-semibold text-secondary-300">AI Recommended</span>
             </div>
           )}
           
-          {/* Feature list */}
-          <div className="space-y-3 mb-6 flex-grow">
-            {service.features?.map((feature, i) => (
-              <motion.div 
-                key={i} 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 + 0.3 }}
-                className="flex items-start gap-2"
-              >
-                <div className="rounded-full bg-secondary-500/20 p-0.5 mt-1 flex-shrink-0">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-secondary-400" />
+          <div className="p-6 flex-grow flex flex-col">
+            {/* Header with icon and category */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                  {getServiceIcon(service.iconKey)}
                 </div>
-                <span className="text-sm text-neutral-200">{feature}</span>
-              </motion.div>
-            ))}
+                <span className="text-sm font-medium text-neutral-300">{service.category}</span>
+              </div>
+              
+              {/* ROI Badge */}
+              {service.averageROI && (
+                <div className="bg-white/10 py-1 px-2.5 rounded backdrop-blur-sm">
+                  <span className="text-xs font-semibold text-white">ROI: </span>
+                  <span className="text-xs font-bold text-secondary-300">{service.averageROI}</span>
+                </div>
+              )}
+            </div>
+            
+            <h3 className="font-display font-bold text-xl text-white mb-3 group-hover:text-secondary-300 transition-colors duration-300">
+              {service.name}
+            </h3>
+            
+            <p className="text-neutral-300 mb-5">{service.description}</p>
+            
+            {/* Recommendation explanation */}
+            {isRecommended && service.explanation && (
+              <div className="mb-4 p-3 bg-white/5 backdrop-blur-sm rounded-lg">
+                <p className="text-sm text-neutral-200 italic">"{service.explanation}"</p>
+              </div>
+            )}
+            
+            {/* Feature list */}
+            <div className="space-y-3 mb-6 flex-grow">
+              {service.features?.map((feature, i) => (
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 + 0.3 }}
+                  className="flex items-start gap-2"
+                >
+                  <div className="rounded-full bg-secondary-500/20 p-0.5 mt-1 flex-shrink-0">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-secondary-400" />
+                  </div>
+                  <span className="text-sm text-neutral-200">{feature}</span>
+                </motion.div>
+              ))}
+            </div>
+            
+            {/* CTA Button */}
+            <Button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDetails(true);
+                
+                // Find related services as additional recommendations
+                const relatedServices = allServices
+                  ?.filter(s => s.id !== service.id)
+                  .filter(s => {
+                    // Find services that complement this one based on category
+                    if (service.category.toLowerCase() === 'automation' && s.category.toLowerCase() === 'analytics') return true;
+                    if (service.category.toLowerCase() === 'analytics' && s.category.toLowerCase() === 'automation') return true;
+                    if (service.category.toLowerCase() === 'customer experience' && 
+                      (s.category.toLowerCase() === 'automation' || s.category.toLowerCase() === 'analytics')) return true;
+                    return false;
+                  })
+                  .slice(0, 2);
+                  
+                setAdditionalRecommendations(relatedServices || []);
+              }}
+              className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/5 group-hover:bg-secondary-500/20 group-hover:border-secondary-500/30 transition-colors duration-300"
+            >
+              Learn More
+              <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
-          
-          {/* CTA Button */}
-          <Button 
-            className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/5 group-hover:bg-secondary-500/20 group-hover:border-secondary-500/30 transition-colors duration-300"
-          >
-            Learn More
-            <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-          </Button>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+      
+      {/* Service Details Modal */}
+      <ServiceDetailModal 
+        service={service} 
+        open={showDetails} 
+        onOpenChange={setShowDetails}
+        additionalRecommendations={additionalRecommendations}
+      />
+    </>
   );
 }
 
