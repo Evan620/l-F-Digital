@@ -157,16 +157,16 @@ export default function CaseStudies() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
             >
-              <div className="h-full w-full bg-gradient-to-br from-secondary-500/20 to-primary-500/20 backdrop-blur-sm">
+              <div className="h-full w-full bg-gradient-to-br from-secondary-500/30 to-primary-500/30 backdrop-blur-lg">
                 <motion.div 
                   className="absolute inset-0 flex items-center justify-center"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 1 }}
                 >
-                  <div className="text-center">
-                    <span className="block text-5xl font-bold text-secondary-400">300%</span>
-                    <span className="text-white text-xl">ROI</span>
+                  <div className="text-center bg-black/40 px-6 py-3 rounded-lg shadow-xl backdrop-blur-md">
+                    <span className="block text-5xl font-bold text-secondary-300">300%</span>
+                    <span className="text-white text-xl font-medium">ROI</span>
                   </div>
                 </motion.div>
               </div>
@@ -178,16 +178,16 @@ export default function CaseStudies() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
             >
-              <div className="h-full w-full bg-gradient-to-br from-neutral-800/50 to-neutral-900/50 backdrop-blur-sm">
+              <div className="h-full w-full bg-gradient-to-br from-neutral-800/70 to-neutral-900/70 backdrop-blur-lg">
                 <motion.div 
                   className="absolute inset-0 flex items-center justify-center"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 1 }}
                 >
-                  <div className="text-center">
-                    <span className="block text-5xl font-bold text-neutral-500">0%</span>
-                    <span className="text-neutral-400 text-xl">Starting Point</span>
+                  <div className="text-center bg-black/40 px-6 py-3 rounded-lg shadow-xl backdrop-blur-md">
+                    <span className="block text-5xl font-bold text-white">0%</span>
+                    <span className="text-neutral-300 text-xl font-medium">Starting Point</span>
                   </div>
                 </motion.div>
               </div>
