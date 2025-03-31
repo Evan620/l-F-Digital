@@ -134,12 +134,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
               responseContent = await generateOpenRouterCompletion([
                 { role: "user", content: prompt }
               ], { 
-                model: "deepseek/deepseek-r1-zero:free",
+                model: "anthropic/claude-3.5-haiku-20241022:beta",
                 jsonMode: true 
               });
-              console.log("OpenRouter response received successfully");
-            } catch (orError) {
-              console.error("OpenRouter error:", orError);
+              console.log("OpenRouter Claude response received successfully");
+            } catch (claudeError) {
+              console.error("OpenRouter Claude error:", claudeError);
+              
+              // Try Qwen as a secondary fallback
+              try {
+                responseContent = await generateOpenRouterCompletion([
+                  { role: "user", content: prompt }
+                ], { 
+                  model: "qwen/qwen2.5-vl-32b-instruct:free",
+                  jsonMode: true 
+                });
+                console.log("OpenRouter Qwen response received successfully");
+              } catch (qwenError) {
+                console.error("OpenRouter Qwen error:", qwenError);
+                
+                // Try DeepSeek as a tertiary fallback
+                try {
+                  responseContent = await generateOpenRouterCompletion([
+                    { role: "user", content: prompt }
+                  ], { 
+                    model: "deepseek/deepseek-r1-zero:free",
+                    jsonMode: true 
+                  });
+                  console.log("OpenRouter DeepSeek response received successfully");
+                } catch (deepseekError) {
+                  console.error("OpenRouter DeepSeek error:", deepseekError);
+                }
+              }
             }
           }
           
@@ -281,19 +307,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (azureError) {
           console.error("Azure OpenAI error:", azureError);
           
-          // Try OpenRouter as a fallback if available
+          // Try OpenRouter with Anthropic model as a fallback if available
           if (hasOpenRouterCredentials()) {
-            console.log("Trying OpenRouter as fallback for case study generation");
+            console.log("Trying OpenRouter with Claude-3.5-Haiku as fallback for case study generation");
             try {
               responseContent = await generateOpenRouterCompletion([
                 { role: "user", content: prompt }
               ], { 
-                model: "deepseek/deepseek-r1-zero:free",
+                model: "anthropic/claude-3.5-haiku-20241022:beta",
                 jsonMode: true 
               });
               console.log("OpenRouter response received successfully");
             } catch (orError) {
               console.error("OpenRouter error:", orError);
+              
+              // If Anthropic model fails, try Qwen as a secondary fallback
+              try {
+                console.log("Trying OpenRouter with Qwen as secondary fallback for case study generation");
+                responseContent = await generateOpenRouterCompletion([
+                  { role: "user", content: prompt }
+                ], { 
+                  model: "qwen/qwen2.5-vl-32b-instruct:free",
+                  jsonMode: true 
+                });
+                console.log("OpenRouter Qwen response received successfully");
+              } catch (qwenError) {
+                console.error("OpenRouter Qwen error:", qwenError);
+                
+                // If Qwen model fails, try DeepSeek as a tertiary fallback
+                try {
+                  console.log("Trying OpenRouter with DeepSeek as tertiary fallback for case study generation");
+                  responseContent = await generateOpenRouterCompletion([
+                    { role: "user", content: prompt }
+                  ], { 
+                    model: "deepseek/deepseek-r1:free",
+                    jsonMode: true 
+                  });
+                  console.log("OpenRouter DeepSeek response received successfully");
+                } catch (deepseekError) {
+                  console.error("OpenRouter DeepSeek error:", deepseekError);
+                }
+              }
             }
           }
           
@@ -494,16 +548,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (azureError) {
           console.error("Azure OpenAI error:", azureError);
           
-          // Try OpenRouter as a fallback if available
+          // Try OpenRouter with Anthropic model as a fallback if available
           if (hasOpenRouterCredentials()) {
-            console.log("Trying OpenRouter as fallback for chat response");
+            console.log("Trying OpenRouter with Claude-3.5-Haiku as fallback for chat response");
             try {
               responseContent = await generateOpenRouterCompletion(openAIMessages, { 
-                model: "deepseek/deepseek-r1-zero:free"
+                model: "anthropic/claude-3.5-haiku-20241022:beta"
               });
               console.log("OpenRouter response received successfully");
             } catch (orError) {
               console.error("OpenRouter error:", orError);
+              
+              // If Anthropic model fails, try Qwen as a secondary fallback
+              try {
+                console.log("Trying OpenRouter with Qwen as secondary fallback");
+                responseContent = await generateOpenRouterCompletion(openAIMessages, { 
+                  model: "qwen/qwen2.5-vl-32b-instruct:free" 
+                });
+                console.log("OpenRouter Qwen response received successfully");
+              } catch (qwenError) {
+                console.error("OpenRouter Qwen error:", qwenError);
+                
+                // If Qwen model fails, try DeepSeek as a tertiary fallback
+                try {
+                  console.log("Trying OpenRouter with DeepSeek as tertiary fallback");
+                  responseContent = await generateOpenRouterCompletion(openAIMessages, { 
+                    model: "deepseek/deepseek-r1:free" 
+                  });
+                  console.log("OpenRouter DeepSeek response received successfully");
+                } catch (deepseekError) {
+                  console.error("OpenRouter DeepSeek error:", deepseekError);
+                }
+              }
             }
           }
           
@@ -649,19 +725,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (azureError) {
           console.error("Azure OpenAI error:", azureError);
           
-          // Try OpenRouter as a fallback if available
+          // Try OpenRouter with Anthropic model as a fallback if available
           if (hasOpenRouterCredentials()) {
-            console.log("Trying OpenRouter as fallback for ROI calculation");
+            console.log("Trying OpenRouter with Claude-3.5-Haiku as fallback for ROI calculation");
             try {
               responseContent = await generateOpenRouterCompletion([
                 { role: "user", content: prompt }
               ], { 
-                model: "deepseek/deepseek-r1-zero:free",
+                model: "anthropic/claude-3.5-haiku-20241022:beta",
                 jsonMode: true 
               });
               console.log("OpenRouter response received successfully");
             } catch (orError) {
               console.error("OpenRouter error:", orError);
+              
+              // If Anthropic model fails, try Qwen as a secondary fallback
+              try {
+                console.log("Trying OpenRouter with Qwen as secondary fallback for ROI calculation");
+                responseContent = await generateOpenRouterCompletion([
+                  { role: "user", content: prompt }
+                ], { 
+                  model: "qwen/qwen2.5-vl-32b-instruct:free",
+                  jsonMode: true 
+                });
+                console.log("OpenRouter Qwen response received successfully");
+              } catch (qwenError) {
+                console.error("OpenRouter Qwen error:", qwenError);
+                
+                // If Qwen model fails, try DeepSeek as a tertiary fallback
+                try {
+                  console.log("Trying OpenRouter with DeepSeek as tertiary fallback for ROI calculation");
+                  responseContent = await generateOpenRouterCompletion([
+                    { role: "user", content: prompt }
+                  ], { 
+                    model: "deepseek/deepseek-r1:free",
+                    jsonMode: true 
+                  });
+                  console.log("OpenRouter DeepSeek response received successfully");
+                } catch (deepseekError) {
+                  console.error("OpenRouter DeepSeek error:", deepseekError);
+                }
+              }
             }
           }
           
