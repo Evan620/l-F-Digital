@@ -688,10 +688,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (hasGoogleCalendarCredentials()) {
         // If Google Calendar is configured, create the event
         const result = await googleCalendar.createEvent(eventData);
+        
+        // Send notification email
+        try {
+          await sendBookingNotification(bookingData);
+        } catch (emailError) {
+          console.error("Failed to send email notification:", emailError);
+        }
+        
         res.json(result);
       } else {
         // If not configured, return a simulated successful booking
         console.log("Google Calendar not configured. Simulating successful booking:", eventData);
+        
+        // Still send notification email
+        try {
+          await sendBookingNotification(bookingData);
+        } catch (emailError) {
+          console.error("Failed to send email notification:", emailError);
+        }
+        
         res.json({
           success: true,
           message: "Consultation scheduled successfully (Google Calendar integration not available)",
