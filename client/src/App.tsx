@@ -18,7 +18,7 @@ export default function App() {
         <Route path="/case-studies" component={CaseStudies} />
         <Route path="/contact" component={Contact} />
         <Route path="/ai-tools" component={AITools} />
-        <Route path="/:rest*" component={NotFound} />
+        <Route component={NotFound} />
       </Router>
       <Toaster />
     </AIProvider>
