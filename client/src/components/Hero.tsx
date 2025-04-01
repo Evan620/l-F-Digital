@@ -34,7 +34,7 @@ export default function Hero() {
             </div>
             <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl">
               <div className="flex items-center">
-                <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent tracking-wide">AI-powered business solutions</span>
+                <span className="relative bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent tracking-wide text-white">AI-powered business solutions</span>
               </div>
             </h1>
             <p className="text-lg text-neutral-300 max-w-xl">
