@@ -33,8 +33,8 @@ export default function Hero() {
               AI-Powered Digital Transformation
             </div>
             <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl">
-              <span className="block mb-2">Transforming Business</span>
-              <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent text-3xl sm:text-4xl md:text-5xl tracking-wide">Through AI Innovation</span>
+              <span className="block mb-4">Transforming Business</span>
+              <span className="block bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent text-4xl sm:text-5xl md:text-6xl tracking-wide">Through AI Innovation</span>
             </h1>
             <p className="text-lg text-neutral-300 max-w-xl">
               Revolutionize your workflows, automate processes, and unlock growth with our cutting-edge AI solutions tailored to your industry's unique challenges.
