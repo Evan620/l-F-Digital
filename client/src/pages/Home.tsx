@@ -19,9 +19,9 @@ export default function Home() {
     const handleScroll = () => {
       setHasScrolled(window.scrollY > 50);
     };
-    
+
     window.addEventListener('scroll', handleScroll);
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -30,15 +30,15 @@ export default function Home() {
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   };
-  
+
   const navigateToCaseStudies = () => {
     setLocation('/case-studies');
   };
-  
+
   const navigateToAITools = () => {
     setLocation('/ai-tools');
   };
-  
+
   return (
     <div className="relative min-h-screen bg-neutral-900 text-neutral-100">
       {/* Background elements */}
@@ -49,10 +49,10 @@ export default function Home() {
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,rgba(31,41,55,0)_70%)]"></div>
       </div>
-      
+
       {/* Main content */}
       <Navbar />
-      
+
       {/* Welcome Popup */}
       <AnimatePresence>
         {showWelcomePopup && (
@@ -60,9 +60,9 @@ export default function Home() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-4 right-4 z-50 max-w-sm bg-neutral-800/95 backdrop-blur-sm p-4 rounded-lg border border-primary-500/20 shadow-lg"
+            className="fixed top-16 left-0 right-0 bg-neutral-800 border-y border-neutral-700 p-4 z-50 flex items-center justify-center gap-4"
           >
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between w-full max-w-sm">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary-900/50 flex items-center justify-center">
                   <Bot className="w-5 h-5 text-primary-400" />
@@ -88,7 +88,7 @@ export default function Home() {
       <main className="relative z-10">
         <Hero />
         <ServicesExplorer fullView={false} />
-        
+
         {/* Interactive Tools Section (replacing individual tool components) */}
         <section className="py-20 bg-neutral-950 relative">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -109,7 +109,7 @@ export default function Home() {
                 Experience our AI tools designed to help you visualize how our solutions can transform your business.
               </p>
             </motion.div>
-            
+
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {/* Case Study Generator Card */}
               <motion.div
@@ -135,7 +135,7 @@ export default function Home() {
                   </Button>
                 </div>
               </motion.div>
-              
+
               {/* ROI Calculator Card */}
               <motion.div
                 className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl"
@@ -164,7 +164,7 @@ export default function Home() {
           </div>
         </section>
       </main>
-      
+
       {/* Chat interface */}
       <AIChatInterface isOpen={isChatOpen} onToggle={toggleChat} />
     </div>
