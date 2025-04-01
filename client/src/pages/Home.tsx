@@ -11,6 +11,7 @@ import { ArrowRight, FileText, Calculator } from 'lucide-react';
 export default function Home() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [showWelcomePopup, setShowWelcomePopup] = useState(true);
   const [_, setLocation] = useLocation();
 
   // Handle scroll events for animations
@@ -52,6 +53,38 @@ export default function Home() {
       {/* Main content */}
       <Navbar />
       
+      {/* Welcome Popup */}
+      <AnimatePresence>
+        {showWelcomePopup && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-4 right-4 z-50 max-w-sm bg-neutral-800/95 backdrop-blur-sm p-4 rounded-lg border border-primary-500/20 shadow-lg"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary-900/50 flex items-center justify-center">
+                  <Bot className="w-5 h-5 text-primary-400" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-white mb-1">Meet OrionAI</h3>
+                  <p className="text-sm text-neutral-300">Your intelligent assistant for exploring our services and getting instant help.</p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-neutral-400 hover:text-white -mr-2 -mt-2"
+                onClick={() => setShowWelcomePopup(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <main className="relative z-10">
         <Hero />
         <ServicesExplorer fullView={false} />

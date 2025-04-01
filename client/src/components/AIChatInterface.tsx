@@ -164,7 +164,10 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                   AI
                 </div>
                 <div>
-                  <h3 className="font-medium text-white">L&F Digital Assistant</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium text-white">OrionAI</h3>
+                    <span className="px-1.5 py-0.5 text-[10px] font-medium bg-primary-900/50 text-primary-300 rounded-full">BETA</span>
+                  </div>
                   <div className="flex items-center text-xs text-neutral-400">
                     <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                     Online
