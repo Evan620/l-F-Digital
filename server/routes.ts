@@ -536,10 +536,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (hasOpenRouterCredentials()) {
           try {
             console.log("Using OpenRouter with Mistral model for ROI calculation");
+            const systemMessage = {
+              role: "system",
+              content: "You are a ROI calculation API. You MUST respond with valid JSON only, no natural language. Format your response exactly as specified in the user's prompt."
+            };
+            
             responseContent = await openrouterGenerateChatCompletion(
-              [{ role: "user", content: prompt }],
+              [systemMessage, { role: "user", content: prompt }],
               { jsonMode: true, maxTokens: 1500 }
             );
+            
+            // Clean the response to ensure it's valid JSON
+            responseContent = responseContent.trim();
+            if (!responseContent.startsWith('{')) {
+              // Find the first { and last } to extract JSON
+              const start = responseContent.indexOf('{');
+              const end = responseContent.lastIndexOf('}') + 1;
+              if (start >= 0 && end > start) {
+                responseContent = responseContent.slice(start, end);
+              }
+            }
+            
             console.log("Successfully generated ROI with OpenRouter");
           } catch (openrouterError) {
             console.error("OpenRouter service failed:", openrouterError);
