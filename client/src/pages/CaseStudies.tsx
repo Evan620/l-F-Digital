@@ -28,8 +28,6 @@ import ROICalculator from '@/components/ROICalculator';
 import AIChatInterface from '@/components/AIChatInterface';
 import { useAI } from '@/context/AIContext';
 
-import { AIProvider } from '@/context/AIContext';
-
 export default function CaseStudies() {
   const { toast } = useToast();
   const { isChatOpen, toggleChat } = useAI();
