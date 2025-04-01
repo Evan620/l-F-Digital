@@ -7,11 +7,11 @@ import GoogleCalendarBooking from '@/components/GoogleCalendarBooking';
 export default function Hero() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showGoogleCalendar, setShowGoogleCalendar] = useState(false);
-  
+
   useEffect(() => {
     setIsLoaded(true);
   }, []);
-  
+
   return (
     <section className="relative pt-20 lg:pt-24 overflow-hidden">
       {showGoogleCalendar && (
@@ -32,14 +32,14 @@ export default function Hero() {
             <div className="inline-block px-4 py-1 rounded-full bg-white/10 text-sm font-medium text-primary-300 mb-4">
               AI-Powered Digital Transformation
             </div>
-            <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl leading-tight">
-              <span className="block">Transform Your Business with</span>
-              <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent font-bold tracking-tight">AI-Driven Solutions</span>
+            <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl">
+              <span className="block mb-2">Transforming Business</span>
+              <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent text-3xl sm:text-4xl md:text-5xl tracking-wide">Through AI Innovation</span>
             </h1>
             <p className="text-lg text-neutral-300 max-w-xl">
               Revolutionize your workflows, automate processes, and unlock growth with our cutting-edge AI solutions tailored to your industry's unique challenges.
             </p>
-            
+
             {/* CTA Buttons */}
             <div className="pt-6 flex flex-col sm:flex-row gap-4">
               <Button 
@@ -59,7 +59,7 @@ export default function Hero() {
                 Send a Quote
               </Button>
             </div>
-            
+
             {/* Industry Recognition */}
             <div className="pt-8">
               <p className="text-sm text-neutral-400 mb-3">Trusted by industry leaders</p>
@@ -71,7 +71,7 @@ export default function Hero() {
                     <text x="50" y="25" className="text-xl font-bold" fill="currentColor">Safaricom</text>
                   </svg>
                 </div>
-                
+
                 {/* KCB Tech Logo */}
                 <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
                   <svg viewBox="0 0 120 40" className="h-full w-auto">
@@ -79,7 +79,7 @@ export default function Hero() {
                     <text x="35" y="25" className="text-xl font-bold" fill="currentColor">KCB Tech</text>
                   </svg>
                 </div>
-                
+
                 {/* Twiga Foods Logo */}
                 <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
                   <svg viewBox="0 0 150 40" className="h-full w-auto">
@@ -87,7 +87,7 @@ export default function Hero() {
                     <text x="40" y="25" className="text-xl font-bold" fill="currentColor">Twiga Foods</text>
                   </svg>
                 </div>
-                
+
                 {/* Sendy Logo */}
                 <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
                   <svg viewBox="0 0 100 40" className="h-full w-auto">
@@ -95,7 +95,7 @@ export default function Hero() {
                     <text x="40" y="25" className="text-xl font-bold" fill="currentColor">Sendy</text>
                   </svg>
                 </div>
-                
+
                 {/* Jumia Kenya Logo */}
                 <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
                   <svg viewBox="0 0 150 40" className="h-full w-auto">
@@ -103,7 +103,7 @@ export default function Hero() {
                     <text x="45" y="25" className="text-xl font-bold" fill="currentColor">Jumia</text>
                   </svg>
                 </div>
-                
+
                 {/* MPESA Logo */}
                 <div className="h-8 text-neutral-400 hover:text-neutral-200 transition-colors">
                   <svg viewBox="0 0 120 40" className="h-full w-auto">
@@ -114,7 +114,7 @@ export default function Hero() {
               </div>
             </div>
           </motion.div>
-          
+
           {/* Hero Animation/Visual */}
           <motion.div 
             className="w-full lg:w-1/2 h-full flex justify-center"
@@ -153,7 +153,7 @@ export default function Hero() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Floating elements */}
               <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
                 <motion.div 

@@ -60,17 +60,12 @@ export default function Home() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-16 left-0 right-0 bg-neutral-800 border-y border-neutral-700 p-4 z-50 flex items-center justify-center gap-4"
+            className="fixed top-16 left-0 right-0 bg-neutral-800 border-y border-neutral-700 py-2 px-4 z-50 flex items-center justify-center"
           >
-            <div className="flex items-start justify-between w-full max-w-sm">
+            <div className="flex items-center justify-between w-full max-w-3xl">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary-900/50 flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-primary-400" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-white mb-1">Meet OrionAI</h3>
-                  <p className="text-sm text-neutral-300">Your intelligent assistant for exploring our services and getting instant help.</p>
-                </div>
+                <Bot className="h-5 w-5 text-primary-400" />
+                <span className="text-sm text-neutral-300">Meet OrionAI - Your intelligent assistant for exploring our services</span>
               </div>
               <Button
                 variant="ghost"
