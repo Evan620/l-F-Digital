@@ -169,7 +169,6 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                     <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
                   </div>
                 </div>
-                </div>
               </div>
               <Button 
                 size="icon" 
