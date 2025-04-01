@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 export const sendBookingNotification = async (bookingData: any) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: 'your-business-email@example.com', // Replace with your business email
+    to: process.env.NOTIFICATION_EMAIL || 'your-business-email@example.com',
     subject: 'New Consultation Booking',
     html: `
       <h2>New Booking Request</h2>
