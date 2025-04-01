@@ -159,19 +159,16 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
             `}</style>
             {/* Chat Header */}
             <div className="p-4 bg-neutral-800 border-b border-neutral-700 flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary-600 to-secondary-600 flex items-center justify-center text-white font-bold">
-                  AI
-                </div>
+              <div className="flex items-center gap-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-white">OrionAI</h3>
+                    <h3 className="text-lg font-bold text-white">OrionAI</h3>
                     <span className="px-1.5 py-0.5 text-[10px] font-medium bg-primary-900/50 text-primary-300 rounded-full">BETA</span>
                   </div>
-                  <div className="flex items-center text-xs text-neutral-400">
-                    <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                    Online
+                  <div className="flex items-center text-xs">
+                    <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
                   </div>
+                </div>
                 </div>
               </div>
               <Button 
