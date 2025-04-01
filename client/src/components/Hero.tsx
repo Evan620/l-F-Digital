@@ -32,14 +32,14 @@ export default function Hero() {
             <div className="inline-block px-4 py-1 rounded-full bg-white/10 text-sm font-medium text-primary-300 mb-4">
               AI-Powered Digital Transformation
             </div>
-            <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl space-y-4">
+            <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl">
               <div className="flex items-center gap-3">
-                <span>Transforming Business</span>
-                <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent tracking-wide">Through AI Innovation</span>
+                <span>Smart Solutions</span>
+                <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent tracking-wide">Powered by AI</span>
               </div>
             </h1>
             <p className="text-lg text-neutral-300 max-w-xl">
-              Revolutionize your workflows, automate processes, and unlock growth with our cutting-edge AI solutions tailored to your industry's unique challenges.
+              Driving efficiency and innovation through intelligent automation. We turn complex business challenges into streamlined digital success stories.
             </p>
 
             {/* CTA Buttons */}
