@@ -6,8 +6,6 @@ import { Input } from '@/components/ui/input';
 import { MessageSquare, X, Send } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import { type Message, type Conversation } from '@shared/schema';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 
 type AIChatInterfaceProps = {
   isOpen: boolean;
@@ -20,7 +18,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
+  
   // Initialize conversation when component mounts
   useEffect(() => {
     const initializeConversation = async () => {
@@ -32,7 +30,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
             timestamp: Date.now()
           }]
         });
-
+        
         const newConversation = await response.json();
         setConversation(newConversation);
       } catch (error) {
@@ -43,29 +41,29 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
         });
       }
     };
-
+    
     if (!conversation) {
       initializeConversation();
     }
   }, []);
-
+  
   // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [conversation?.messages]);
-
+  
   const handleSubmitMessage = async () => {
     if (!message.trim() || !conversation) return;
-
+    
     // Add user message to UI immediately
     const userMessage: Message = {
       role: 'user',
       content: message,
       timestamp: Date.now()
     };
-
+    
     setConversation(prev => {
       if (!prev) return null;
       return {
@@ -73,17 +71,17 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
         messages: [...prev.messages, userMessage]
       };
     });
-
+    
     setMessage('');
     setIsTyping(true);
-
+    
     try {
       const response = await apiRequest('POST', `/api/conversations/${conversation.id}/messages`, {
         message: message.trim()
       });
-
+      
       const data = await response.json();
-
+      
       if (data.conversation) {
         setConversation(data.conversation);
       }
@@ -93,7 +91,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
         description: "We couldn't send your message. Please try again.",
         variant: "destructive",
       });
-
+      
       // Remove the user message if API call fails
       setConversation(prev => {
         if (!prev) return null;
@@ -106,21 +104,21 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
       setIsTyping(false);
     }
   };
-
+  
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmitMessage();
     }
   };
-
+  
   // Quick suggestion buttons
   const quickSuggestions = [
     "Request a demo",
     "Pricing options",
     "Integration with my CRM"
   ];
-
+  
   return (
     <>
       {/* Chat Button */}
@@ -132,7 +130,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
       >
         <MessageSquare className="h-6 w-6 text-white" />
       </motion.button>
-
+      
       {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
@@ -166,7 +164,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                 <X className="h-5 w-5" />
               </Button>
             </div>
-
+            
             {/* Chat Messages */}
             <div className="p-4 overflow-y-auto flex-1 space-y-4">
               {conversation?.messages.map((msg, index) => (
@@ -177,35 +175,21 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                   {msg.role === 'assistant' && (
                     <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary-600 to-secondary-600 flex-shrink-0" />
                   )}
-                  <div className={`p-4 rounded-tl-xl rounded-tr-xl ${
+                  <div className={`p-3 rounded-tl-xl rounded-tr-xl ${
                     msg.role === 'user' 
                       ? 'bg-primary-700 rounded-bl-xl' 
                       : 'bg-neutral-800 rounded-br-xl'
                   } max-w-[80%]`}>
-                    <div className={`prose prose-invert prose-sm max-w-none ${msg.role === 'user' ? 'text-white' : 'text-neutral-200'}`}>
-                      <ReactMarkdown 
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          h1: ({node, ...props}) => <h1 className="text-lg font-bold mb-2" {...props} />,
-                          h2: ({node, ...props}) => <h2 className="text-md font-semibold mb-2" {...props} />,
-                          ul: ({node, ...props}) => <ul className="list-disc pl-4 space-y-1" {...props} />,
-                          ol: ({node, ...props}) => <ol className="list-decimal pl-4 space-y-1" {...props} />,
-                          li: ({node, ...props}) => <li className="text-sm" {...props} />,
-                          p: ({node, ...props}) => <p className="text-sm mb-2 last:mb-0" {...props} />,
-                          code: ({node, ...props}) => <code className="bg-neutral-700/50 rounded px-1" {...props} />,
-                          pre: ({node, ...props}) => <pre className="bg-neutral-700/30 rounded p-2 my-2 overflow-x-auto" {...props} />
-                        }}
-                      >
-                        {msg.content}
-                      </ReactMarkdown>
-                    </div>
+                    <p className={`text-sm ${msg.role === 'user' ? 'text-white' : 'text-neutral-200'}`}>
+                      {msg.content}
+                    </p>
                   </div>
                   {msg.role === 'user' && (
                     <div className="w-6 h-6" /> 
                   )}
                 </div>
               ))}
-
+              
               {/* AI Typing Indicator */}
               {isTyping && (
                 <div className="flex items-end gap-2">
@@ -231,11 +215,11 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                   </div>
                 </div>
               )}
-
+              
               {/* For auto-scrolling */}
               <div ref={messagesEndRef} />
             </div>
-
+            
             {/* Chat Input */}
             <div className="p-4 border-t border-neutral-800">
               <div className="flex gap-2">
@@ -256,7 +240,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                   <Send className="h-5 w-5" />
                 </Button>
               </div>
-
+              
               {/* Quick Suggestions */}
               <div className="mt-3 flex flex-wrap gap-2">
                 {quickSuggestions.map((suggestion, index) => (
