@@ -5,8 +5,8 @@ import Hero from '@/components/Hero';
 import ServicesExplorer from '@/components/ServicesExplorer';
 import AIChatInterface from '@/components/AIChatInterface';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
-import { ArrowRight, FileText, Calculator } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, FileText, Calculator, Bot, X } from 'lucide-react';
 
 export default function Home() {
   const [isChatOpen, setIsChatOpen] = useState(false);
