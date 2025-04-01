@@ -34,7 +34,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
         const response = await apiRequest('POST', '/api/conversations', {
           messages: [{
             role: 'assistant',
-            content: "Hi there! I'm your L&F Digital AI assistant. How can I help you today? You can ask about our services, pricing, or how we can solve specific business challenges.",
+            content: "Hello! I'm OrionAI, your intelligent assistant. How can I help you today? Feel free to ask about our services, pricing, or how we can solve your business challenges.",
             timestamp: Date.now()
           }]
         });
@@ -163,10 +163,10 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-bold text-white">OrionAI</h3>
-                    <span className="px-1.5 py-0.5 text-[10px] font-medium bg-primary-900/50 text-primary-300 rounded-full">BETA</span>
-                  </div>
-                  <div className="flex items-center text-xs">
-                    <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+                    <div className="flex items-center gap-1">
+                      <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+                      <span className="px-1.5 py-0.5 text-[10px] font-medium bg-primary-900/50 text-primary-300 rounded-full">BETA</span>
+                    </div>
                   </div>
                 </div>
               </div>
