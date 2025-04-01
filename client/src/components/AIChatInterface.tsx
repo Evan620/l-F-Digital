@@ -1,16 +1,24 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useToast } from '@/hooks/use-toast';
+import { Send, X, Bot, User, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MessageSquare, X, Send } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import { type Message, type Conversation } from '@shared/schema';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
-type AIChatInterfaceProps = {
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp?: number;
+}
+
+interface AIChatInterfaceProps {
   isOpen: boolean;
   onToggle: () => void;
-};
+}
 
 export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfaceProps) {
   const { toast } = useToast();
@@ -18,7 +26,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+
   // Initialize conversation when component mounts
   useEffect(() => {
     const initializeConversation = async () => {
@@ -30,7 +38,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
             timestamp: Date.now()
           }]
         });
-        
+
         const newConversation = await response.json();
         setConversation(newConversation);
       } catch (error) {
@@ -41,29 +49,29 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
         });
       }
     };
-    
+
     if (!conversation) {
       initializeConversation();
     }
   }, []);
-  
+
   // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [conversation?.messages]);
-  
+
   const handleSubmitMessage = async () => {
     if (!message.trim() || !conversation) return;
-    
+
     // Add user message to UI immediately
     const userMessage: Message = {
       role: 'user',
       content: message,
       timestamp: Date.now()
     };
-    
+
     setConversation(prev => {
       if (!prev) return null;
       return {
@@ -71,17 +79,17 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
         messages: [...prev.messages, userMessage]
       };
     });
-    
+
     setMessage('');
     setIsTyping(true);
-    
+
     try {
       const response = await apiRequest('POST', `/api/conversations/${conversation.id}/messages`, {
         message: message.trim()
       });
-      
+
       const data = await response.json();
-      
+
       if (data.conversation) {
         setConversation(data.conversation);
       }
@@ -91,7 +99,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
         description: "We couldn't send your message. Please try again.",
         variant: "destructive",
       });
-      
+
       // Remove the user message if API call fails
       setConversation(prev => {
         if (!prev) return null;
@@ -104,21 +112,21 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
       setIsTyping(false);
     }
   };
-  
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmitMessage();
     }
   };
-  
+
   // Quick suggestion buttons
   const quickSuggestions = [
     "Request a demo",
     "Pricing options",
     "Integration with my CRM"
   ];
-  
+
   return (
     <>
       {/* Chat Button */}
@@ -130,17 +138,23 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
       >
         <MessageSquare className="h-6 w-6 text-white" />
       </motion.button>
-      
+
       {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed bottom-24 right-6 w-96 bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-700 overflow-hidden max-h-[500px] flex flex-col z-50"
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-4 right-4 w-[450px] bg-neutral-900 rounded-xl border border-neutral-800 shadow-2xl overflow-hidden z-50"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.2 }}
           >
+            <style>{`
+              .chat-message:nth-child(odd) {
+                background: rgba(255,255,255,0.02);
+              }
+              .prose :last-child { margin-bottom: 0; }
+            `}</style>
             {/* Chat Header */}
             <div className="p-4 bg-neutral-800 border-b border-neutral-700 flex justify-between items-center">
               <div className="flex items-center gap-3">
@@ -164,7 +178,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            
+
             {/* Chat Messages */}
             <div className="p-4 overflow-y-auto flex-1 space-y-4">
               {conversation?.messages.map((msg, index) => (
@@ -172,24 +186,41 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                   key={index}
                   className={`flex items-end gap-2 ${msg.role === 'user' ? 'justify-end' : ''}`}
                 >
-                  {msg.role === 'assistant' && (
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary-600 to-secondary-600 flex-shrink-0" />
-                  )}
-                  <div className={`p-3 rounded-tl-xl rounded-tr-xl ${
-                    msg.role === 'user' 
-                      ? 'bg-primary-700 rounded-bl-xl' 
-                      : 'bg-neutral-800 rounded-br-xl'
-                  } max-w-[80%]`}>
-                    <p className={`text-sm ${msg.role === 'user' ? 'text-white' : 'text-neutral-200'}`}>
-                      {msg.content}
-                    </p>
+                  <div className="p-4 chat-message">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br flex items-center justify-center flex-shrink-0">
+                        {msg.role === 'assistant' ? (
+                          <Bot className="w-5 h-5 text-primary-400" />
+                        ) : (
+                          <User className="w-5 h-5 text-secondary-400" />
+                        )}
+                      </div>
+                      <div className="flex-1 prose prose-invert prose-sm max-w-none">
+                        <ReactMarkdown 
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            h1: ({node, ...props}) => <h1 className="text-xl font-bold mb-2" {...props} />,
+                            h2: ({node, ...props}) => <h2 className="text-lg font-bold mb-2" {...props} />,
+                            h3: ({node, ...props}) => <h3 className="text-md font-bold mb-2" {...props} />,
+                            ul: ({node, ...props}) => <ul className="list-disc ml-4 mb-2" {...props} />,
+                            ol: ({node, ...props}) => <ol className="list-decimal ml-4 mb-2" {...props} />,
+                            li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                            p: ({node, ...props}) => <p className="mb-2 text-neutral-300" {...props} />,
+                            code: ({node, ...props}) => <code className="bg-neutral-800 px-1 py-0.5 rounded" {...props} />,
+                            pre: ({node, ...props}) => <pre className="bg-neutral-800 p-3 rounded-lg my-2 overflow-x-auto" {...props} />,
+                            blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-primary-500/50 pl-4 italic my-2" {...props} />,
+                            strong: ({node, ...props}) => <strong className="text-primary-400 font-bold" {...props} />,
+                            a: ({node, ...props}) => <a className="text-primary-400 hover:underline" {...props} />
+                          }}
+                        >
+                          {msg.content}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
                   </div>
-                  {msg.role === 'user' && (
-                    <div className="w-6 h-6" /> 
-                  )}
                 </div>
               ))}
-              
+
               {/* AI Typing Indicator */}
               {isTyping && (
                 <div className="flex items-end gap-2">
@@ -215,11 +246,11 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                   </div>
                 </div>
               )}
-              
+
               {/* For auto-scrolling */}
               <div ref={messagesEndRef} />
             </div>
-            
+
             {/* Chat Input */}
             <div className="p-4 border-t border-neutral-800">
               <div className="flex gap-2">
@@ -240,7 +271,7 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
                   <Send className="h-5 w-5" />
                 </Button>
               </div>
-              
+
               {/* Quick Suggestions */}
               <div className="mt-3 flex flex-wrap gap-2">
                 {quickSuggestions.map((suggestion, index) => (
