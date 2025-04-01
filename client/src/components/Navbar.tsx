@@ -1,13 +1,12 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { AIContext } from '@/context/AIContext';
+import { useAI } from '@/context/AIContext';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const aiContext = useContext(AIContext);
-  const toggleChat = aiContext?.toggleChat || (() => console.log('AI chat not available'));
+  const { toggleChat } = useAI();
 
   useEffect(() => {
     const handleScroll = () => {
