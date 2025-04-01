@@ -122,9 +122,11 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
 
   // Quick suggestion buttons
   const quickSuggestions = [
-    "Request a demo",
-    "Pricing options",
-    "Integration with my CRM"
+    "Schedule a consultation",
+    "Recommend solutions for my business",
+    "Calculate ROI potential",
+    "Generate case study",
+    "Book a demo"
   ];
 
   return (
@@ -180,7 +182,8 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
             </div>
 
             {/* Chat Messages */}
-            <div className="p-4 overflow-y-auto flex-1 space-y-4">
+            <ScrollArea className="flex-1 h-[500px] p-4">
+              <div className="space-y-4">
               {conversation?.messages.map((msg, index) => (
                 <div 
                   key={index}
@@ -249,7 +252,8 @@ export default function AIChatInterface({ isOpen, onToggle }: AIChatInterfacePro
 
               {/* For auto-scrolling */}
               <div ref={messagesEndRef} />
-            </div>
+              </div>
+            </ScrollArea>
 
             {/* Chat Input */}
             <div className="p-4 border-t border-neutral-800">

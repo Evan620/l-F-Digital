@@ -34,7 +34,7 @@ export default function Hero() {
             </div>
             <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl leading-tight">
               <span className="block">Transform Your Business with</span>
-              <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent font-bold tracking-tight">AI-Driven Solutions</span>
+              <span className="bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent font-bold tracking-tight"><span className="text-primary-500">AI-Driven Solutions</span></span>
             </h1>
             <p className="text-lg text-neutral-300 max-w-xl">
               Revolutionize your workflows, automate processes, and unlock growth with our cutting-edge AI solutions tailored to your industry's unique challenges.
