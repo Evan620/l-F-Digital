@@ -28,13 +28,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer">
-              <div className="w-8 h-8 rounded-md bg-gradient-to-r from-primary-600 to-secondary-600 flex items-center justify-center">
-                <span className="font-display font-bold text-white">LÆF</span>
+              <div className="w-10 h-10 rounded-md bg-gradient-to-r from-primary-600 to-secondary-600 flex items-center justify-center">
+                <span className="font-display font-bold text-white text-lg">LÆF</span>
               </div>
-              <div className="flex flex-col">
-                <span className="font-display font-bold text-white">LÆF Digital</span>
-                <span className="text-[10px] font-light italic text-neutral-300 -mt-1">Locus of Algorithmic</span>
-              </div>
+              <span className="font-display font-bold text-white text-lg">Digital</span>
             </div>
           </Link>
           
