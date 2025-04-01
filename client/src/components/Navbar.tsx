@@ -54,16 +54,6 @@ export default function Navbar() {
             </Link>
           </div>
           
-          {/* AI Chat Button */}
-          <div>
-            <Button 
-              onClick={toggleChat}
-              className="rounded-full bg-primary-700 hover:bg-primary-600 shadow-lg shadow-primary-900/30"
-            >
-              Talk to AI
-            </Button>
-          </div>
-          
           {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button 
